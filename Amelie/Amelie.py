@@ -1,82 +1,68 @@
 # -*- coding: utf-8 -*
 
+# ======================= #
+#   by AmeliePick. 2018   #
+#  github.com/AmeliePick  #
+# ======================= #
+
 from sys import stdin, exit as sys_exit
-import os
-import webbrowser
-import subprocess
-import random
+import os, webbrowser, subprocess ,random
 
-print ( 100 * "_")
-print ("                                                  _ _       ")
-print ("                             /\                  | (_)      ")
-print ("                            /  \   _ __ ___   ___| |_  ___  ")
-print ("                           / /\ \ | '_ ` _ \ / _ \ | |/ _ \ ")
-print ("                          / ____ \| | | | | |  __/ | |  __/ ")
-print ("                         /_/    \_\_| |_| |_|\___|_|_|\___| ")
-print ( 100 * "_")
+print ( 70 * "_")
+print ("\t\t                         _ _       \n" +
+       "\t\t    /\                  | (_)      \n" +
+       "\t\t   /  \   _ __ ___   ___| |_  ___  \n" +
+       "\t\t  / /\ \ | '_ ` _ \ / _ \ | |/ _ \ \n" +
+       "\t\t / ____ \| | | | | |  __/ | |  __/ \n" +
+       "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
+print ( 70 * "_")
 
-#--- Бот ---
+# ----- bot -----
 
-#--- Логин профиля ---
-username = os.getlogin()
+# get current login username
+g_username = os.getlogin()
 
+# set username
+def set_username():
+    username = input("\n What is your name? > ")
 
-#--- Запись/Изменение имени юзера ---
+    if (username != ""):
+        with open("../DataBase/username.txt", "w") as writeUsername:
+            writeUsername.write(username)
+        print ("\n Welcome, "+ username + "!")
+    else:
+        print ("\n (!) Name can't be empty :D")
+        set_username();
 
-def Rename():
-    userRname = input("What your name? ")
-    with open("DataBase/username.txt", "wt") as Userwrite:
-        loginOfUs = Userwrite.write(userRname)
-    with open("DataBase/username.txt", "r") as login:
-        Login = login.read()
-        print ("Welcome, "+ userRname)
+# ----- entry -----
 
-#--- Вход ---
+start = input("\n Hi, I'm Amelie. Start me? Press [Y] of [N]: ")
 
+while (True):
+    if (start == "Y" or start == "y"):
+        print ("\n Salute! What I'm capable of, you can find out right now =D")
+        break
+    elif (start == "N" or start == "n"):
+        print ("\n Thinking... Now you are working, bye =D")
+        sys_exit()
+    else:
+        start = input("\n (!) Try again - [Y] or [N]: ")
+        continue
 
-start = input("\n Hi, I'm Amelie. Start me? Press Y of N: ")
+# ----- end of the entry -----
 
-if start == "Y" or start == "y":
-    print ("\n Salute! What I'm capable of, you can find out right now =D")
-elif start == "N" or start == "n":
-    print (" Think... Now you working BB =D")
-    sys_exit()
-elif start != "Y" or start != "N":
-    while start != "Y" or start != "N":
-        startFalse = input("Invalid syntax, enter Y or N pls: ")
-        if startFalse == "Y" or startFalse == "y":
-            print ("\n Salute! What I'm capable of, you can find out right now =D")
-            break
-        elif startFalse == "N" or startFalse == "n":
-            print ("Think... Now you working BB =D")
-            sys_exit()
-            break
-        elif startFalse != "Y" or startFalse != "y" or startFalse != "N" or startFalse != "n":
-            print ("\n Try again =D")
-            continue
+# read username from file in DB
+usernameInFile = open("../DataBase/username.txt", "r")
+username = usernameInFile.read()
+usernameInFile.close()
+
+# call function to set it if it's empty
+if (username == ""):
+    set_username()
 else:
-    while start == "":
-        start_sec = input("Write Y or N pls: ")
-        if start_sec == "Y" or start_sec == "y":
-            print ("\n Salute! What I'm capable of, you can find out right now =D")
-            break
-        elif start_sec == "N" or start_sec == "n":
-            print (" Think... Now you working BB =D")
-            sys_exit()
-            break
-        elif not "Y" or "y" or "N" or "n" in start:
-            print ("\n Try again!")
-            continue
+    print("\n Welcome, " + username + "!")
 
-#--- Конец входа
-
-
-userlogin = open("DataBase/username.txt", "r")
-source = userlogin.read()
-userlogin.close()
-
-if source == "":
-    Rename()
+# ===== i will not go deeper, cmon. (c) Matt Fawkes ===== #
 
 #--- Функция листа возможностей
 
@@ -92,15 +78,15 @@ def menu():
         canDo = canDoit.lower()
         if canDo == "1":
             print ("\n You're probably calling yourself: "+ username)
-            
+
         elif canDo == "2":
             En = webbrowser.open('http://google.com', new=2)
             print ("I'm opened your browser ^-^")
-            
+
         elif canDo == "3":
             En18 = webbrowser.open('https://rt.pornhub.com/', new=3)
             print ("I'm opened your browser, honey ^-^")
-            
+
         elif canDo == "4":
             Ex = subprocess.Popen('explorer "C:\path\of\folder"')
             print ("\n--- Expolere was opened ---")
@@ -109,7 +95,7 @@ def menu():
             with open("DataBase/about.txt", 'r') as file:
                 print (" Reading...")
                 print ("\n", file.readline())
-            
+
         elif canDo == "6":
             Site = webbrowser.open('http://clear-sky.zz.vc', new=2)
             print ("\n Browser was opened =D")
@@ -125,16 +111,16 @@ def menu():
 while True:
 
     #--- Считывание данных из Базы ---
-    with open("DataBase/hi_s.txt", "r") as fileHI:
+    with open("../DataBase/hi_s.txt", "r") as fileHI:
         data = fileHI.read()
         massData = data.replace('\n', '')
-        
-        
 
-    with open("DataBase/Synonym.txt", "r") as Sin:
+
+
+    with open("../DataBase/Synonym.txt", "r") as Sin:
         dataSin = Sin.read()
         massDataSin = dataSin.replace('\n', '')
-        
+
     #--- Конец считывания ---
 
 
@@ -143,18 +129,18 @@ while True:
     # --- Input он же Quest на mobile Ver ---
 
     if Input in massData:
-        fileHI = open("DataBase/hi_s.txt", "r")
+        fileHI = open("../DataBase/hi_s.txt", "r")
         linelist = []
         for line in fileHI:
             linelist.append(line)
         choice = random.choice(linelist)
         fileHI.close()
-        with open ("DataBase/username.txt", "r") as LoginTXT:
+        with open ("../DataBase/username.txt", "r") as LoginTXT:
             userName = LoginTXT.read()
         print ("\n<--- "+ userName+ ", "+ choice)
 
     elif Input in massDataSin:
-        QAN = open("DataBase/Expression.txt", "r")
+        QAN = open("../DataBase/Expression.txt", "r")
         linelist =[]
         for line in QAN:
             linelist.append(line)
