@@ -40,6 +40,8 @@ def speak():
 #open file
 f = open ("../DataBase/social.txt", "r")
 ReadFile = f.read()
+ff = open ("../DataBase/answers.txt", "r")
+ReadFFile = ff.read()
 
 def EditTXT(TXT):
     TXT = TXT.lower()
@@ -59,7 +61,7 @@ def AI():
         data['tag'] += [row[1]]
     return data
 
-def training(data, Val_split = 0.8):
+def training(data, Val_split = 0.1):
     lenght = len(data['text'])
     
     indexes = np.arange(lenght)
@@ -94,9 +96,9 @@ def open_AI():
     mass = []
     mass.append(Chat_Input)
     pred = text_clf.predict(mass)
-    
+    ToAnswser = ''.join(pred).replace(' ', '')
 
-    return pred, Chat_Input
+    return ToAnswser
 
 AA = open_AI
 
@@ -120,7 +122,7 @@ def inv_AI():
     return data
 
 #Training Ai
-def inv_training(data, Val_split = 0.8):
+def inv_training(data, Val_split = 0.1):
     lenght = len(data['tag'])
     
     indexes = np.arange(lenght)
@@ -156,13 +158,12 @@ def inv_open_AI():
     
     mass = []
     mass.append(Output)
-    Answer = text_clf.predict(mass)
+    EditAnswer = text_clf.predict(mass)
+    Answer  = ''.join(EditAnswer)
     speak()
-    print ("<--- ",str(Answer))
+    print ('<---',Answer + '\n')
 
     return str(Answer)
 
-while (True):
-    open_AI()
-    inv_open_AI()
+
     
