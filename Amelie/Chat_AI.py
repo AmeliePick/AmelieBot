@@ -11,6 +11,9 @@ from sklearn.metrics import accuracy_score
 #open file
 f = open ("../DataBase/social.txt", "r")
 ReadFile = f.read()
+ff = open ("../DataBase/answers.txt", "r")
+ReadFFile = ff.read()
+
 
 def EditTXT(TXT):
     TXT = TXT.lower()
@@ -30,7 +33,7 @@ def AI():
         data['tag'] += [row[1]]
     return data
 
-def training(data, Val_split = 0.8):
+def training(data, Val_split = 0.1):
     lenght = len(data['text'])
     
     indexes = np.arange(lenght)
@@ -60,14 +63,15 @@ def open_AI():
     predicted = text_clf.predict( D['train']['x'] )
 
 
-    Chat_Input = input("---> ")
+    Chat_Input = input('---> ').capitalize()
 
     mass = []
     mass.append(Chat_Input)
     pred = text_clf.predict(mass)
-    
+    ToAnswser = ''.join(pred).replace(' ', '')
+    print (ToAnswser+ '\n')
 
-    return pred, Chat_Input
+    return ToAnswser
 
 AA = open_AI
 
@@ -83,15 +87,16 @@ def inv_EditTXT(TXT):
     return TXT
 
 def inv_AI():
-    data = {'text': [], 'tag':[]}
+    data = {'tag': [], 'text':[]}
     for line in open("../DataBase/answers.txt"):
         row = line.split('@')
         data['tag'] += [row[0]]
         data['text'] += [row[1]]
     return data
 
+
 #Training Ai
-def inv_training(data, Val_split = 0.8):
+def inv_training(data, Val_split = 0.1):
     lenght = len(data['tag'])
     
     indexes = np.arange(lenght)
@@ -110,6 +115,7 @@ def inv_training(data, Val_split = 0.8):
         'test': { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
     }
 
+
 def inv_open_AI():
     data = inv_AI()
     D = inv_training(data)
@@ -125,8 +131,9 @@ def inv_open_AI():
     
     mass = []
     mass.append(Output)
-    Answer = text_clf.predict(mass)
-    print ("<--- ",Answer)
+    EditAnswer = text_clf.predict(mass)
+    Answer  = ''.join(EditAnswer)
+    print ('<---',Answer + '\n')
 
 while (True):
     open_AI()
