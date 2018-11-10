@@ -1,55 +1,51 @@
 # -*- coding: utf-8 -*-
-
 import sys, random, pickle, re
 import numpy as np
-import nltk.stem as stemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
-
-#open file
-f = open ("../DataBase/social.txt", "r")
-ReadFile = f.read()
-ff = open ("../DataBase/answers.txt", "r")
-ReadFFile = ff.read()
+from sklearn import model_selection
 
 
-def EditTXT(TXT):
-    TXT = TXT.lower()
-    
-    stemmer = Stemmer('russian')
-    TXT = ' '.join(Stemmer.stemWords(TXT.split()))
-    
-
-    TXT = re.sub('\?', "", ReadFile )
-    return TXT
 
 def AI():
-    data = {'text': [], 'tag':[]}
-    for line in open("../DataBase/social.txt"):
-        row = line.split('@')
-        data['text'] += [row[0]]
-        data['tag'] += [row[1]]
-    return data
+    Edit = {'text': [], 'tag':[]}
+    for line in open ("../DataBase/social.txt", "r"):
+        row = line.split(' @ ')
+        
+        Edit['text'] += [row[0]]
+        Edit['tag'] += [row[1]]
+    
+        
+    return Edit
 
-def training(data, Val_split = 0.1):
-    lenght = len(data['text'])
+def training(Edit, Val_split = 0.1):
+    lenght = len(Edit['text'])
     
     indexes = np.arange(lenght)
 
     np.random.shuffle(indexes)
 
-    X = [data['text'][i]
+    X = [Edit['text'][i]
     for i in indexes ]
-    Y = [data['tag'][i]
+    Y = [Edit['tag'][i]
     for i in indexes]
 
     nb_valid_samples = int(Val_split * lenght)
 
+
+
+    #save the model to disk
+    filename = 'model.sav'
+    pickle.dump(nb_valid_samples, open("models/model.sav", 'wb'))
+    
+    #load the model from disk
+    loaded_model = pickle.load(open("models/model.sav", 'rb'))
+  
+
     return { 
-        'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
-        'test': { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
+        'train': { 'x': X[:-loaded_model], 'y': Y[:-loaded_model]  },
+        'test': { 'x': X[-loaded_model:], 'y': Y[-loaded_model:]  }
     }
 
 def open_AI():
@@ -60,81 +56,36 @@ def open_AI():
                     ('clf', SGDClassifier(loss='hinge')),
                     ])
     text_clf.fit(D['train']['x'], D['train']['y'])
-    predicted = text_clf.predict( D['train']['x'] )
+    predicted = text_clf.predict( D['test']['x'] )
 
-
+    
+    
+    
+    #Input
     Chat_Input = input('---> ').capitalize()
 
+    #give a type of input
     mass = []
     mass.append(Chat_Input)
     pred = text_clf.predict(mass)
-    ToAnswser = ''.join(pred).replace(' ', '')
-    print (ToAnswser+ '\n')
-
-    return ToAnswser
-
-AA = open_AI
-
-#--- Revers AI ---
-def inv_EditTXT(TXT):
-    TXT = TXT.lower()
-    
-    stemmer = Stemmer('russian')
-    TXT = ' '.join(Stemmer.stemWords(TXT.split()))
+    ToAnswser = ''.join(pred).replace('\n', '')
     
 
-    TXT = re.sub('\?', "", ReadFFile )
-    return TXT
 
-def inv_AI():
-    data = {'tag': [], 'text':[]}
-    for line in open("../DataBase/answers.txt"):
-        row = line.split('@')
-        data['tag'] += [row[0]]
-        data['text'] += [row[1]]
-    return data
+        #--- Answer ---
 
-
-#Training Ai
-def inv_training(data, Val_split = 0.1):
-    lenght = len(data['tag'])
+    tag = []
+    text = []
     
-    indexes = np.arange(lenght)
+    for line in open ("../DataBase/answers.txt", "r"):
+        row = line.split(' @ ')
+        tag.append(row[0])
+        #text.append(row[1])
 
-    np.random.shuffle(indexes)
-
-    X = [data['tag'][i]
-    for i in indexes ]
-    Y = [data['text'][i]
-    for i in indexes]
-
-    nb_valid_samples = int(Val_split * lenght)
-
-    return { 
-        'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
-        'test': { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
-    }
-
-
-def inv_open_AI():
-    data = inv_AI()
-    D = inv_training(data)
-    text_clf = Pipeline([
-                    ('tfidf', TfidfVectorizer()),
-                    ('clf', SGDClassifier(loss='hinge')),
-                    ])
-    text_clf.fit(D['train']['x'], D['train']['y'])
-    predicted = text_clf.predict( D['train']['x'] )
-
-
-    Output = str(AA)
+        if ToAnswser in line:
+            text.append(row[1])
+            Output = random.choice(text)
     
-    mass = []
-    mass.append(Output)
-    EditAnswer = text_clf.predict(mass)
-    Answer  = ''.join(EditAnswer)
-    print ('<---',Answer + '\n')
+    print("\n<--- ", Output)
 
-while (True):
-    open_AI()
-    inv_open_AI()
+    return Output
