@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
-import sys, random, pickle, re
+import sys, random, pickle, re, webbrowser, time
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
 from sklearn import model_selection
 
+from Stem_Res import Stemm
+from EditSearch import EditSearch
 
+
+
+f = open ("../DataBase/social.txt", "r")
+global ToAnswser
 
 def AI():
     Edit = {'text': [], 'tag':[]}
@@ -30,6 +36,8 @@ def training(Edit, Val_split = 0.1):
     for i in indexes ]
     Y = [Edit['tag'][i]
     for i in indexes]
+
+    
 
     nb_valid_samples = int(Val_split * lenght)
 
@@ -62,7 +70,7 @@ def open_AI():
     
     
     #Input
-    Chat_Input = input('---> ').capitalize()
+    Chat_Input = str(input('\n---> ').capitalize())
 
     #give a type of input
     mass = []
@@ -74,18 +82,54 @@ def open_AI():
 
         #--- Answer ---
 
+    
+
     tag = []
     text = []
     
     for line in open ("../DataBase/answers.txt", "r"):
         row = line.split(' @ ')
         tag.append(row[0])
-        #text.append(row[1])
+        
+        
 
         if ToAnswser in line:
+
             text.append(row[1])
-            Output = random.choice(text)
+
+    Output = random.choice(text)
+        
+    try:   
     
-    print("\n<--- ", Output)
+        print("\n<--- ", Output)
+
+    except:
+        Output = "Я не понимаю тебя =("
+        print ("\n<---", Output)
+        
+
+    if ToAnswser == "Search":
+        
+        search = webbrowser.open(EditSearch(Chat_Input), new=2)
+    
+    elif ToAnswser == "Youtube":
+
+        EditS = EditSearch(Chat_Input)
+        GetAns = Stemm(EditS)
+        
+            
+        search = webbrowser.open('http://www.youtube.com/results?search_query=' + str(GetAns))
+        
+        
+    
+
+
+    #Exit from app
+    if ToAnswser == "Exit":
+        #time.sleep(5)
+        while pygame.mixer.music.get_busy() :
+            time.sleep(0.1)
+        sys.exit()
 
     return Output
+
