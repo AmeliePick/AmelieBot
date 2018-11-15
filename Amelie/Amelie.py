@@ -6,9 +6,10 @@
 # ======================= #
 from sys import stdin, exit as sys_exit
 import os, webbrowser, subprocess ,random, re, pyttsx3
-import set_username
-from entry_input import start
-from gtts import gTTS
+import set_username, entry_input
+
+from libs.Speak import speak
+
 #------
 
 print ( 70 * "_")
@@ -31,9 +32,9 @@ if (username == ""):
     set_username.set_username()
 
 # ----- entry -----
-start()
+entry_input.start()
 # ----- end of the entry -----
-# ===== i will not go deeper, cmon. (c) Matt Fawkes =====  UPD: changed by AmeliePick ===#
+# ===== i will not go deeper, cmon. (c) Matt Fawkes =====  UPD: changed by AmeliePick === #
 
 #--- Chat
 On = input ("Enable voice? [Y] or [N]: ")
