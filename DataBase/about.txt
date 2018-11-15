@@ -1,3 +1,0 @@
-Amelie- Assistant of your PC, always prompt and help. 
-
-Developed by Python
