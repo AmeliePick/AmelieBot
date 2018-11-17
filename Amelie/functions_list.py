@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*
+
+
+#UPD 17.11.2018/19:00 
+#It doesn't work at the time of publication, I'll see what I can do about it
+
 import os, webbrowser, subprocess ,random, re
 # get current login username
 g_username = os.getlogin()
