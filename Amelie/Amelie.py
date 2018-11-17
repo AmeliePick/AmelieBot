@@ -4,6 +4,7 @@
 #   by AmeliePick. 2018   #
 #  github.com/AmeliePick  #
 # ======================= #
+
 from sys import stdin, exit as sys_exit
 import os, webbrowser, subprocess ,random, re, pyttsx3
 import set_username, entry_input
@@ -37,14 +38,18 @@ entry_input.start()
 # ===== i will not go deeper, cmon. (c) Matt Fawkes =====  UPD: changed by AmeliePick === #
 
 #--- Chat
-On = input ("Enable voice? [Y] or [N]: ")
+On = input ("\nEnable voice? [Y] or [N]: ")
 while (True):
     if On == "Y" or On ==  "y":
+        print("Идёт обучение бота...")
+
         from Chat_AI_with_syn import speech
         while (True):
             speech()
             
     elif On == "N" or On ==  "n":
+        print("Идёт обучение бота...")
+
         from Chat_AI import open_AI
         while (True):
             open_AI()
