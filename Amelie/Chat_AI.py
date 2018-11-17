@@ -1,18 +1,33 @@
 # -*- coding: utf-8 -*-
-import sys, random, pickle, re, webbrowser, time
+import sys, random, pickle, re, webbrowser, subprocess
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
 from sklearn import model_selection
 
-from Stem_Res import Stemm
-from EditSearch import EditSearch
-
+from libs.Stem_Res import Stemm
 
 
 f = open ("../DataBase/social.txt", "r")
-global ToAnswser
+
+
+# Variables for EditSearch()
+text = []
+
+An = ""
+
+# get ToAnswser from open_AI() in EditSearch()
+To = ''
+
+
+
+'''
+
+Functions for creating and training the neural network to recognize the type of input. 
+For example: What is the weather today? - Weather. Where is Paris? - Location
+
+'''
 
 def AI():
     Edit = {'text': [], 'tag':[]}
@@ -78,9 +93,9 @@ def open_AI():
     pred = text_clf.predict(mass)
     ToAnswser = ''.join(pred).replace('\n', '')
     
-
-
-        #--- Answer ---
+    To = ToAnswser
+    print(ToAnswser)
+  #--- Answer ---
 
     
 
@@ -97,15 +112,19 @@ def open_AI():
 
             text.append(row[1])
 
-    Output = random.choice(text)
-        
-    try:   
-    
-        print("\n<--- ", Output)
+    try:
+
+        Output = random.choice(text)
+        print ("\n<---", Output)
+
 
     except:
         Output = "Я не понимаю тебя =("
         print ("\n<---", Output)
+        
+
+    
+    
         
 
     if ToAnswser == "Search":
@@ -120,16 +139,74 @@ def open_AI():
             
         search = webbrowser.open('http://www.youtube.com/results?search_query=' + str(GetAns))
         
+    elif ToAnswser == "Open":
+
+        print(EditSearch(Chat_Input))
+        search = subprocess.Popen('EditSearch(Chat_Input)')
         
     
 
-
-    #Exit from app
+    '''
+    Exit from app
     if ToAnswser == "Exit":
-        #time.sleep(5)
+        time.sleep(5)
         while pygame.mixer.music.get_busy() :
             time.sleep(0.1)
         sys.exit()
+    '''
 
     return Output
 
+
+'''
+
+The processing function of the search query in the search engines.
+
+User input is supplied to the function input and unnecessary search words are removed from it. 
+For example: Find music on YouTube - it will be just music
+
+
+'''
+
+def EditSearch(Input):
+
+
+    
+
+    for i in f:
+        row = i.split(' @ ')
+
+        text.append(row[0])
+        
+
+        if To == "Youtube" and "Youtube" in i:
+            text.append(row[0])
+            
+        
+        elif To == "Search" and "Search" in i:
+            text.append(row[0])
+
+
+        elif To == "Open" and "Open" in i:
+            text.append(row[0])
+            
+        
+
+    for item in text:
+        if item in text and item in Input:
+
+            An = Input.replace(item, '')
+
+            
+
+
+
+    An = re.sub('[?!]', '', An)
+
+    try:
+        return An.lstrip()
+
+    except:
+        An = ''
+
+        return An
