@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*
 
+
+# === Username installation module ===
+
 def set_username():
     username = input("\n What is your name? > ")
 
