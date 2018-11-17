@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*
 
+# === Program start module ===
 
 def start():
     start = input("\n Hi, I'm Amelie. Start me? Press [Y] of [N]: ")
