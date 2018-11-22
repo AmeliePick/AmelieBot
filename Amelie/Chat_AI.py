@@ -1,5 +1,15 @@
 # -*- coding: utf-8 -*-
-import sys, random, pickle, re, webbrowser, subprocess
+
+'''
+Chat is a neural network that classifies requests from the user. 
+Then, after processing the type of the question, it passes it to the answer function, 
+where the answer is processed and the operations are performed according to the input.
+
+User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
+
+'''
+
+import sys, random, pickle, re, webbrowser, subprocess, os
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
@@ -9,16 +19,22 @@ from sklearn import model_selection
 from libs.Stem_Res import Stemm
 
 
-f = open ("../DataBase/social.txt", "r")
+with open ("../DataBase/social.txt", "r") as file:
+    f = file.readlines()
+
+with open ("../DataBase/answers.txt", "r") as Afile:
+    ANfile = Afile.readlines()
 
 
 # Variables for EditSearch()
 text = []
-
 An = ""
 
 # get ToAnswser from open_AI() in EditSearch()
 To = ''
+
+# get global value from input for functions
+Chat_Input = ''
 
 
 
@@ -31,7 +47,7 @@ For example: What is the weather today? - Weather. Where is Paris? - Location
 
 def AI():
     Edit = {'text': [], 'tag':[]}
-    for line in open ("../DataBase/social.txt", "r"):
+    for line in f:
         row = line.split(' @ ')
         
         Edit['text'] += [row[0]]
@@ -71,7 +87,16 @@ def training(Edit, Val_split = 0.1):
         'test': { 'x': X[-loaded_model:], 'y': Y[-loaded_model:]  }
     }
 
-def open_AI():
+
+def Enter():
+    Input = str(input('\n---> ').capitalize())
+
+    global Chat_Input
+    Chat_Input = Input
+
+    return Input
+
+def open_AI(Something):
     data = AI()
     D = training(data)
     text_clf = Pipeline([
@@ -85,24 +110,37 @@ def open_AI():
     
     
     #Input
-    Chat_Input = str(input('\n---> ').capitalize())
+    
+    
 
     #give a type of input
     mass = []
-    mass.append(Chat_Input)
-    pred = text_clf.predict(mass)
+    
+    
+    mass.append(Something)
+    try:
+        pred = text_clf.predict(mass)
+    except:
+        return "Pause"
+        
     ToAnswser = ''.join(pred).replace('\n', '')
     
+    
     To = ToAnswser
-    print(ToAnswser)
-  #--- Answer ---
+    
+    global Chat_Input
+    Chat_Input = Something
 
     
 
+    return ToAnswser
+
+def Answer(ToAnswser):
     tag = []
     text = []
     
-    for line in open ("../DataBase/answers.txt", "r"):
+    for line in ANfile:
+        
         row = line.split(' @ ')
         tag.append(row[0])
         
@@ -112,20 +150,8 @@ def open_AI():
 
             text.append(row[1])
 
-    try:
-
-        Output = random.choice(text)
-        print ("\n<---", Output)
-
-
-    except:
-        Output = "Я не понимаю тебя =("
-        print ("\n<---", Output)
-        
-
-    
-    
-        
+    if ToAnswser == "Pause":
+        return ''
 
     if ToAnswser == "Search":
         
@@ -141,10 +167,39 @@ def open_AI():
         
     elif ToAnswser == "Open":
 
-        print(EditSearch(Chat_Input))
-        search = subprocess.Popen('EditSearch(Chat_Input)')
+        try:
+            search = subprocess.Popen(EditSearch(Chat_Input))
+            
+            
+
+
+        except FileNotFoundError:
+            
+
+            Ed = EditedOpen(EditSearch(Chat_Input))
+
+            if Ed == 1:
+                from exceptions_chat import except_for_add
+                Add_prog = except_for_add()
+
+                if Add_prog == 0:
+                    pass
+
+            
+
+
+    try:
+
+        Output = random.choice(text)
+        print ("\n<---", Output)
+
+
+    except:
+        Output = "Я не понимаю тебя =("
+        print ("\n<---", Output)
         
-    
+
+ 
 
     '''
     Exit from app
@@ -159,6 +214,7 @@ def open_AI():
 
 
 '''
+Net search functions
 
 The processing function of the search query in the search engines.
 
@@ -170,12 +226,10 @@ For example: Find music on YouTube - it will be just music
 
 def EditSearch(Input):
 
-
-    
-
     for i in f:
+        
         row = i.split(' @ ')
-
+        
         text.append(row[0])
         
 
@@ -195,6 +249,7 @@ def EditSearch(Input):
     for item in text:
         if item in text and item in Input:
 
+            global An
             An = Input.replace(item, '')
 
             
@@ -204,9 +259,42 @@ def EditSearch(Input):
     An = re.sub('[?!]', '', An)
 
     try:
-        return An.lstrip()
+        return An.lstrip().capitalize()
 
     except:
         An = ''
 
         return An
+
+def EditedOpen(search):
+    with open('../DataBase/added_programms.txt', 'r') as File:
+    #AP = File.readlines()
+        Names = []
+        Links = []
+    
+
+        for line in File:
+        
+            row = line.split(' = ')
+            if search in line:
+                if Names != []:
+                    Names.clear()
+                if Links != []:
+                    Links.clear()
+            
+                Links.append(row[1])
+                Names.append(row[0])
+            
+            
+
+
+
+    if search in Names:
+        try:
+            search = subprocess.Popen(Links[0])
+            return 0
+        except FileNotFoundError:
+            print("Неверно указан путь")
+            return 1
+    else:
+        return 1
