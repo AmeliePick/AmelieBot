@@ -5,13 +5,19 @@
 #  github.com/AmeliePick  #
 # ======================= #
 
+
+'''
+The main file of the bot. 
+The functions of entering the program and choosing the bot mode are called.
+'''
+
 from sys import stdin, exit as sys_exit
 import os, webbrowser, subprocess ,random, re, pyttsx3
 import set_username, entry_input
 
 from libs.Speak import speak
 
-#------
+
 
 print ( 70 * "_")
 print ("\t\t                         _ _       \n" +
@@ -43,16 +49,23 @@ while (True):
     if On == "Y" or On ==  "y":
         print("Идёт обучение бота...")
 
-        from Chat_AI_with_syn import speech
-        while (True):
-            speech()
+        
+        import Chat_AI_with_syn
+        
+
             
     elif On == "N" or On ==  "n":
         print("Идёт обучение бота...")
 
-        from Chat_AI import open_AI
-        while (True):
-            open_AI()
+        from Chat_AI import Enter, open_AI, Answer
+
+        while(True):
+            
+            Answer(open_AI(Enter()))
+            
+
+        
+            
        
     else:
         On = input("Enter [Y] or [N] please ^-^ : ")
