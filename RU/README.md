@@ -45,7 +45,7 @@
 ***
 
 # Ссылки:
-+ Помочь расширить Базу Данных(Руководство)
++ Помочь расширить Базу Данных([Руководство](https://github.com/AmeliePick/AmelieChatBot/tree/master/API))
 
 + Предложения писать сюда -> widomaker86@gmail.com
 
