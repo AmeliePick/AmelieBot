@@ -45,7 +45,7 @@ Initially, the bot was planned to be kept in the background. In trial tests, he 
 ***
 
 # Links:
-+ Help expand the Database (Guide)
++ Help expand the Database ([Guide](https://github.com/AmeliePick/AmelieChatBot/tree/master/API))
 
 + Suggestions to write here -> widomaker86@gmail.com
 
