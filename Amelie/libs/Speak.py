@@ -1,45 +1,68 @@
 # -*- coding: utf-8 -*
+import pyaudio
+import requests
+
 
 # === The synthesis module ====
 
 '''
+Synthesis is carried out with the help of IBM Watson. 
+In the code, I left my API Kay. If you want a friend to use your Cloud Foundry Services, then simply replace line 65 and enter your data into it.
 
-The synthesis is based on gTTS (Google Text-to-Speech). Gets data from a chat file, processes it, and writes it to a file .mp3 for work synthesis need the Internet. 
-Due to the algorithm of the library, there is a delay of a few seconds before playback
 
+I  made minor changes to the work of the Watson module
 '''
 
-import os, random, playsound
-from pygame import mixer
-from gtts import gTTS
+
+class TtsWatson:
+
+    RATE = 22050
+    SAMPWIDTH = 2
+    NCHANNELS = 1
+    ACCEPT = 'audio/wav'
+
+    def __init__(self, user, password, voice = 'en-US_AllisonVoice',
+                 url = 'https://stream.watsonplatform.net/text-to-speech/api',
+                 chunk = 2048):
+        self.user = user
+        self.password = password
+        self.voice = voice
+        self.url = url
+        self.chunk = int(chunk)
+
+    def play(self, text):
+        req = requests.get(self.url + "/v1/synthesize",
+                           auth=(self.user, self.password),
+                           params={'text': text, 'voice': self.voice, 'accept': self.ACCEPT},
+                           stream=False, verify=True) #changed by AmeliePick
+
+        '''
+
+        When playing the voice, there were small suspensions.
+
+        '''
+                          
+
+        p = pyaudio.PyAudio()
+
+        stream = p.open(format=p.get_format_from_width(self.SAMPWIDTH),
+                        channels=self.NCHANNELS,
+                        rate=self.RATE,
+                        output=True)
+        bytesRead = 0
+        dataToRead = b''
+        for data in req.iter_content(1):
+            dataToRead += data
+            bytesRead += 1
+            if bytesRead % self.chunk == 0:
+                stream.write(dataToRead)
+                dataToRead = b''
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
 
 
-
+Speak = TtsWatson('a1e788b1-51d6-44b6-afde-4e5e29539c2a', '7mPsS2pAxngj')
 
 def speak(speech):
-
-    Old_name_mp3 = "old"
-
-    try:
-    
-        Send_in_Google = gTTS(text = speech, lang = "ru")
-    
-    
-
-            #take name of file
-        r1 = random.randint(1,10000000)
-        r2 = random.randint(1,10000000)
-
-        file = str(r2)+"sound"+str(r1) +".mp3"
-
-            #get result from Google 
-        Send_in_Google.save(file)
-    
-        
-            #play sound
-        playsound.playsound(file)
-            #delete file from drive
-        os.remove(file)
-
-    except AssertionError:
-        return 1
+        Speak.play(speech)
