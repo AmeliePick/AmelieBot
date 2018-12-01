@@ -10,6 +10,7 @@ User input is also processed for search engines. Unnecessary part of the phrase 
 '''
 
 import sys, random, pickle, re, webbrowser, subprocess, os
+from time import sleep
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
@@ -50,6 +51,7 @@ def AI():
     for line in f:
         row = line.split(' @ ')
         
+
         Edit['text'] += [row[0]]
         Edit['tag'] += [row[1]]
     
@@ -86,6 +88,7 @@ def training(Edit, Val_split = 0.1):
         'train': { 'x': X[:-loaded_model], 'y': Y[:-loaded_model]  },
         'test': { 'x': X[-loaded_model:], 'y': Y[-loaded_model:]  }
     }
+
 
 
 def Enter():
@@ -155,7 +158,7 @@ def Answer(ToAnswser):
 
     if ToAnswser == "Search":
         
-        search = webbrowser.open(EditSearch(Chat_Input), new=2)
+        search = webbrowser.open('https://www.google.ru/search?q=' +EditSearch(Chat_Input), new=1)
     
     elif ToAnswser == "Youtube":
 
@@ -163,16 +166,13 @@ def Answer(ToAnswser):
         GetAns = Stemm(EditS)
         
             
-        search = webbrowser.open('http://www.youtube.com/results?search_query=' + str(GetAns))
+        search = webbrowser.open('http://www.youtube.com/results?search_query=' + str(GetAns), new=1)
         
     elif ToAnswser == "Open":
 
         try:
             search = subprocess.Popen(EditSearch(Chat_Input))
             
-            
-
-
         except FileNotFoundError:
             
 
@@ -185,7 +185,13 @@ def Answer(ToAnswser):
                 if Add_prog == 0:
                     pass
 
-            
+
+    #Exit from app
+    elif ToAnswser == "Exit":
+        Output = random.choice(text)
+        print ("\n<---", Output)
+        sleep(1)
+        sys.exit()
 
 
     try:
@@ -197,18 +203,7 @@ def Answer(ToAnswser):
     except:
         Output = "Я не понимаю тебя =("
         print ("\n<---", Output)
-        
 
- 
-
-    '''
-    Exit from app
-    if ToAnswser == "Exit":
-        time.sleep(5)
-        while pygame.mixer.music.get_busy() :
-            time.sleep(0.1)
-        sys.exit()
-    '''
 
     return Output
 
@@ -243,6 +238,8 @@ def EditSearch(Input):
 
         elif To == "Open" and "Open" in i:
             text.append(row[0])
+        
+        
             
         
 
@@ -259,6 +256,7 @@ def EditSearch(Input):
     An = re.sub('[?!]', '', An)
 
     try:
+        
         return An.lstrip().capitalize()
 
     except:
