@@ -18,13 +18,24 @@ from sklearn.pipeline import Pipeline
 from sklearn import model_selection
 
 from libs.Stem_Res import Stemm
+from libs.configParser import Config
 
+#--- Language check --- 
+if Config("settings.ini") == "RU":
 
-with open ("../DataBase/social.txt", "r") as file:
-    f = file.readlines()
+    with open ("../DataBase/social.txt", "r") as file:
+        f = file.readlines()
 
-with open ("../DataBase/answers.txt", "r") as Afile:
-    ANfile = Afile.readlines()
+    with open ("../DataBase/answers.txt", "r") as Afile:
+        ANfile = Afile.readlines()
+
+if Config("settings.ini") == "EN":
+
+    with open ("../DataBase/socialEN.txt", "r") as file:
+        f = file.readlines()
+
+    with open ("../DataBase/answersEN.txt", "r") as Afile:
+        ANfile = Afile.readlines()
 
 
 # Variables for EditSearch()
@@ -158,7 +169,7 @@ def Answer(ToAnswser):
 
     if ToAnswser == "Search":
         
-        search = webbrowser.open('https://www.google.ru/search?q=' +EditSearch(Chat_Input), new=1)
+        search = webbrowser.open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input)), new=1)
     
     elif ToAnswser == "Youtube":
 
