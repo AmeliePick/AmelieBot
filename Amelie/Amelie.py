@@ -11,11 +11,13 @@ The main file of the bot.
 The functions of entering the program and choosing the bot mode are called.
 '''
 
+from scipy.spatial import kdtree
 from sys import stdin, exit as sys_exit
 import os, webbrowser, subprocess ,random, re, pyttsx3
 import set_username, entry_input
 
 from libs.Speak import speak
+from libs.configParser import createConfig, Config
 
 
 
@@ -43,11 +45,54 @@ entry_input.start()
 # ----- end of the entry -----
 # ===== i will not go deeper, cmon. (c) Matt Fawkes =====  UPD: changed by AmeliePick === #
 
+
+#--- language selection ---
+'''
+A configuration file is created.
+A configuration file is created. 
+Further from it all information is read. 
+If the file is empty, which means this is the first launch of the application, the user is prompted to select the bot language.
+'''
+
+if os.path.exists("settings.ini") == False:
+    
+    createSettings = open("settings.ini", 'a')
+    createSettings.close()
+
+    settings = open("settings.ini", 'r')
+    Rsettings = settings.read()
+
+    path = "settings.ini"
+
+    if Rsettings == "":
+
+        choose_lang = input("Choose language [RU] of [EN]: ")
+        while(True):
+
+            if choose_lang == "RU":
+                value = "RU"
+                createConfig(path, value)
+                break
+
+            elif choose_lang == "EN":
+                value = "EN"
+                createConfig(path, value)
+                break
+
+            else:
+                choose_lang = input("Choose language [RU] of [EN]: ")
+                continue
+
+
 #--- Chat
+
 On = input ("\nEnable voice? [Y] or [N]: ")
 while (True):
     if On == "Y" or On ==  "y":
-        print("Идёт обучение бота...")
+       
+
+
+        print("There is a bot learning...")
 
         
         import Chat_AI_with_syn
@@ -55,17 +100,13 @@ while (True):
 
             
     elif On == "N" or On ==  "n":
-        print("Идёт обучение бота...")
+        print("There is a bot learning...")
 
         from Chat_AI import Enter, open_AI, Answer
 
         while(True):
             
             Answer(open_AI(Enter()))
-            
 
-        
-            
-       
     else:
         On = input("Enter [Y] or [N] please ^-^ : ")
