@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from libs.configParser import Parser
 
 '''
 Request module for adding a program to the database
@@ -7,8 +8,9 @@ Request module for adding a program to the database
 
 
 def except_for_add():
-    print("<--- I have not found such a program")
-    AddProgramm = input("=D can you add it to my database and I'll open it next time\n Add a program? [Y] or [N]: ")
+    print("<--- "+ Parser("n_found"))
+    print(Parser("addPr"))
+    AddProgramm = input("--> ")
 
     if AddProgramm == "Y" or  AddProgramm == "y":
         from AddPr import AddProgramm
