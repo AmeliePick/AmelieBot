@@ -18,23 +18,25 @@ from sklearn.pipeline import Pipeline
 from sklearn import model_selection
 
 from libs.Stem_Res import Stemm
-from libs.configParser import Config
+from libs.configParser import Config, Parser
 
 #--- Language check --- 
-if Config("settings.ini") == "RU":
+check = Config("settings.ini")
 
-    with open ("../DataBase/social.txt", "r") as file:
+if check == "RU":
+
+    with open ("../DataBase/social.json", "r") as file:
         f = file.readlines()
 
-    with open ("../DataBase/answers.txt", "r") as Afile:
+    with open ("../DataBase/answers.json", "r") as Afile:
         ANfile = Afile.readlines()
 
-if Config("settings.ini") == "EN":
+if check == "EN":
 
-    with open ("../DataBase/socialEN.txt", "r") as file:
+    with open ("../DataBase/socialEN.json", "r") as file:
         f = file.readlines()
 
-    with open ("../DataBase/answersEN.txt", "r") as Afile:
+    with open ("../DataBase/answersEN.json", "r") as Afile:
         ANfile = Afile.readlines()
 
 
@@ -88,11 +90,17 @@ def training(Edit, Val_split = 0.1):
 
 
     #save the model to disk
-    filename = 'model.sav'
-    pickle.dump(nb_valid_samples, open("models/model.sav", 'wb'))
+    if check == "RU":
+        filename = 'model.sav'
+
+    elif check == "EN":
+        filename = 'modelEN.sav'
+
+
+    pickle.dump(nb_valid_samples, open("models/"+filename, 'wb'))
     
     #load the model from disk
-    loaded_model = pickle.load(open("models/model.sav", 'rb'))
+    loaded_model = pickle.load(open("models/"+filename, 'rb'))
   
 
     return { 
@@ -111,6 +119,8 @@ def Enter():
     return Input
 
 def open_AI(Something):
+    if Something == 1:
+        return 1
     data = AI()
     D = training(data)
     text_clf = Pipeline([
@@ -150,6 +160,9 @@ def open_AI(Something):
     return ToAnswser
 
 def Answer(ToAnswser):
+    if ToAnswser == 1:
+        return 1
+
     tag = []
     text = []
     
@@ -163,6 +176,8 @@ def Answer(ToAnswser):
         if ToAnswser in line:
 
             text.append(row[1])
+
+    
 
     if ToAnswser == "Pause":
         return ''
@@ -212,7 +227,7 @@ def Answer(ToAnswser):
 
 
     except:
-        Output = "Я не понимаю тебя =("
+        Output = Parser("Unknown")
         print ("\n<---", Output)
 
 
@@ -276,7 +291,7 @@ def EditSearch(Input):
         return An
 
 def EditedOpen(search):
-    with open('../DataBase/added_programms.txt', 'r') as File:
+    with open('../DataBase/added_programms.json', 'r') as File:
     #AP = File.readlines()
         Names = []
         Links = []
@@ -303,7 +318,7 @@ def EditedOpen(search):
             search = subprocess.Popen(Links[0])
             return 0
         except FileNotFoundError:
-            print("Неверно указан путь")
+            print(Parser("Wrong path"))
             return 1
     else:
         return 1
