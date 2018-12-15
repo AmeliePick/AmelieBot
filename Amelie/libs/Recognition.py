@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*
 import time, os
 import speech_recognition as sr
+from .configParser import Parser
 
 '''
 Regonizer module
@@ -13,32 +15,40 @@ def REG():
 
     # Microphone and Recognition
     r = sr.Recognizer()
-    micro = sr.Microphone()
+
+    #Microphone check
+    try:
+        micro = sr.Microphone()
+
+    except OSError:
+        print(Parser("errMicro"))
+        return 1
 
 
     #Noise calibration
 
-    print("Пару секунд тишины...")
+    print(Parser("Silence"))
     with micro as source:
         r.adjust_for_ambient_noise(source)
 
     #Listening to the microphone
 
     with micro as source:
-        print("Скажите что-нибудь\n")
+        print(Parser("SaySTH"))
         audio = r.listen(source)
 
         #Speech to text recording
     try:
         
-        Chat_Input = r.recognize_google(audio, language="ru_RU")
-        print("---> ", Chat_Input)
+        Chat_Input = r.recognize_google(audio, language="en_US")
+        #print("---> ", Chat_Input)
         
-        return Chat_Input
+        return Chat_Input.capitalize()
 
     except sr.UnknownValueError:
-        print("Робот не расслышал фразу")
+        print(Parser("errSay"))
         os.system("pause")
 
     except sr.RequestError as e:
-        print("Ошибка сервиса; {0}".format(e))
+        print(Parser("service_error") +"{0}".format(e))
+        return 1
