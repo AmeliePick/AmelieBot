@@ -227,7 +227,15 @@ def Answer(ToAnswser):
 
 
     except:
-        Output = Parser("Unknown")
+        Unknown = []
+        for i in ANfile:
+            row = i.split(' @ ')
+
+            if "Unknown" in i:
+                Unknown.append(row[1])
+
+
+        Output = random.choice(Unknown)
         print ("\n<---", Output)
 
 
@@ -264,10 +272,8 @@ def EditSearch(Input):
 
         elif To == "Open" and "Open" in i:
             text.append(row[0])
-        
-        
-            
-        
+           
+
 
     for item in text:
         if item in text and item in Input:
