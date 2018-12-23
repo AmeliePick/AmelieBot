@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
 import time, os
 import speech_recognition as sr
-from .configParser import Parser
+from .configParser import Parser, Config
 
 '''
 Regonizer module
@@ -9,6 +9,16 @@ Regonizer module
 Listens to speech, converts to text and sends it to the chat module for processing.
 
 '''
+
+# check lang
+
+valuelang = ""
+
+if Config("settings.ini") == "RU":
+    valuelang = "RU"
+
+else:
+    valuelang = "en_US"
 
 
 def REG():
@@ -40,8 +50,8 @@ def REG():
         #Speech to text recording
     try:
         
-        Chat_Input = r.recognize_google(audio, language="en_US")
-        #print("---> ", Chat_Input)
+        Chat_Input = r.recognize_google(audio, language=valuelang)
+        print("---> ", Chat_Input)
         
         return Chat_Input.capitalize()
 
