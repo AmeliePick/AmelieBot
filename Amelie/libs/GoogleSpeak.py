@@ -3,10 +3,8 @@
 # === The synthesis module ====
 
 '''
-
 The synthesis is based on gTTS (Google Text-to-Speech). Gets data from a chat file, processes it, and writes it to a file .mp3 for work synthesis need the Internet. 
 Due to the algorithm of the library, there is a delay of a few seconds before playback
-
 '''
 
 import os, random, playsound
@@ -17,6 +15,8 @@ from gtts import gTTS
 
 
 def speak(speech):
+    if speech == 1:
+        return 1
 
     Old_name_mp3 = "old"
 
@@ -28,9 +28,8 @@ def speak(speech):
 
             #take name of file
         r1 = random.randint(1,10000000)
-        r2 = random.randint(1,10000000)
 
-        file = str(r2)+"sound"+str(r1) +".mp3"
+        file = "sound"+str(r1) +".mp3"
 
             #get result from Google 
         Send_in_Google.save(file)
@@ -42,4 +41,7 @@ def speak(speech):
         os.remove(file)
 
     except AssertionError:
+        return 1
+
+    except AttributeError:
         return 1
