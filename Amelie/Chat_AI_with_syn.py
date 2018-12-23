@@ -11,14 +11,13 @@ import sys, os, random, pickle, re, playsound
 from Chat_AI import Answer, open_AI
 from libs.Recognition import REG
 from libs.Speak import speak
+from libs.GoogleSpeak import speak as Speak
 
 def speech():
 
     return speak(Answer(open_AI(REG())))
 
+def speechRU():
+    
+    return Speak(Answer(open_AI(REG())))
 
-while(True):
-    speech()
-
-    if speech == 1:
-        os.system("pause")
