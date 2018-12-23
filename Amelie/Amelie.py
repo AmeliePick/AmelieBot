@@ -14,10 +14,8 @@ The functions of entering the program and choosing the bot mode are called.
 
 from sys import stdin, exit as sys_exit
 import os, webbrowser, subprocess ,random, re, pyttsx3
+
 import set_username, entry_input
-
-from libs.Speak import speak
-
 from libs.configParser import *
 
 print ( 70 * "_")
@@ -97,17 +95,28 @@ while (True):
     if On == "Y" or On ==  "y":
        
 
-
         print(Parser("Learning"))
 
         
-        import Chat_AI_with_syn
+        from Chat_AI_with_syn import speechRU
+        if Config("settings.ini") == "RU":
+            
+                if speechRU() == 1:
+                    print(Parser("Voice_control"))
+                    On = input ("--> ")
+                    continue
+
+        else:
+            from Chat_AI_with_syn import speech
+            
+            if speech() == 1:
+                print(Parser("Voice_control"))
+                On = input ("--> ")
+                continue
         # ↑ Microphone check
 
         #If there is no microphone
-        print(Parser("Voice_control"))
-        On = input ()
-        continue
+        
             
     elif On == "N" or On ==  "n":
         print(str(Parser("Learning")))
