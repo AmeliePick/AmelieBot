@@ -32,12 +32,14 @@ if check == "RU":
         ANfile = Afile.readlines()
 
 if check == "EN":
-
+    
     with open ("../DataBase/socialEN.json", "r") as file:
         f = file.readlines()
+        
 
     with open ("../DataBase/answersEN.json", "r") as Afile:
         ANfile = Afile.readlines()
+        
 
 
 # Variables for EditSearch()
@@ -82,8 +84,6 @@ def training(Edit, Val_split = 0.1):
     for i in indexes ]
     Y = [Edit['tag'][i]
     for i in indexes]
-
-    
 
     nb_valid_samples = int(Val_split * lenght)
 
@@ -130,13 +130,6 @@ def open_AI(Something):
     text_clf.fit(D['train']['x'], D['train']['y'])
     predicted = text_clf.predict( D['test']['x'] )
 
-    
-    
-    
-    #Input
-    
-    
-
     #give a type of input
     mass = []
     
@@ -154,8 +147,6 @@ def open_AI(Something):
     
     global Chat_Input
     Chat_Input = Something
-
-    
 
     return ToAnswser
 
