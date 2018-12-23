@@ -31,11 +31,13 @@ class TtsWatson:
         self.chunk = int(chunk)
 
     def play(self, text):
+        
         req = requests.get(self.url + "/v1/synthesize",
                            auth=(self.user, self.password),
                            params={'text': text, 'voice': self.voice, 'accept': self.ACCEPT},
                            stream=False, verify=True) #changed by AmeliePick
 
+        
         '''
 
         When playing the voice, there were small suspensions.
@@ -65,4 +67,7 @@ class TtsWatson:
 Speak = TtsWatson('a1e788b1-51d6-44b6-afde-4e5e29539c2a', '7mPsS2pAxngj')
 
 def speak(speech):
+    if speech == 1:
+        return 1
+    else:
         Speak.play(speech)
