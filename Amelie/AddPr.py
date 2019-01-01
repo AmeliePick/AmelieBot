@@ -8,7 +8,7 @@ The module adds to the database data on the location of user applications for fu
 print("\nHey, you can add the location of any program to my database. Alas, I'm not very trained and can't find it =(\n\nBut my Creator is working on it")
 
 def AddProgramm():
-    with open('../DataBase/added_programms.txt', 'a') as file_added_programms:
+    with open('../DataBase/added_programms.json', 'a') as file_added_programms:
         
 
         while(True):
