@@ -48,7 +48,9 @@ Salyut @ Greetings
 Hello @ Greetings
 Copenhagen is the capital of which country? @ Location
 Where does Amelie live? @ Location
-Open @ Open 
+Tell about @ Search
+Open @ Open
+What can you do? @ Skill
 Find Python Guide @ Search
 Open application @ Open
 Youtube @ Youtube
@@ -66,3 +68,6 @@ How are you feeling? @ Affairs
 What's up @ Affairs
 What mood? @ Affairs
 Sap @ Greetings
+Thank @ Thanks
+A'm fine @ Affairs2
+Let's talk @ Comm
