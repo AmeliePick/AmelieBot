@@ -44,14 +44,6 @@ if check == "EN":
 
 # Variables for EditSearch()
 text = []
-An = ""
-
-# get ToAnswser from open_AI() in EditSearch()
-To = ''
-
-# get global value from input for functions
-Chat_Input = ''
-
 
 
 '''
@@ -142,7 +134,7 @@ def open_AI(Something):
         
     ToAnswser = ''.join(pred).replace('\n', '')
     
-    
+    global To
     To = ToAnswser
     
     global Chat_Input
@@ -201,6 +193,10 @@ def Answer(ToAnswser):
 
                 if Add_prog == 0:
                     pass
+
+            
+            search = EditedOpen(EditSearch(str(Chat_Input)))
+
 
 
     #Exit from app
@@ -277,6 +273,7 @@ def EditSearch(Input):
 
 
     An = re.sub('[?!]', '', An)
+    print(An)
 
     try:
         
@@ -289,7 +286,6 @@ def EditSearch(Input):
 
 def EditedOpen(search):
     with open('../DataBase/added_programms.json', 'r') as File:
-    #AP = File.readlines()
         Names = []
         Links = []
     
@@ -307,13 +303,10 @@ def EditedOpen(search):
                 Names.append(row[0])
             
             
-
-
-
     if search in Names:
         try:
             search = subprocess.Popen(Links[0])
-            return 0
+            return search
         except FileNotFoundError:
             print(Parser("Wrong path"))
             return 1
