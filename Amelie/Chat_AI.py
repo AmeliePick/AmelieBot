@@ -32,6 +32,9 @@ if check == "RU":
         ANfile = Afile.readlines()
 
 if check == "EN":
+
+    with open("../DataBase/test.json", "r") as train:
+        Ftrain = train.readlines()
     
     with open ("../DataBase/socialEN.json", "r") as file:
         f = file.readlines()
@@ -55,7 +58,7 @@ For example: What is the weather today? - Weather. Where is Paris? - Location
 
 def AI():
     Edit = {'text': [], 'tag':[]}
-    for line in f:
+    for line in Ftrain:
         row = line.split(' @ ')
         
 
@@ -136,11 +139,20 @@ def open_AI(Something):
     
     global To
     To = ToAnswser
-    
+    print(To)
+
     global Chat_Input
     Chat_Input = Something
 
     return ToAnswser
+
+
+def selfLearning(InputType):
+    with open ("../DataBase/test.json", "a") as selfWriting:
+        getInput = Chat_Input + ' @ ' + InputType + "\n"
+        selfWriting.write(getInput)
+
+
 
 def Answer(ToAnswser):
     if ToAnswser == 1:
@@ -191,11 +203,10 @@ def Answer(ToAnswser):
                 from exceptions_chat import except_for_add
                 Add_prog = except_for_add()
 
-                if Add_prog == 0:
-                    pass
+                search = EditedOpen(EditSearch(str(Chat_Input)))
 
             
-            search = EditedOpen(EditSearch(str(Chat_Input)))
+            
 
 
 
@@ -208,7 +219,7 @@ def Answer(ToAnswser):
 
 
     try:
-
+        selfLearning(ToAnswser)
         Output = random.choice(text)
         print ("\n<---", Output)
 
@@ -241,20 +252,23 @@ For example: Find music on YouTube - it will be just music
 '''
 
 def EditSearch(Input):
-
+    global An
+    
     for i in f:
         
         row = i.split(' @ ')
-        
-        text.append(row[0])
+       
         
 
         if To == "Youtube" and "Youtube" in i:
             text.append(row[0])
             
+            
+            
         
         elif To == "Search" and "Search" in i:
             text.append(row[0])
+            print(text)
 
 
         elif To == "Open" and "Open" in i:
@@ -263,27 +277,24 @@ def EditSearch(Input):
 
 
     for item in text:
-        if item in text and item in Input:
-
-            global An
+        if item in text and item in Input:              
             An = Input.replace(item, '')
+            if item in Ftrain:
+                print(1)
 
             
-
-
-
-    An = re.sub('[?!]', '', An)
-    print(An)
-
     try:
-        
+
+        An = re.sub('[?!]', '', An)
+
         return An.lstrip().capitalize()
 
     except:
-        An = ''
 
-        return An
+        return Input
 
+        
+        
 def EditedOpen(search):
     with open('../DataBase/added_programms.json', 'r') as File:
         Names = []
@@ -305,8 +316,7 @@ def EditedOpen(search):
             
     if search in Names:
         try:
-            search = subprocess.Popen(Links[0])
-            return search
+            return subprocess.Popen(Links[0])
         except FileNotFoundError:
             print(Parser("Wrong path"))
             return 1
