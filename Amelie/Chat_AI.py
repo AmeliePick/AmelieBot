@@ -25,7 +25,10 @@ check = Config("settings.ini")
 
 if check == "RU":
 
-    with open ("../DataBase/social.json", "r") as file:
+    with open("../DataBase/DataSet_RU.json", "r", encoding="utf8") as train:
+        Ftrain = train.readlines()
+
+    with open ("../DataBase/ClearSearchRU.json", "r") as file:
         f = file.readlines()
 
     with open ("../DataBase/answers.json", "r") as Afile:
@@ -33,10 +36,10 @@ if check == "RU":
 
 if check == "EN":
 
-    with open("../DataBase/test.json", "r") as train:
+    with open("../DataBase/DataSet_EN.json", "r") as train:
         Ftrain = train.readlines()
     
-    with open ("../DataBase/socialEN.json", "r") as file:
+    with open ("../DataBase/ClearSearchEN.json", "r") as file:
         f = file.readlines()
         
 
@@ -139,7 +142,6 @@ def open_AI(Something):
     
     global To
     To = ToAnswser
-    print(To)
 
     global Chat_Input
     Chat_Input = Something
@@ -148,9 +150,15 @@ def open_AI(Something):
 
 
 def selfLearning(InputType):
-    with open ("../DataBase/test.json", "a") as selfWriting:
-        getInput = Chat_Input + ' @ ' + InputType + "\n"
-        selfWriting.write(getInput)
+    getInput = Chat_Input + ' @ ' + InputType + "\n"
+
+    if check == "RU":
+        with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
+            train.write(getInput)
+    if check == "EN":
+
+        with open("../DataBase/DataSet_EN.json", "a") as train:
+            train.write(getInput)
 
 
 
@@ -264,23 +272,17 @@ def EditSearch(Input):
             text.append(row[0])
             
             
-            
-        
         elif To == "Search" and "Search" in i:
             text.append(row[0])
-            print(text)
 
 
         elif To == "Open" and "Open" in i:
             text.append(row[0])
            
 
-
     for item in text:
         if item in text and item in Input:              
             An = Input.replace(item, '')
-            if item in Ftrain:
-                print(1)
 
             
     try:
