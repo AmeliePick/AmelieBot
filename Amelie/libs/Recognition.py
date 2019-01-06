@@ -32,7 +32,7 @@ def REG():
 
     except OSError:
         print(Parser("errMicro"))
-        return 1
+        return 3
 
 
     #Noise calibration
