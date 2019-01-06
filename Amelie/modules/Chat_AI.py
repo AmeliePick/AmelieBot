@@ -109,7 +109,15 @@ def training(Edit, Val_split = 0.1):
 
 
 def Enter():
-    Input = str(input('\n---> ').capitalize())
+    try:
+        Input = str(input('\n---> ').capitalize())
+        
+        if Input == "":
+            print(Parser("WrongInput"))
+            return 2
+    except KeyboardInterrupt:
+        print(Parser("WrongInput"))
+        Input = str(input('\n---> ').capitalize())
 
     global Chat_Input
     Chat_Input = Input
@@ -119,6 +127,8 @@ def Enter():
 def open_AI(Something):
     if Something == 1:
         return 1
+    if Something == 3:
+        return 3
     data = AI()
     D = training(data)
     text_clf = Pipeline([
@@ -165,6 +175,8 @@ def selfLearning(InputType):
 def Answer(ToAnswser):
     if ToAnswser == 1:
         return 1
+    if ToAnswser == 3:
+        return 3
 
     tag = []
     text = []
