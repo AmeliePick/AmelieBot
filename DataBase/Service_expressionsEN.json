@@ -6,9 +6,10 @@ bye # Thinking... Now you are working, bye =D
 tryAgain # (!) Try again - [Y] or [N]
 Unknown # I can't understand you =(
 WrongPath # Wrong path
+WrongInput # Try again
 Learning # There is a bot learning...
 Voice_control # Enable voice? [Y] or [N]
-WrongIpuy # Enter [Y] or [N] please ^-^
+WrongInput_menu # Enter [Y] or [N] please ^-^
 C_lang # Choose language [RU] of [EN]
 n_found # I have not found such a program
 addPr # =D can you add it to my database and I'll open it next time. Add a program? [Y] or [N]
