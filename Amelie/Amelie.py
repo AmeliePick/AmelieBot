@@ -29,6 +29,11 @@ print ( 70 * "_")
 
 # ----- Bot -----
 
+# Errors dictionary:
+    # if return 1 - error with Internet connetcion
+    # if return 2 - error with input(user didnt enter somethings)
+    # if return 3 - error with micro(micro is not defined)
+
 #--- language selection ---
 '''
 A configuration file is created.
@@ -98,18 +103,19 @@ while (True):
         print(Parser("Learning"))
 
         
-        from Chat_AI_with_syn import speechRU
+        from modules.Chat_AI_with_syn import speechRU
         if Config("settings.ini") == "RU":
-            
-                if speechRU() == 1:
+                Chat = speechRU()
+                if Chat == 1 or Chat == 3:
                     print(Parser("Voice_control"))
                     On = input ("--> ")
                     continue
 
         else:
-            from Chat_AI_with_syn import speech
+            from modules.Chat_AI_with_syn import speech
             
-            if speech() == 1:
+            Chat = speech()
+            if Chat == 1 or Chat == 3:
                 print(Parser("Voice_control"))
                 On = input ("--> ")
                 continue
@@ -125,7 +131,10 @@ while (True):
 
         while(True):
             
-            Answer(open_AI(Enter()))
+            Chat = Answer(open_AI(Enter()))
+
+            if Chat == 2:
+                Chat
 
     else:
         print(Parser("WrongInput"))
