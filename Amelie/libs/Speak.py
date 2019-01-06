@@ -66,8 +66,10 @@ class TtsWatson:
 
 Speak = TtsWatson('a1e788b1-51d6-44b6-afde-4e5e29539c2a', '7mPsS2pAxngj')
 
-def speak(speech):
-    if speech == 1:
+def speak(Answer):
+    if Answer == 1:
         return 1
+    if Answer == 3:
+        return 3
     else:
-        Speak.play(speech)
+        Speak.play(Answer)
