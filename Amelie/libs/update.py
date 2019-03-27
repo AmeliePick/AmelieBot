@@ -1,38 +1,66 @@
 # -*- coding: utf-8 -*-
 from urllib.request import urlopen
-from .configParser import Config, Parser
+from .configParser import Config, Parser, setConfig
 from re import sub
+from os import remove
 
 
 def checkUpdate():
+    '''
+    Getting config file and check versions
+    '''
     try:
-        response = urlopen('http://ameliepick.ml/update.ini')
+        # get config file
+        response = urlopen('http://ameliepick.ml/AmelieBot/update.ini')
         with open ("t.ini", 'wb') as tmp:
             tmp.write(response.read())
+
+        # if a new version is it, change version in this config file
+        if(Config('t.ini', "ver") != Config("settings.ini", "ver")):
+            setConfig("settings.ini", "ver", Config('t.ini', "ver"))
+            return True
+
     except:
-        return Parser("service_error")
+        print(Parser("service_error"))
+        return False
      
 
 def download(response):
-        if(Config('t.ini', "update") == Config("update.ini", "update")):
-            R = Config('t.ini', "modules").split();
-            getModules = []
-            for i in R:
-                getModules.append(i)
+    '''
+    response --- new version flag
+    '''
+    if response == True:
+        # getting list of new files
+        R = Config('t.ini', "modules").split();
+        getModules = []
+        for i in R:
+            getModules.append(i)
             
+        # download new files
+        for file in getModules:
+            if file == "Amelie.py" or "setup.py":
+                dir = ""
+            else:
+                dir = "modules/"
 
-            prefix = "modules/"
-            for i in getModules:
-                getFile = urlopen('http://ameliepick.ml/modules/'+i)
+            getFile = urlopen('http://ameliepick.ml/AmelieBot/modules/'+file)
 
-                with open('tmp_file.py', 'wb') as tmp:
-                    tmp.write(getFile.read())
+            # paste from new file to temp file
+            with open('tmp_file.py', 'wb') as tmp:
+                tmp.write(getFile.read())
 
-                with open(prefix+i, 'w') as mergeFile:
-                    with open('tmp_file.py', 'r') as tmp2:
-                        mergeFile.write(tmp2.read())
+            # rewrite local file
+            with open(dir+file, 'w') as mergeFile:
+                with open('tmp_file.py', 'r') as tmp2:
+                    mergeFile.write(tmp2.read())
 
-            return Parser("Yupdate")
+        
+        remove("tmp_file.py")
+        remove("t.ini")
+        print(Parser("Yupdate"))
+        return 0
 
-        else:
-            return Parser("Nupdate")
+
+    else:
+        print(Parser("Nupdate"))
+        return 1
