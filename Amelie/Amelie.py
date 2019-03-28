@@ -18,8 +18,10 @@ from sys import executable
 from os import path as os_path
 from os import execl
 from time import sleep
+from os import remove
 
-from modules import set_username, entry_input
+from modules import entry_input
+from modules.set_username import set_username
 from libs.configParser import *
 from libs.update import checkUpdate, download
 
@@ -32,7 +34,7 @@ print ("\t\t                         _ _       \n" +
        "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
 print ( 70 * "_")
 
-print("AmelieBot " + Config("settings.ini", "ver"), '\n')
+
 # ----- Bot -----
 
 # Errors dictionary:
@@ -44,33 +46,39 @@ print("AmelieBot " + Config("settings.ini", "ver"), '\n')
 #--- language selection ---
 '''
 A configuration file is created.
-A configuration file is created. 
 Further from it all information is read. 
 If the file is empty, which means this is the first launch of the application, the user is prompted to select the bot language.
 '''
 
 
+# --- 
 def createSetting():
     createSettings = open("settings.ini", 'a')
     createSettings.close()
 
+    createConfig("settings.ini")
 
-def pullSettings(path):
+
+def setLang(path):
     '''
     path -- The path where the configuration file is located
     '''
+
+    # Default settings
+    setConfig(path, "lang", "-")
+
     choose_lang = input("Choose language [RU] of [EN]: ") #delete this
 
     while(True):
 
         if choose_lang == "RU":
             value = "RU"
-            createConfig(path, value)
+            setConfig(path, "lang", value)
             break
 
         elif choose_lang == "EN":
             value = "EN"
-            createConfig(path, value)
+            setConfig(path, "lang", value)
             break
 
         else:
@@ -83,35 +91,30 @@ if os_path.exists("settings.ini") == False:
     createSetting()
 
     path = "settings.ini"
-
-    settings = open("settings.ini", 'r')
-    Rsettings = settings.read()
     
-    pullSettings(path)
 
+    setConfig(path, "ver", "2.5.2")
+    setLang(path)
 
-    settings.close()
 elif os_path.exists("settings.ini") == True:
-    handle = open("settings.ini", 'r')
+    path = "settings.ini"
+    handle = open(path, 'r')
     ReadHandle = handle.read()
 
     if ReadHandle == '':
-        pullSettings("settings.ini")
+        pullSettings(path)
         handle.close() # Check for empty settings
 
+    if Config(path, "lang") == '-':
+        setLang(path)
 
-# read username from file in DB
-usernameInFile = open("../DataBase/username.txt", "r")
-username = usernameInFile.read()
-usernameInFile.close()
-
-
-#check updates
+# --- Check updates ---
 isupdate  = checkUpdate()
 if isupdate:
     print(Parser("isUpdate"))
     sleep(2)
     download(isupdate)
+    remove("tmp_file.py")
 
     #restart of bot
     exe = executable
@@ -120,10 +123,22 @@ if isupdate:
 else:
     print(Parser("istUpdate"), '\n')
 
+remove("t.ini")
 
-# call function to set it if it's empty, set username
-if (username == ""):
-    set_username.set_username()
+print("AmelieBot " + Config("settings.ini", "ver"), '\n')
+
+
+# --- Set username ---
+if os_path.exists("../DataBase/username.txt"):
+    with open("../DataBase/username.txt", 'r') as file_user:
+        username = file_user.read()
+        if (username == ""):
+            set_username()
+
+if not os_path.exists("../DataBase/username.txt"):
+    set_username()
+
+
 
 
 # ----- entry -----
