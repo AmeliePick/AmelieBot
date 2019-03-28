@@ -2,7 +2,7 @@
 from urllib.request import urlopen
 from .configParser import Config, Parser, setConfig
 from re import sub
-from os import remove
+from time import sleep
 
 
 def checkUpdate():
@@ -38,7 +38,7 @@ def download(response):
             
         # download new files
         for file in getModules:
-            if file == "Amelie.py" or "setup.py":
+            if file == 'Amelie.py' or file == 'setup.py':
                 dir = ""
             else:
                 dir = "modules/"
@@ -55,9 +55,8 @@ def download(response):
                     mergeFile.write(tmp2.read())
 
         
-        remove("tmp_file.py")
-        remove("t.ini")
         print(Parser("Yupdate"))
+        sleep(1.5)
         return 0
 
 
