@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*
-import pyaudio
-import requests
-
 
 # === The synthesis module ====
+
+from pyaudio import PyAudio
+from requests import get
+
+
 
 '''
 Synthesis is carried out with the help of IBM Watson. 
@@ -32,7 +34,7 @@ class TtsWatson:
 
     def play(self, text):
         
-        req = requests.get(self.url + "/v1/synthesize",
+        req = get(self.url + "/v1/synthesize",
                            auth=(self.user, self.password),
                            params={'text': text, 'voice': self.voice, 'accept': self.ACCEPT},
                            stream=False, verify=True) #changed by AmeliePick
@@ -45,7 +47,7 @@ class TtsWatson:
         '''
                           
 
-        p = pyaudio.PyAudio()
+        p = PyAudio()
 
         stream = p.open(format=p.get_format_from_width(self.SAMPWIDTH),
                         channels=self.NCHANNELS,
@@ -67,9 +69,4 @@ class TtsWatson:
 Speak = TtsWatson('a1e788b1-51d6-44b6-afde-4e5e29539c2a', '7mPsS2pAxngj')
 
 def speak(Answer):
-    if Answer == 1:
-        return 1
-    if Answer == 3:
-        return 3
-    else:
-        Speak.play(Answer)
+    Speak.play(Answer)

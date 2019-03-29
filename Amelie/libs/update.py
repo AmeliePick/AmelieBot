@@ -38,19 +38,18 @@ def download(response):
             
         # download new files
         for file in getModules:
-            if file == 'Amelie.py' or file == 'setup.py':
-                dir = ""
-            else:
-                dir = "modules/"
-
-            getFile = urlopen('http://ameliepick.ml/AmelieBot/modules/'+file)
+            try:
+                getFile = urlopen('http://ameliepick.ml/AmelieBot/'+file)
+            except:
+                print(Parser("WrongPath"))
+                return 1
 
             # paste from new file to temp file
             with open('tmp_file.py', 'wb') as tmp:
                 tmp.write(getFile.read())
 
             # rewrite local file
-            with open(dir+file, 'w') as mergeFile:
+            with open(file, 'w') as mergeFile:
                 with open('tmp_file.py', 'r') as tmp2:
                     mergeFile.write(tmp2.read())
 

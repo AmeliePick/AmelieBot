@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*
-import time, os
+from os import system
 import speech_recognition as sr
 from .configParser import Parser, Config
 
@@ -14,7 +14,7 @@ Listens to speech, converts to text and sends it to the chat module for processi
 
 valuelang = ""
 
-if Config("settings.ini") == "RU":
+if Config("settings.ini", "lang") == "RU":
     valuelang = "RU"
 
 else:
@@ -27,12 +27,7 @@ def REG():
     r = sr.Recognizer()
 
     #Microphone check
-    try:
-        micro = sr.Microphone()
-
-    except OSError:
-        print(Parser("errMicro"))
-        return 3
+    micro = sr.Microphone()
 
 
     #Noise calibration
@@ -57,8 +52,8 @@ def REG():
 
     except sr.UnknownValueError:
         print(Parser("errSay"))
-        os.system("pause")
+        system("pause")
 
-    except sr.RequestError as e:
-        print(Parser("service_error") +"{0}".format(e))
-        return 1
+    except sr.RequestError:
+        raise ConnectionError 
+        
