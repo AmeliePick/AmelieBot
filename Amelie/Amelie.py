@@ -100,10 +100,12 @@ elif os_path.exists("settings.ini") == True:
     path = "settings.ini"
     handle = open(path, 'r')
     ReadHandle = handle.read()
+    handle.close() # Check for empty settings
 
     if ReadHandle == '':
-        pullSettings(path)
-        handle.close() # Check for empty settings
+        createConfig("settings.ini")
+        setConfig(path, "ver", "2.5.2")
+        setLang(path)
 
     if Config(path, "lang") == '-':
         setLang(path)
@@ -123,7 +125,8 @@ if isupdate:
 else:
     print(Parser("istUpdate"), '\n')
 
-remove("t.ini")
+if os_path.exists("t.ini"):
+    remove("t.ini")
 
 print("AmelieBot " + Config("settings.ini", "ver"), '\n')
 
@@ -153,27 +156,26 @@ On = input ("--> ")
 while (True):
     if On == "Y" or On ==  "y":
         print(Parser("Learning"))
-        if Config("settings.ini", "lang") == "RU":
-            from modules.Chat_AI_with_syn import speechRU
+        try:
+            if Config("settings.ini", "lang") == "RU":
+                from modules.Chat_AI_with_syn import speechRU
+                speechRU()
 
-            Chat = speechRU()
-            #Microphone check
-            if Chat == 1 or Chat == 3:
-                print(Parser("Voice_control"))
-                On = input ("--> ")
-                continue
+            else:
+                from modules.Chat_AI_with_syn import speech
+                speech()
 
-        else:
-            from modules.Chat_AI_with_syn import speech
-            Chat = speech()
+        except ConnectionError:
+            print(Parser("service_error"))
+                
+        except OSError:
+            print(Parser("errMicro"))
 
-            #Microphone check
-            if Chat == 1 or Chat == 3:
-                print(Parser("Voice_control"))
-                On = input ("--> ")
-                continue
-      
-      
+        finally:
+            print(Parser("Voice_control"))
+            On = input ("--> ")
+
+    
     elif On == "N" or On ==  "n":
         print(str(Parser("Learning")))
 

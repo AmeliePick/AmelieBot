@@ -8,10 +8,17 @@ where the answer is processed and the operations are performed according to the 
 User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
 
 '''
-
-import sys, random, pickle, re, webbrowser, subprocess, os
-from time import sleep
+import random
 import numpy as np
+
+from webbrowser import open as webbrowser_open
+from os import _exit
+from pickle import dump
+from pickle import load
+from subprocess import Popen
+from re import sub
+from time import sleep
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
@@ -20,31 +27,22 @@ from sklearn import model_selection
 from libs.Stem_Res import Stemm
 from libs.configParser import Config, Parser
 
+
 #--- Language check --- 
-check = Config("settings.ini")
+check = Config("settings.ini", "lang")
 
+postfix = "EN.json"
 if check == "RU":
+     postfix = "RU.json"
 
-    with open("../DataBase/DataSet_RU.json", "r", encoding="utf8") as train:
-        Ftrain = train.readlines()
-
-    with open ("../DataBase/ClearSearchRU.json", "r") as file:
-        f = file.readlines()
-
-    with open ("../DataBase/answers.json", "r") as Afile:
-        ANfile = Afile.readlines()
-
-if check == "EN":
-
-    with open("../DataBase/DataSet_EN.json", "r") as train:
-        Ftrain = train.readlines()
+with open("../DataBase/DataSet_"+postfix, "r", encoding="utf8") as train:
+    Ftrain = train.readlines()
     
-    with open ("../DataBase/ClearSearchEN.json", "r") as file:
-        f = file.readlines()
-        
+with open ("../DataBase/ClearSearch"+postfix, "r") as file:
+    f = file.readlines()
 
-    with open ("../DataBase/answersEN.json", "r") as Afile:
-        ANfile = Afile.readlines()
+with open ("../DataBase/answers"+postfix, "r") as Afile:
+    ANfile = Afile.readlines()
         
 
 
@@ -71,6 +69,7 @@ def AI():
         
     return Edit
 
+
 def training(Edit, Val_split = 0.1):
     lenght = len(Edit['text'])
     
@@ -88,17 +87,16 @@ def training(Edit, Val_split = 0.1):
 
 
     #save the model to disk
+    filename = 'modelEN.sav'
     if check == "RU":
         filename = 'model.sav'
 
-    elif check == "EN":
-        filename = 'modelEN.sav'
 
 
-    pickle.dump(nb_valid_samples, open("models/"+filename, 'wb'))
+    dump(nb_valid_samples, open("models/"+filename, 'wb'))
     
     #load the model from disk
-    loaded_model = pickle.load(open("models/"+filename, 'rb'))
+    loaded_model = load(open("models/"+filename, 'rb'))
   
 
     return { 
@@ -107,28 +105,26 @@ def training(Edit, Val_split = 0.1):
     }
 
 
-
 def Enter():
-    try:
-        Input = str(input('\n---> ').capitalize())
-        
-        if Input == "":
-            print(Parser("WrongInput"))
-            return 2
-    except KeyboardInterrupt:
-        print(Parser("WrongInput"))
-        Input = str(input('\n---> ').capitalize())
+    while(True):
+        try:
+            Input = str(input('\n---> ').capitalize())
+            
+            if Input == '' or Input == '\n':
+                raise KeyboardInterrupt
 
-    global Chat_Input
-    Chat_Input = Input
+        except KeyboardInterrupt:
+            print("\n\n<--- " + Parser("WrongInput"))
+            continue
+            
 
-    return Input
+        global Chat_Input
+        Chat_Input = Input
+
+        return Input
+
 
 def open_AI(Something):
-    if Something == 1:
-        return 1
-    if Something == 3:
-        return 3
     data = AI()
     D = training(data)
     text_clf = Pipeline([
@@ -171,12 +167,7 @@ def selfLearning(InputType):
             train.write(getInput)
 
 
-
 def Answer(ToAnswser):
-    if ToAnswser == 1:
-        return 1
-    if ToAnswser == 3:
-        return 3
 
     tag = []
     text = []
@@ -186,37 +177,32 @@ def Answer(ToAnswser):
         row = line.split(' @ ')
         tag.append(row[0])
         
-        
 
         if ToAnswser in line:
-
             text.append(row[1])
 
     
-
     if ToAnswser == "Pause":
         return ''
 
     if ToAnswser == "Search":
         
-        search = webbrowser.open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input)), new=1)
+        search = webbrowser_open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input)), new=1)
     
     elif ToAnswser == "Youtube":
 
         EditS = EditSearch(Chat_Input)
         GetAns = Stemm(EditS)
         
-            
-        search = webbrowser.open('http://www.youtube.com/results?search_query=' + str(GetAns), new=1)
+        search = webbrowser_open('http://www.youtube.com/results?search_query=' + str(GetAns), new=1)
         
     elif ToAnswser == "Open":
 
         try:
-            search = subprocess.Popen(EditSearch(Chat_Input))
+            search = Popen(EditSearch(Chat_Input))
             
         except FileNotFoundError:
-            
-
+        
             Ed = EditedOpen(EditSearch(Chat_Input))
 
             if Ed == 1:
@@ -225,17 +211,12 @@ def Answer(ToAnswser):
 
                 search = EditedOpen(EditSearch(str(Chat_Input)))
 
-            
-            
-
-
-
     #Exit from app
     elif ToAnswser == "Exit":
         Output = random.choice(text)
         print ("\n<---", Output)
         sleep(1)
-        sys.exit()
+        _exit(0)
 
 
     try:
@@ -272,6 +253,8 @@ For example: Find music on YouTube - it will be just music
 '''
 
 def EditSearch(Input):
+
+
     global An
     
     for i in f:
@@ -299,7 +282,7 @@ def EditSearch(Input):
             
     try:
 
-        An = re.sub('[?!]', '', An)
+        An = sub('[?!]', '', An)
 
         return An.lstrip().capitalize()
 
@@ -308,7 +291,10 @@ def EditSearch(Input):
         return Input
 
         
+
         
+
+    
 def EditedOpen(search):
     with open('../DataBase/added_programms.json', 'r') as File:
         Names = []
@@ -330,7 +316,7 @@ def EditedOpen(search):
             
     if search in Names:
         try:
-            return subprocess.Popen(Links[0])
+            return Popen(Links[0])
         except FileNotFoundError:
             print(Parser("Wrong path"))
             return 1
