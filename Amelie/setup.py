@@ -1,7 +1,7 @@
 from cx_Freeze import setup, Executable
 import sys
 
-exe = Executable(script="Amelie.py", icon = "./logo.ico")
+exe = Executable(script="Amelie.py", icon = "../logo.ico")
 buildOptions = dict(includes =["idna.idnadata", 'atexit', 'numpy.core._methods', 'numpy.lib.format', 'scipy',
                                 'scipy.integrate', 'scipy.signal',  'scipy.sparse.linalg', 'scipy.sparse.csgraph',
                                 'scipy.sparse.csgraph._validation'], optimize=1)
