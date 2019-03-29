@@ -9,17 +9,16 @@ The second function reads the value of the required parameter and returns its va
 
 '''
 
-def createConfig(path, value):
+def createConfig(path):
     '''
     Create a config file
     '''
 
     config = ConfigParser()
     config.add_section("Settings")
-    config.set("Settings", "Language", value)
 
-
-
+    with open(path, "w") as config_file:
+        config.write(config_file)
 
 
 def Config(path, option = "NONE"):
