@@ -17,4 +17,8 @@ errMicro # Microphone is not defined
 Silence # A couple of seconds of silence ...
 SaySTH # Say something
 errSay # Bot did not hear the phrase
-service_error # Service error
+service_error # Service error. No Internet connection
+Nupdate # No updates
+Yupdate # Updates are success installed. Rebooting...
+isUpdate # I have new updates ^-^
+istUpdate # No new updates
