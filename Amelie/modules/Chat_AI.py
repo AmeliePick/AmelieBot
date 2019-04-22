@@ -45,6 +45,7 @@ with open ("../DataBase/answers"+postfix, "r") as Afile:
     ANfile = Afile.readlines()
         
 
+Chat_Input = ""
 
 # Variables for EditSearch()
 text = []
@@ -139,6 +140,9 @@ def open_AI(Something):
     
     
     mass.append(Something)
+
+    Chat_Input = Something
+
     try:
         pred = text_clf.predict(mass)
     except:
@@ -149,13 +153,13 @@ def open_AI(Something):
     global To
     To = ToAnswser
 
-    global Chat_Input
-    Chat_Input = Something
+    
 
     return ToAnswser
 
 
 def selfLearning(InputType):
+    global Chat_Input
     getInput = Chat_Input + ' @ ' + InputType + "\n"
 
     if check == "RU":
@@ -169,21 +173,7 @@ def selfLearning(InputType):
 
 def Answer(ToAnswser):
 
-    tag = []
-    text = []
-    
-    for line in ANfile:
-        
-        row = line.split(' @ ')
-        tag.append(row[0])
-        
-
-        if ToAnswser in line:
-            text.append(row[1])
-
-    
-    if ToAnswser == "Pause":
-        return ''
+    selfLearning(ToAnswser)
 
     if ToAnswser == "Search":
         
@@ -204,25 +194,39 @@ def Answer(ToAnswser):
         except FileNotFoundError:
         
             Ed = EditedOpen(EditSearch(Chat_Input))
-
             if Ed == 1:
                 from modules.exceptions_chat import except_for_add
                 Add_prog = except_for_add()
 
                 search = EditedOpen(EditSearch(str(Chat_Input)))
 
-    #Exit from app
-    elif ToAnswser == "Exit":
-        Output = random.choice(text)
-        print ("\n<---", Output)
-        sleep(1)
-        _exit(0)
+        except OSError as e:
+            if(e.winerror == 87):
+                ToAnswser = "Unknown"
+        
+        
+    # --- Get answer ---
+    tag = []
+    text = []
+    
+    for line in ANfile:
+        
+        row = line.split(' @ ')
+        tag.append(row[0])
+        
+
+        if ToAnswser in line:
+            text.append(row[1])
 
 
-    try:
-        selfLearning(ToAnswser)
+
+    try:  
         Output = random.choice(text)
         print ("\n<---", Output)
+
+        if ToAnswser == "Exit":
+            sleep(1)
+            return 0;
 
 
     except:
