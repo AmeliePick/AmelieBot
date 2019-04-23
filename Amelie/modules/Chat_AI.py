@@ -28,6 +28,24 @@ from libs.Stem_Res import Stemm
 from libs.configParser import Config, Parser
 
 
+class answer:
+    num = 0
+    output = ''
+
+    def __init__(self, num, output):
+        self.num = num
+        self.output = output
+
+    def getNum(self):
+        return self.num
+
+    def getOut(self):
+        return self.output
+
+
+
+
+
 #--- Language check --- 
 check = Config("settings.ini", "lang")
 
@@ -141,6 +159,7 @@ def open_AI(Something):
     
     mass.append(Something)
 
+    global Chat_Input
     Chat_Input = Something
 
     try:
@@ -160,7 +179,7 @@ def open_AI(Something):
 
 def selfLearning(InputType):
     global Chat_Input
-    getInput = Chat_Input + ' @ ' + InputType + "\n"
+    getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
 
     if check == "RU":
         with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
@@ -220,26 +239,27 @@ def Answer(ToAnswser):
 
 
 
-    try:  
+    try:
         Output = random.choice(text)
         print ("\n<---", Output)
 
-        if ToAnswser == "Exit":
-            sleep(1)
-            return 0;
+    except IndexError:
+            Unknown = []
+            for i in ANfile:
+                row = i.split(' @ ')
+
+                if "Unknown" in i:
+                    Unknown.append(row[1])
 
 
-    except:
-        Unknown = []
-        for i in ANfile:
-            row = i.split(' @ ')
+            Output = random.choice(Unknown)
+            print ("\n<---", Output)
+        
 
-            if "Unknown" in i:
-                Unknown.append(row[1])
+    if ToAnswser == "Exit":
+        out = answer(0, Output)
 
-
-        Output = random.choice(Unknown)
-        print ("\n<---", Output)
+        return out
 
 
     return Output

@@ -69,4 +69,6 @@ class TtsWatson:
 Speak = TtsWatson('a1e788b1-51d6-44b6-afde-4e5e29539c2a', '7mPsS2pAxngj')
 
 def speak(Answer):
-    Speak.play(Answer)
+    Speak.play(Answer.getOut())
+    if Answer.getNum() == 0:
+        exit(0)
