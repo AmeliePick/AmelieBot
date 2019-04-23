@@ -34,5 +34,6 @@ def speak(speech):
         
     #play sound
     playsound(file)
+
     #delete file from drive
-    remove(file)
+    remove(str(file))
