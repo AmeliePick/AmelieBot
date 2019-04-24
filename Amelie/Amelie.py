@@ -17,13 +17,16 @@ from sys import argv
 from sys import executable
 from os import path as os_path
 from os import execl
-from time import sleep
+from os import _exit
 from os import remove
+from time import sleep
 
 from modules import entry_input
 from modules.set_username import set_username
 from libs.configParser import *
 from libs.update import checkUpdate, download
+
+
 
 print ( 70 * "_")
 print ("\t\t                         _ _       \n" +
@@ -160,10 +163,12 @@ while (True):
             if Config("settings.ini", "lang") == "RU":
                 from modules.Chat_AI_with_syn import speechRU
                 speechRU()
+                continue
 
             else:
                 from modules.Chat_AI_with_syn import speech
                 speech()
+                continue
 
         except ConnectionError:
             print(Parser("service_error"))
@@ -171,9 +176,15 @@ while (True):
         except OSError:
             print(Parser("errMicro"))
 
-        finally:
-            print(Parser("Voice_control"))
-            On = input ("--> ")
+        except SystemExit:
+            _exit(0)
+
+
+        
+        
+        
+        print(Parser("Voice_control"))
+        On = input ("--> ")
 
     
     elif On == "N" or On ==  "n":
@@ -183,6 +194,13 @@ while (True):
 
         while(True):
             Chat = Answer(open_AI(Enter()))
+
+            if Chat.getNum() == 0:
+                sleep(1)
+                _exit(0)
+            
+                
+   
 
     else:
         print(Parser("WrongInput"))

@@ -8,7 +8,8 @@ where the answer is processed and the operations are performed according to the 
 User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
 
 '''
-import random
+
+from random import choice
 import numpy as np
 
 from webbrowser import open as webbrowser_open
@@ -28,21 +29,32 @@ from libs.Stem_Res import Stemm
 from libs.configParser import Config, Parser
 
 
+# To Singleton
 class answer:
-    num = 0
+    num = 1
     output = ''
 
     def __init__(self, num, output):
         self.num = num
         self.output = output
 
+
+    def setNum(self, num):
+        self.num = num
+
+
+    def setText(self, txt):
+        self.output = txt
+
+
     def getNum(self):
         return self.num
+
 
     def getOut(self):
         return self.output
 
-
+Output = answer(1, '')
 
 
 
@@ -61,9 +73,10 @@ with open ("../DataBase/ClearSearch"+postfix, "r") as file:
 
 with open ("../DataBase/answers"+postfix, "r") as Afile:
     ANfile = Afile.readlines()
-        
 
-Chat_Input = ""
+
+
+
 
 # Variables for EditSearch()
 text = []
@@ -184,31 +197,31 @@ def selfLearning(InputType):
     if check == "RU":
         with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
             train.write(getInput)
-    if check == "EN":
 
+    elif check == "EN":
         with open("../DataBase/DataSet_EN.json", "a") as train:
             train.write(getInput)
 
 
 def Answer(ToAnswser):
+    global Output
+    tag = []
+    text = []
+
+    
 
     selfLearning(ToAnswser)
 
+
     if ToAnswser == "Search":
-        
         search = webbrowser_open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input)), new=1)
     
     elif ToAnswser == "Youtube":
-
-        EditS = EditSearch(Chat_Input)
-        GetAns = Stemm(EditS)
+        search = webbrowser_open('http://www.youtube.com/results?search_query=' + str(Stemm(EditSearch(Chat_Input))), new=1)
         
-        search = webbrowser_open('http://www.youtube.com/results?search_query=' + str(GetAns), new=1)
-        
-    elif ToAnswser == "Open":
-
+    elif ToAnswser == "Open" and EditSearch(Chat_Input) != '':
         try:
-            search = Popen(EditSearch(Chat_Input))
+            search = Popen(EditedOpen(EditSearch(Chat_Input)))
             
         except FileNotFoundError:
         
@@ -222,17 +235,18 @@ def Answer(ToAnswser):
         except OSError as e:
             if(e.winerror == 87):
                 ToAnswser = "Unknown"
+
+    elif ToAnswser == "Exit":
+        Output.setNum(0)
         
         
     # --- Get answer ---
-    tag = []
-    text = []
-    
+    if(EditSearch(Chat_Input) == ''): ToAnswser = "Unknown"
+
     for line in ANfile:
         
         row = line.split(' @ ')
         tag.append(row[0])
-        
 
         if ToAnswser in line:
             text.append(row[1])
@@ -240,27 +254,21 @@ def Answer(ToAnswser):
 
 
     try:
-        Output = random.choice(text)
-        print ("\n<---", Output)
+        Output.setText(choice(text))
+        print ("\n<---", Output.getOut())
 
     except IndexError:
             Unknown = []
+
             for i in ANfile:
                 row = i.split(' @ ')
 
                 if "Unknown" in i:
                     Unknown.append(row[1])
 
-
-            Output = random.choice(Unknown)
-            print ("\n<---", Output)
+            Output = setText(choice(Unknown))
+            print ("\n<---", Output.getOut())
         
-
-    if ToAnswser == "Exit":
-        out = answer(0, Output)
-
-        return out
-
 
     return Output
 
@@ -276,17 +284,31 @@ For example: Find music on YouTube - it will be just music
 
 '''
 
+
+def EditedOpen(search):
+    Name = ''
+    Link = ''
+
+    with open('../DataBase/added_programms.json', 'r') as File:
+        for line in File:
+            
+            row = line.split(' = ')
+
+            if search in line:
+                Link = str(row[1])
+                Name = str(row[0])
+               
+    if search in Name:
+        return Link
+
+
 def EditSearch(Input):
-
-
     global An
     
     for i in f:
         
         row = i.split(' @ ')
        
-        
-
         if To == "Youtube" and "Youtube" in i:
             text.append(row[0])
             
@@ -305,44 +327,9 @@ def EditSearch(Input):
 
             
     try:
-
         An = sub('[?!]', '', An)
 
         return An.lstrip().capitalize()
 
     except:
-
         return Input
-
-        
-
-        
-
-    
-def EditedOpen(search):
-    with open('../DataBase/added_programms.json', 'r') as File:
-        Names = []
-        Links = []
-    
-
-        for line in File:
-        
-            row = line.split(' = ')
-            if search in line:
-                if Names != []:
-                    Names.clear()
-                if Links != []:
-                    Links.clear()
-            
-                Links.append(row[1])
-                Names.append(row[0])
-            
-            
-    if search in Names:
-        try:
-            return Popen(Links[0])
-        except FileNotFoundError:
-            print(Parser("Wrong path"))
-            return 1
-    else:
-        return 1
