@@ -180,14 +180,9 @@ def open_AI(Something):
     except:
         return "Pause"
         
-    ToAnswser = ''.join(pred).replace('\n', '')
-    
-    global To
-    To = ToAnswser
+    ToAnswer = ''.join(pred).replace('\n', '')
 
-    
-
-    return ToAnswser
+    return ToAnswer
 
 
 def selfLearning(InputType):
@@ -203,52 +198,48 @@ def selfLearning(InputType):
             train.write(getInput)
 
 
-def Answer(ToAnswser):
+def Answer(ToAnswer):
     global Output
     tag = []
     text = []
 
+    selfLearning(ToAnswer)
+
+    if ToAnswer == "Search":
+        webbrowser_open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input, ToAnswer)), new=1)
     
-
-    selfLearning(ToAnswser)
-
-
-    if ToAnswser == "Search":
-        search = webbrowser_open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input)), new=1)
-    
-    elif ToAnswser == "Youtube":
-        search = webbrowser_open('http://www.youtube.com/results?search_query=' + str(Stemm(EditSearch(Chat_Input))), new=1)
+    elif ToAnswer == "Youtube":
+        webbrowser_open('http://www.youtube.com/results?search_query=' + str(Stemm(EditSearch(Chat_Input, ToAnswer))), new=1)
         
-    elif ToAnswser == "Open" and EditSearch(Chat_Input) != '':
+    elif ToAnswer == "Open" and EditSearch(Chat_Input) != '':
         try:
-            search = Popen(EditedOpen(EditSearch(Chat_Input)))
+            Popen(EditedOpen(EditSearch(Chat_Input, ToAnswer)))
             
         except FileNotFoundError:
         
-            Ed = EditedOpen(EditSearch(Chat_Input))
-            if Ed == 1:
+            if EditedOpen(EditSearch(Chat_Input)) == 1:
                 from modules.exceptions_chat import except_for_add
                 Add_prog = except_for_add()
 
-                search = EditedOpen(EditSearch(str(Chat_Input)))
+                search = EditedOpen(EditSearch(Chat_Input, ToAnswer))
 
         except OSError as e:
             if(e.winerror == 87):
-                ToAnswser = "Unknown"
+                ToAnswer = "Unknown"
 
-    elif ToAnswser == "Exit":
+    elif ToAnswer == "Exit":
         Output.setNum(0)
         
         
     # --- Get answer ---
-    if(EditSearch(Chat_Input) == ''): ToAnswser = "Unknown"
+   
 
     for line in ANfile:
         
         row = line.split(' @ ')
         tag.append(row[0])
 
-        if ToAnswser in line:
+        if ToAnswer in line:
             text.append(row[1])
 
 
@@ -266,7 +257,7 @@ def Answer(ToAnswser):
                 if "Unknown" in i:
                     Unknown.append(row[1])
 
-            Output = setText(choice(Unknown))
+            Output.setText(choice(Unknown))
             print ("\n<---", Output.getOut())
         
 
@@ -302,22 +293,22 @@ def EditedOpen(search):
         return Link
 
 
-def EditSearch(Input):
+def EditSearch(Input, ToAnswer = ''):
     global An
     
     for i in f:
         
         row = i.split(' @ ')
        
-        if To == "Youtube" and "Youtube" in i:
+        if ToAnswer == "Youtube" and "Youtube" in i:
             text.append(row[0])
             
             
-        elif To == "Search" and "Search" in i:
+        elif ToAnswer == "Search" and "Search" in i:
             text.append(row[0])
 
 
-        elif To == "Open" and "Open" in i:
+        elif ToAnswer == "Open" and "Open" in i:
             text.append(row[0])
            
 
