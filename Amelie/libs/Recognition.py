@@ -11,9 +11,6 @@ Listens to speech, converts to text and sends it to the chat module for processi
 '''
 
 # check lang
-
-valuelang = ""
-
 if Config("settings.ini", "lang") == "RU":
     valuelang = "RU"
 
@@ -21,23 +18,24 @@ else:
     valuelang = "en_US"
 
 
-def REG():
-
-    # Microphone and Recognition
-    r = sr.Recognizer()
-
-    #Microphone check
-    micro = sr.Microphone()
+# Microphone and Recognition
+r = sr.Recognizer()
+micro = sr.Microphone()
 
 
-    #Noise calibration
+def calibration():
+     #Noise calibration
+     print(Parser("Silence"))
 
-    print(Parser("Silence"))
-    with micro as source:
+     with micro as source:
         r.adjust_for_ambient_noise(source)
 
-    #Listening to the microphone
 
+def REG():
+    global Chat_Input
+
+
+    #Listening to the microphone
     with micro as source:
         print(Parser("SaySTH"))
         audio = r.listen(source)

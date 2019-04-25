@@ -159,16 +159,23 @@ On = input ("--> ")
 while (True):
     if On == "Y" or On ==  "y":
         print(Parser("Learning"))
+
         try:
             if Config("settings.ini", "lang") == "RU":
-                from modules.Chat_AI_with_syn import speechRU
-                speechRU()
-                continue
+                from modules.Chat_AI_with_syn import speechRU, calibration
+                calibration()
+
+                while (True):
+                    speechRU()
+                    continue
 
             else:
-                from modules.Chat_AI_with_syn import speech
-                speech()
-                continue
+                from modules.Chat_AI_with_syn import speech, calibration
+                calibration()
+
+                while (True):
+                    speech()
+                    continue
 
         except ConnectionError:
             print(Parser("service_error"))
@@ -198,9 +205,6 @@ while (True):
             if Chat.getNum() == 0:
                 sleep(1)
                 _exit(0)
-            
-                
-   
 
     else:
         print(Parser("WrongInput"))
