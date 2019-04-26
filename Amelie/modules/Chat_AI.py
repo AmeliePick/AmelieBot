@@ -28,33 +28,7 @@ from sklearn import model_selection
 from libs.Stem_Res import Stemm
 from libs.configParser import Config, Parser
 
-
-# To Singleton
-class answer:
-    num = 1
-    output = ''
-
-    def __init__(self, num, output):
-        self.num = num
-        self.output = output
-
-
-    def setNum(self, num):
-        self.num = num
-
-
-    def setText(self, txt):
-        self.output = txt
-
-
-    def getNum(self):
-        return self.num
-
-
-    def getOut(self):
-        return self.output
-
-Output = answer(1, '')
+from .request_obj import Output
 
 
 
@@ -186,7 +160,6 @@ def open_AI(Something):
 
 
 def selfLearning(InputType):
-    global Chat_Input
     getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
 
     if check == "RU":
@@ -199,7 +172,6 @@ def selfLearning(InputType):
 
 
 def Answer(ToAnswer):
-    global Output
     tag = []
     text = []
 
@@ -219,7 +191,7 @@ def Answer(ToAnswer):
         
             if EditedOpen(EditSearch(Chat_Input)) == 1:
                 from modules.exceptions_chat import except_for_add
-                Add_prog = except_for_add()
+                except_for_add()
 
                 search = EditedOpen(EditSearch(Chat_Input, ToAnswer))
 
@@ -232,8 +204,6 @@ def Answer(ToAnswer):
         
         
     # --- Get answer ---
-   
-
     for line in ANfile:
         
         row = line.split(' @ ')
@@ -241,8 +211,6 @@ def Answer(ToAnswer):
 
         if ToAnswer in line:
             text.append(row[1])
-
-
 
     try:
         Output.setText(choice(text))
@@ -294,8 +262,7 @@ def EditedOpen(search):
 
 
 def EditSearch(Input, ToAnswer = ''):
-    global An
-    
+
     for i in f:
         
         row = i.split(' @ ')
