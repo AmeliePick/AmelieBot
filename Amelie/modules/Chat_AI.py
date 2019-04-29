@@ -9,26 +9,25 @@ User input is also processed for search engines. Unnecessary part of the phrase 
 
 '''
 
-from random import choice
-import numpy as np
+from random         import choice
+from numpy          import random, arange
 
-from webbrowser import open as webbrowser_open
-from os import _exit
-from pickle import dump
-from pickle import load
-from subprocess import Popen
-from re import sub
-from time import sleep
+from webbrowser     import open as webbrowser_open
+from os             import _exit
+from pickle         import dump
+from pickle         import load
+from subprocess     import Popen
+from re             import sub
+from time           import sleep
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import SGDClassifier
-from sklearn.pipeline import Pipeline
-from sklearn import model_selection
+from sklearn.feature_extraction.text    import TfidfVectorizer
+from sklearn.linear_model               import SGDClassifier
+from sklearn.pipeline                   import Pipeline
+from sklearn                            import model_selection
 
-from libs.Stem_Res import Stemm
-from libs.configParser import Config, Parser
-
-from .request_obj import Output
+from libs.Stem_Res      import Stemm
+from libs.configParser  import Config, Parser
+from .request_obj       import Output
 
 
 
@@ -79,9 +78,9 @@ def AI():
 def training(Edit, Val_split = 0.1):
     lenght = len(Edit['text'])
     
-    indexes = np.arange(lenght)
+    indexes = arange(lenght)
 
-    np.random.shuffle(indexes)
+    random.shuffle(indexes)
 
     X = [Edit['text'][i]
     for i in indexes ]
@@ -205,6 +204,8 @@ def Answer(ToAnswer):
         
     # --- Get answer ---
     for line in ANfile:
+
+        
         
         row = line.split(' @ ')
         tag.append(row[0])
