@@ -11,50 +11,33 @@ The main file of the bot.
 The functions of entering the program and choosing the bot mode are called.
 '''
 
-
-from sys import stdin, exit as sys_exit
-from sys import argv
-from sys import executable
-from os import path as os_path
-from os import execl
-from os import _exit
-from os import remove
-from time import sleep
-
-from modules import entry_input
-from modules.set_username import set_username
-from libs.configParser import *
-from libs.update import checkUpdate, download
+from time   import sleep
+from sys    import stdin, exit as sys_exit
+from sys    import argv
+from sys    import exc_info 
+from sys    import executable
+from os     import path as os_path
+from os     import execl
+from os     import _exit
+from os     import remove
 
 
 
-print ( 70 * "_")
-print ("\t\t                         _ _       \n" +
-       "\t\t    /\                  | (_)      \n" +
-       "\t\t   /  \   _ __ ___   ___| |_  ___  \n" +
-       "\t\t  / /\ \ | '_ ` _ \ / _ \ | |/ _ \ \n" +
-       "\t\t / ____ \| | | | | |  __/ | |  __/ \n" +
-       "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
-print ( 70 * "_")
+
+from modules                    import entry_input
+from modules.set_username       import set_username
+from libs.configParser          import *
+from libs.update                import checkUpdate, download
+from libs.logger                import LogWrite
 
 
-# ----- Bot -----
 
-# Errors dictionary:
-    # if return 1 - error with Internet connetcion
-    # if return 2 - error with input(user didnt enter somethings)
-    # if return 3 - error with micro(micro is not defined)
-
-
-#--- language selection ---
-'''
-A configuration file is created.
-Further from it all information is read. 
-If the file is empty, which means this is the first launch of the application, the user is prompted to select the bot language.
-'''
+def restart():
+    #restart of the bot
+    exe = executable
+    execl(exe, exe, *argv)
 
 
-# --- 
 def createSetting():
     createSettings = open("settings.ini", 'a')
     createSettings.close()
@@ -89,6 +72,32 @@ def setLang(path):
             continue
 
 
+
+# ----- Bot -----
+
+
+print ( 70 * "_")
+print ("\t\t                         _ _       \n" +
+       "\t\t    /\                  | (_)      \n" +
+       "\t\t   /  \   _ __ ___   ___| |_  ___  \n" +
+       "\t\t  / /\ \ | '_ ` _ \ / _ \ | |/ _ \ \n" +
+       "\t\t / ____ \| | | | | |  __/ | |  __/ \n" +
+       "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
+print ( 70 * "_")
+
+
+
+
+
+#--- language selection ---
+'''
+A configuration file is created.
+Further from it all information is read. 
+If the file is empty, which means this is the first launch of the application, the user is prompted to select the bot language.
+'''
+
+
+
 if os_path.exists("settings.ini") == False:
 
     createSetting()
@@ -121,9 +130,7 @@ if isupdate:
     download(isupdate)
     remove("tmp_file.py")
 
-    #restart of bot
-    exe = executable
-    execl(exe, exe, *argv)
+    restart()
 
 else:
     print(Parser("istUpdate"), '\n')
@@ -157,10 +164,11 @@ entry_input.start()
 print(Parser("Voice_control"))
 On = input ("--> ")
 while (True):
-    if On == "Y" or On ==  "y":
-        print(Parser("Learning"))
+    try:
+        if On == "Y" or On ==  "y":
+            print(Parser("Learning"))
 
-        try:
+        
             if Config("settings.ini", "lang") == "RU":
                 from modules.Chat_AI_with_syn import speechRU, calibration
                 calibration()
@@ -177,35 +185,42 @@ while (True):
                     speech()
                     continue
 
-        except ConnectionError:
-            print(Parser("service_error"))
-                
-        except OSError:
-            print(Parser("errMicro"))
 
-        except SystemExit:
-            _exit(0)
-
-
-        
-        
-        
-        print(Parser("Voice_control"))
-        On = input ("--> ")
 
     
-    elif On == "N" or On ==  "n":
-        print(str(Parser("Learning")))
+        elif On == "N" or On ==  "n":
+            print(str(Parser("Learning")))
 
-        from modules.Chat_AI import Enter, open_AI, Answer
+            from modules.Chat_AI import Enter, open_AI, Answer
 
-        while(True):
-            Chat = Answer(open_AI(Enter()))
+            while(True):
+                Chat = Answer(open_AI(Enter()))
 
-            if Chat.getNum() == 0:
-                sleep(1)
-                _exit(0)
+                if Chat.getNum() == 0:
+                    sleep(1)
+                    _exit(0)
+                    
 
-    else:
-        print(Parser("WrongInput"))
-        On = input("--> ")
+        else:
+            print(Parser("WrongInput"))
+            On = input("--> ")
+            continue
+
+
+    except SystemExit:
+        _exit(0)
+
+    except Exception:
+        LogWrite()
+        print(Parser("crash"))
+        restart()
+
+    except ConnectionError:
+        print(Parser("service_error"))
+                
+    except OSError:
+        print(Parser("errMicro"))
+
+
+    print(Parser("Voice_control"))
+    On = input ("--> ")
