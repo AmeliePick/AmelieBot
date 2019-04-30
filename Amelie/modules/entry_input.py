@@ -8,9 +8,8 @@ from libs.configParser import Parser
 Enter the program where the program expects an exact response from the user
 '''
 
-from sys import exit as sys_exit
-from time import sleep
 from os import _exit
+from time import sleep
 
 def start():
     print(Parser("start"))
@@ -29,4 +28,3 @@ def start():
             print(Parser("tryAgain"))
             start = input("--> ")
             continue
-

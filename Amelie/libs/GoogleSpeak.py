@@ -10,12 +10,13 @@ Due to the algorithm of the library, there is a delay of a few seconds before pl
 from os         import remove
 from random     import randint
 from gtts       import gTTS
+from playsound  import playsound
 
 
 
 def speak(speech):
     # TODO: fix the deletion of file
-    Send_in_Google = gTTS(text = speech, lang = "ru")
+    Send_in_Google = gTTS(text = speech.getOut(), lang = "ru")
     
     
 
