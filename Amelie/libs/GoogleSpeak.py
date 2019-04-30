@@ -7,18 +7,14 @@ The synthesis is based on gTTS (Google Text-to-Speech). Gets data from a chat fi
 Due to the algorithm of the library, there is a delay of a few seconds before playback
 '''
 
-from os import remove
-from random import randint
-from playsound import playsound
-from gtts import gTTS
-
+from os         import remove
+from random     import randint
+from gtts       import gTTS
 
 
 
 def speak(speech):
-
-    Old_name_mp3 = "old"
-
+    # TODO: fix the deletion of file
     Send_in_Google = gTTS(text = speech, lang = "ru")
     
     
@@ -36,4 +32,7 @@ def speak(speech):
     playsound(file)
 
     #delete file from drive
-    remove(str(file))
+    remove(file)
+
+    if(speech.getNum() == 0):
+        exit(0)

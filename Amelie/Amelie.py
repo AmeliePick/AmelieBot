@@ -210,13 +210,19 @@ while (True):
     except SystemExit:
         _exit(0)
 
+
     except Exception:
         LogWrite()
         print(Parser("crash"))
+
+        #TODO: if os_path.exists("tmp_sound.mp3"): remove("tmp_sound.mp3")
+
         restart()
+
 
     except ConnectionError:
         print(Parser("service_error"))
+
                 
     except OSError:
         print(Parser("errMicro"))
