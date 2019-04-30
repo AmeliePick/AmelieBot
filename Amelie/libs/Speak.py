@@ -4,6 +4,7 @@
 
 from pyaudio import PyAudio
 from requests import get
+from sys import exit
 
 
 

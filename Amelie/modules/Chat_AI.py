@@ -182,7 +182,7 @@ def Answer(ToAnswer):
     elif ToAnswer == "Youtube":
         webbrowser_open('http://www.youtube.com/results?search_query=' + str(Stemm(EditSearch(Chat_Input, ToAnswer))), new=1)
         
-    elif ToAnswer == "Open" and EditSearch(Chat_Input) != '':
+    elif ToAnswer == "Open" and EditSearch(Chat_Input,  ToAnswer) != '':
         try:
             Popen(EditedOpen(EditSearch(Chat_Input, ToAnswer)))
             
