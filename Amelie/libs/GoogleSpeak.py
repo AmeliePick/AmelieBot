@@ -9,14 +9,16 @@ Due to the algorithm of the library, there is a delay of a few seconds before pl
 
 from os         import remove
 from random     import randint
-from gtts       import gTTS
-from playsound  import playsound
+from libs.tts   import gTTS
+from sys        import exit
+from ctypes import windll
+
 
 
 
 def speak(speech):
     # TODO: fix the deletion of file
-    Send_in_Google = gTTS(text = speech.getOut(), lang = "ru")
+    answer = gTTS(text = speech.getOut(), lang = "ru")
     
     
 
@@ -25,15 +27,11 @@ def speak(speech):
 
     file = "sound"+str(r1) +".mp3"
 
-    #get result from Google 
-    Send_in_Google.save(file)
-    
-        
     #play sound
-    playsound(file)
+    answer.play()
 
-    #delete file from drive
-    remove(file)
+
+
 
     if(speech.getNum() == 0):
         exit(0)
