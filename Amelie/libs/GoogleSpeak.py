@@ -11,12 +11,18 @@ import os
 from random     import randint
 from libs.tts   import gTTS
 from sys        import exit
-from pyglet     import media
+import pyglet
 from os         import path as os_path
 from os         import remove
 from time       import sleep
 
+def exit(speech, file):
+    if(speech.getNum() == 0):
+        #TODO: fix the deletion of sound file
+        if os_path.exists(file):
+            remove(file)
 
+        exit(0)
 
 def speak(speech):
     # TODO: fix the deletion of file
@@ -32,15 +38,18 @@ def speak(speech):
     answer.save(file)
 
     #play sound
-    song = media.load(file)
-    song.play()
-    sleep(2)
-    
     
 
-    if(speech.getNum() == 0):
-        #TODO: fix the deletion of sound file
-        if os_path.exists(file):
-            remove(file)
+    song = pyglet.media.load(file)
 
-        exit(0)
+    player = pyglet.media.Player()
+    player.queue(song)
+
+    player.play()
+
+
+    sleep(1.5)
+
+    player.pause()
+    player.__del__()
+
