@@ -2,6 +2,7 @@
 from os import system
 import speech_recognition as sr
 from .configParser import Parser, Config
+from libs.AudioManagement import playAudio
 
 '''
 Regonizer module
@@ -37,6 +38,7 @@ def REG():
 
     #Listening to the microphone
     with micro as source:
+        playAudio('../Res/Sounds/readytohear.mp3')
         print(Parser("SaySTH"))
         audio = r.listen(source)
 
