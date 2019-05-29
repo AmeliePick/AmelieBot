@@ -26,16 +26,12 @@ def _exit(file):
 
 
 def speak(speech):
-    # TODO: fix the deletion of file
     answer = gTTS(text = speech.getOut(), lang = "ru")
     
-    
-
     #take name of file
-    r1 = randint(1,10000000)
-
     file = "sound"+".mp3"
 
+    #save to .mp3 file
     answer.save(file)
 
     #play sound
@@ -43,4 +39,3 @@ def speak(speech):
 
     if speech.getNum() == 0:
         _exit(file)
-

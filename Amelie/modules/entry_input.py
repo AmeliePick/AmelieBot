@@ -3,6 +3,8 @@
 # === Program start module ===
 
 from libs.configParser import Parser
+from .Chat_AI import LangChoice
+
 
 '''
 Enter the program where the program expects an exact response from the user
@@ -17,6 +19,7 @@ def start():
 
     while (True):
         if (start == "Y" or start == "y"):
+            LangChoice()
             print(Parser("sayHello"))
             print ("--> ")
             break

@@ -32,22 +32,26 @@ from .request_obj       import Output
 
 
 #--- Language check --- 
-check = Config("settings.ini", "lang")
 
-postfix = "EN.json"
-if check == "RU":
-     postfix = "RU.json"
 
-with open("../DataBase/DataSet_"+postfix, "r", encoding="utf8") as train:
-    Ftrain = train.readlines()
+def LangChoice():
+    global dataSet, clearSearch, ANfile
+    global checkLang
+
+    checkLang = Config("settings.ini", "lang")
+
+    postfix = "EN.json"
+    if checkLang == "RU":
+        postfix = "RU.json"
+
+    with open("../DataBase/DataSet_"+postfix, "r", encoding="utf8") as train:
+        dataSet = train.readlines()
     
-with open ("../DataBase/ClearSearch"+postfix, "r") as file:
-    f = file.readlines()
+    with open ("../DataBase/ClearSearch"+postfix, "r") as file:
+        clearSearch = file.readlines()
 
-with open ("../DataBase/answers"+postfix, "r") as Afile:
-    ANfile = Afile.readlines()
-
-
+    with open ("../DataBase/answers"+postfix, "r") as Afile:
+        ANfile = Afile.readlines()
 
 
 
@@ -63,8 +67,10 @@ For example: What is the weather today? - Weather. Where is Paris? - Location
 '''
 
 def AI():
+    global dataSet
+
     Edit = {'text': [], 'tag':[]}
-    for line in Ftrain:
+    for line in dataSet:
         row = line.split(' @ ')
         
 
@@ -76,6 +82,8 @@ def AI():
 
 
 def training(Edit, Val_split = 0.1):
+    global checkLang
+
     lenght = len(Edit['text'])
     
     indexes = arange(lenght)
@@ -93,7 +101,7 @@ def training(Edit, Val_split = 0.1):
 
     #save the model to disk
     filename = 'modelEN.sav'
-    if check == "RU":
+    if checkLang == "RU":
         filename = 'model.sav'
 
 
@@ -159,13 +167,14 @@ def open_AI(Something):
 
 
 def selfLearning(InputType):
+    global checkLang
     getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
 
-    if check == "RU":
+    if checkLang == "RU":
         with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
             train.write(getInput)
 
-    elif check == "EN":
+    elif checkLang == "EN":
         with open("../DataBase/DataSet_EN.json", "a") as train:
             train.write(getInput)
 
