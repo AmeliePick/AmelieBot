@@ -22,7 +22,7 @@ from os     import remove
 
 from modules.entry_input        import start
 from modules.set_username       import set_username
-from libs.configParser          import *
+from libs.configParser          import SettingsControl
 from libs.update                import checkUpdate, download
 from libs.logger                import LogWrite
 
@@ -46,7 +46,7 @@ def setLang(path):
     '''
 
     # Default settings
-    setConfig(path, "lang", "-")
+    SettingsControl.setConfig(path, "lang", "-")
 
     choose_lang = input("Choose language [RU] of [EN]: ") #delete this
 
@@ -54,12 +54,12 @@ def setLang(path):
 
         if choose_lang == "RU":
             value = "RU"
-            setConfig(path, "lang", value)
+            SettingsControl.setConfig(path, "lang", value)
             break
 
         elif choose_lang == "EN":
             value = "EN"
-            setConfig(path, "lang", value)
+            SettingsControl.setConfig(path, "lang", value)
             break
 
         else:
@@ -83,7 +83,7 @@ def checkSettings():
         path = "settings.ini"
     
 
-        setConfig(path, "ver", "2.5.2")
+        SettingsControl.setConfig(path, "ver", "2.5.2")
         setLang(path)
 
     elif os_path.exists("settings.ini"):
@@ -97,10 +97,10 @@ def checkSettings():
         if ReadHandle == '':
             # set the default settings
             createConfig("settings.ini")
-            setConfig(path, "ver", "2.5.2")
+            SettingsControl.setConfig(path, "ver", "2.5.2")
             setLang(path)
 
-        if Config(path, "lang") == '-':
+        if SettingsControl.getConfig(path, "lang") == '-':
             setLang(path)
 
 
@@ -108,7 +108,7 @@ def getUpdate():
     # --- Check updates ---
     isupdate  = checkUpdate()
     if isupdate:
-        print(Parser("isUpdate"))
+        print(SettingsControl.Print("isUpdate"))
         sleep(2)
         download(isupdate)
         remove("tmp_file.py")
@@ -116,12 +116,12 @@ def getUpdate():
         restart()
 
     else:
-        print(Parser("istUpdate"), '\n')
+        print(SettingsControl.Print("istUpdate"), '\n')
 
     if os_path.exists("t.ini"):
         remove("t.ini")
 
-    print("AmelieBot " + Config("settings.ini", "ver"), '\n')
+    print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
 
 
 def main():
@@ -150,14 +150,14 @@ def main():
 
 
     #--- Chat
-    print(Parser("Voice_control"))
+    print(SettingsControl.Print("Voice_control"))
     On = input ("--> ")
     while (True):
         try:
             if On == "Y" or On ==  "y":
-                print(Parser("Learning"))
+                print(SettingsControl.Print("Learning"))
 
-                if Config("settings.ini", "lang") == "RU":
+                if SettingsControl.getConfig("settings.ini", "lang") == "RU":
                     from modules.Chat_AI_with_syn import speechRU, calibration
                     calibration()
 
@@ -174,8 +174,7 @@ def main():
                         continue
 
             elif On == "N" or On ==  "n":
-                print(str(Parser("Learning")))
-
+                print(str(SettingsControl.Print("Learning")))
                 from modules.Chat_AI import Enter, open_AI, Answer
 
                 while(True):
@@ -186,7 +185,7 @@ def main():
                         _exit(0)
                     
             else:
-                print(Parser("WrongInput"))
+                print(SettingsControl.Print("WrongInput"))
                 On = input("--> ")
                 continue
 
@@ -197,20 +196,20 @@ def main():
 
         except Exception:
             LogWrite()
-            print(Parser("crash"))
+            print(SettingsControl.Print("crash"))
 
             restart()
 
 
         except ConnectionError:
-            print(Parser("service_error"))
+            print(SettingsControl.Print("service_error"))
 
                 
         except OSError:
-            print(Parser("errMicro"))
+            print(SettingsControl.Print("errMicro"))
 
 
-        print(Parser("Voice_control"))
+        print(SettingsControl.Print("Voice_control"))
         On = input ("--> ")
 
 

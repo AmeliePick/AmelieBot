@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
 
 from os                     import path as os_path
-from libs.configParser      import Parser
+from libs.configParser      import SettingsControl
 
 
 # === Username installation module ===
@@ -13,7 +13,7 @@ def set_username():
             username = file_user.read()
 
         if (username == ""):
-            print(Parser("getName"))
+            print(SettingsControl.Print("getName"))
             username = input("> ")
 
         if (username != ""):
@@ -22,7 +22,7 @@ def set_username():
             print ("\n Welcome, "+ username + "!")
 
         else:
-            print (Parser("emptyName"))
+            print (SettingsControl.Print("emptyName"))
             set_username()
 
     else:

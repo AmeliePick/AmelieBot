@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from urllib.request import urlopen
-from .configParser import Config, Parser, setConfig
+from .configParser import SettingsControl
 from re import sub
 from time import sleep
 
@@ -16,12 +16,12 @@ def checkUpdate():
             tmp.write(response.read())
 
         # if a new version is it, change version in this config file
-        if(Config('t.ini', "ver") != Config("settings.ini", "ver")):
-            setConfig("settings.ini", "ver", Config('t.ini', "ver"))
+        if(SettingsControl.getConfig('t.ini', "ver") != SettingsControl.getConfig("settings.ini", "ver")):
+            SettingsControl.setConfig("settings.ini", "ver", SettingsControl.getConfig('t.ini', "ver"))
             return True
 
     except:
-        print(Parser("service_error"))
+        print(SettingsControl.Print("service_error"))
         return False
      
 
@@ -31,7 +31,7 @@ def download(response):
     '''
     if response == True:
         # getting list of new files
-        R = Config('t.ini', "modules").split();
+        R = SettingsControl.getConfig('t.ini', "modules").split();
         getModules = []
         for i in R:
             getModules.append(i)
@@ -41,7 +41,7 @@ def download(response):
             try:
                 getFile = urlopen('http://ameliepick.ml/AmelieBot/'+file)
             except:
-                print(Parser("WrongPath"))
+                print(SettingsControl.Print("WrongPath"))
                 return 1
 
             # paste from new file to temp file
@@ -54,7 +54,7 @@ def download(response):
                     mergeFile.write(tmp2.read())
 
         
-        print(Parser("Yupdate"))
+        print(SettingsControl.Print("Yupdate"))
         sleep(1.5)
         return 0
 

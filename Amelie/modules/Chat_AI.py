@@ -25,20 +25,19 @@ from sklearn.linear_model               import SGDClassifier
 from sklearn.pipeline                   import Pipeline
 from sklearn                            import model_selection
 
+from libs.configParser  import SettingsControl
 from libs.Stem_Res      import Stemm
-from libs.configParser  import Config, Parser
 from .request_obj       import Output
 
 
 
-#--- Language check --- 
-
 
 def LangChoice():
+    #--- Language check --- 
     global dataSet, clearSearch, ANfile
     global checkLang
 
-    checkLang = Config("settings.ini", "lang")
+    checkLang = SettingsControl.getConfig("settings.ini", "lang")
 
     postfix = "EN.json"
     if checkLang == "RU":
@@ -127,7 +126,7 @@ def Enter():
                 raise KeyboardInterrupt
 
         except KeyboardInterrupt:
-            print("\n\n<--- " + Parser("WrongInput"))
+            print("\n\n<--- " + SettingsControl.Print("WrongInput"))
             continue
             
 
@@ -214,8 +213,7 @@ def Answer(ToAnswer):
     # --- Get answer ---
     for line in ANfile:
 
-        
-        
+           
         row = line.split(' @ ')
         tag.append(row[0])
 
@@ -272,8 +270,8 @@ def EditedOpen(search):
 
 
 def EditSearch(Input, ToAnswer = ''):
-
-    for i in f:
+    global clearSearch
+    for i in clearSearch:
         
         row = i.split(' @ ')
        

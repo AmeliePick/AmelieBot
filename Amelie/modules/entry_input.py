@@ -2,7 +2,7 @@
 
 # === Program start module ===
 
-from libs.configParser import Parser
+from libs.configParser import SettingsControl
 from .Chat_AI import LangChoice
 
 
@@ -14,20 +14,20 @@ from os import _exit
 from time import sleep
 
 def start():
-    print(Parser("start"))
+    print(SettingsControl.Print("start"))
     start = input("--> ")
 
     while (True):
         if (start == "Y" or start == "y"):
             LangChoice()
-            print(Parser("sayHello"))
+            print(SettingsControl.Print("sayHello"))
             print ("--> ")
             break
         elif (start == "N" or start == "n"):
-            print (Parser("bye"))
+            print (SettingsControl.Print("bye"))
             sleep(1.5)
             _exit(0)
         else:
-            print(Parser("tryAgain"))
+            print(SettingsControl.Print("tryAgain"))
             start = input("--> ")
             continue

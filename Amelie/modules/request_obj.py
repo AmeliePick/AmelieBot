@@ -8,8 +8,7 @@ Module for request objects, but this is not a pattern command implementation.
 
 
 class answer:
-    '''
-    The class is a singleton
+    ''' The class is a singleton
 
     num --- for request processing logic
     if num == 0 > This means exit from the application.
