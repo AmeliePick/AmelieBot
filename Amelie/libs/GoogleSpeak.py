@@ -8,7 +8,7 @@ Due to the algorithm of the library, there is a delay of a few seconds before pl
 '''
 
 from random     import randint
-from libs.tts   import gTTS
+from gtts       import gTTS
 from sys        import exit
 from os         import path as os_path
 from os         import remove
