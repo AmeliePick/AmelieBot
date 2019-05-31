@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from configparser import ConfigParser
+from os           import path as os_path
 
 '''
 Module for creating and parsing the settings file
@@ -8,6 +9,17 @@ Using the module "configparser" creates a file with specific fields and their pr
 The second function reads the value of the required parameter and returns its value for further verification in the chat file(Chat_AI.py).
 
 '''
+
+
+
+
+
+
+
+
+
+
+
 
 class settings:
     ''' The class is a singleton
@@ -31,6 +43,7 @@ class settings:
         return cls.instance
 
 
+
     def createConfig(self, path):
         '''
         Create a config file
@@ -39,7 +52,7 @@ class settings:
         self.config.add_section("Settings")
 
         with open(path, "w") as config_file:
-            config.write(config_file)
+            self.config.write(config_file)
 
 
     def getConfig(self, path, option = "NONE"):
@@ -102,7 +115,80 @@ class settings:
                 text.append(row[1])
                 return ''.join(text)
 
+
+    def createSetting(self):
+        createSettings = open("settings.ini", 'a')
+        createSettings.close()
+
+        self.createConfig("settings.ini")
+
+
+    def setLang(self, path):
+        '''
+        path -- The path where the configuration file is located
+        '''
+
+        # Default settings
+        self.setConfig(path, "lang", "-")
+
+        choose_lang = input("Choose language [RU] of [EN]: ") #delete this
+
+        while(True):
+
+            if choose_lang == "RU":
+                value = "RU"
+                self.setConfig(path, "lang", value)
+                break
+
+            elif choose_lang == "EN":
+                value = "EN"
+                self.setConfig(path, "lang", value)
+                break
+
+            else:
+                choose_lang = input("Choose language [RU] of [EN]: ") #delete this
+                continue
+
+
+    def checkSettings(self):
+        ''' language selection
+        A configuration file is created.
+        Further from it all information is read. 
+        If the file is empty, which means this is the 
+        first launch of the application, the user 
+        is prompted to select the bot language.
+        '''
+    
+        if not os_path.exists("settings.ini"):
+
+            self.createSetting()
+
+            path = "settings.ini"
+    
+
+            self.setConfig(path, "ver", "2.5.2")
+            self.setLang(path)
+
+        elif os_path.exists("settings.ini"):
+            path = "settings.ini"
+            ReadHandle = ''
+
+            # Check for empty settings
+            with open(path, 'r') as handle:
+                ReadHandle = handle.read()
+
+            if ReadHandle == '':
+                # set the default settings
+                self.createConfig("settings.ini")
+                self.setConfig(path, "ver", "2.5.2")
+                self.setLang(path)
+
+            if self.getConfig(path, "lang") == '-':
+                self.setLang(path)
+
+
     def __init__(self):
+        self.checkSettings()
         self.lang = self.getConfig("settings.ini", "lang")
         if self.lang == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:

@@ -33,75 +33,12 @@ def restart():
     execl(exe, exe, *argv)
 
 
-def createSetting():
-    createSettings = open("settings.ini", 'a')
-    createSettings.close()
-
-    createConfig("settings.ini")
 
 
-def setLang(path):
-    '''
-    path -- The path where the configuration file is located
-    '''
-
-    # Default settings
-    SettingsControl.setConfig(path, "lang", "-")
-
-    choose_lang = input("Choose language [RU] of [EN]: ") #delete this
-
-    while(True):
-
-        if choose_lang == "RU":
-            value = "RU"
-            SettingsControl.setConfig(path, "lang", value)
-            break
-
-        elif choose_lang == "EN":
-            value = "EN"
-            SettingsControl.setConfig(path, "lang", value)
-            break
-
-        else:
-            choose_lang = input("Choose language [RU] of [EN]: ") #delete this
-            continue
 
 
-def checkSettings():
-    ''' language selection
-    A configuration file is created.
-    Further from it all information is read. 
-    If the file is empty, which means this is the 
-    first launch of the application, the user 
-    is prompted to select the bot language.
-    '''
-    
-    if not os_path.exists("settings.ini"):
 
-        createSetting()
 
-        path = "settings.ini"
-    
-
-        SettingsControl.setConfig(path, "ver", "2.5.2")
-        setLang(path)
-
-    elif os_path.exists("settings.ini"):
-        path = "settings.ini"
-        ReadHandle = ''
-
-        # Check for empty settings
-        with open(path, 'r') as handle:
-            ReadHandle = handle.read()
-
-        if ReadHandle == '':
-            # set the default settings
-            createConfig("settings.ini")
-            SettingsControl.setConfig(path, "ver", "2.5.2")
-            setLang(path)
-
-        if SettingsControl.getConfig(path, "lang") == '-':
-            setLang(path)
 
 
 def getUpdate():
@@ -138,8 +75,6 @@ def main():
            "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
     print ( 70 * "_")
 
-
-    checkSettings()
 
     getUpdate()
 
