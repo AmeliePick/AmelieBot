@@ -9,16 +9,16 @@ User input is also processed for search engines. Unnecessary part of the phrase 
 
 '''
 
-from random         import choice
-from numpy          import random, arange
-
 from webbrowser     import open as webbrowser_open
 from os             import _exit
-from pickle         import dump
-from pickle         import load
 from subprocess     import Popen
 from re             import sub
 from time           import sleep
+
+from random         import choice
+from numpy          import random, arange
+from pickle         import dump
+from pickle         import load
 
 from sklearn.feature_extraction.text    import TfidfVectorizer
 from sklearn.linear_model               import SGDClassifier
@@ -28,8 +28,6 @@ from sklearn                            import model_selection
 from libs.configParser  import SettingsControl
 from libs.Stem_Res      import Stemm
 from .request_obj       import Output
-
-
 
 
 def LangChoice():
@@ -52,10 +50,7 @@ def LangChoice():
     with open ("../DataBase/answers"+postfix, "r") as Afile:
         ANfile = Afile.readlines()
 
-
-
-# Variables for EditSearch()
-text = []
+    return
 
 
 '''
@@ -64,7 +59,6 @@ Functions for creating and training the neural network to recognize the type of 
 For example: What is the weather today? - Weather. Where is Paris? - Location
 
 '''
-
 def AI():
     global dataSet
 
@@ -72,7 +66,6 @@ def AI():
     for line in dataSet:
         row = line.split(' @ ')
         
-
         Edit['text'] += [row[0]]
         Edit['tag'] += [row[1]]
     
@@ -97,12 +90,10 @@ def training(Edit, Val_split = 0.1):
     nb_valid_samples = int(Val_split * lenght)
 
 
-
     #save the model to disk
     filename = 'modelEN.sav'
     if checkLang == "RU":
         filename = 'model.sav'
-
 
 
     dump(nb_valid_samples, open("models/"+filename, 'wb'))
@@ -165,6 +156,10 @@ def open_AI(Something):
     return ToAnswer
 
 
+'''
+Functions for processing user input based on request type, self-learning
+For example: Hi Amelie - Hello. How are you? - I'm fine, and you?
+'''
 def selfLearning(InputType):
     global checkLang
     getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
@@ -177,43 +172,46 @@ def selfLearning(InputType):
         with open("../DataBase/DataSet_EN.json", "a") as train:
             train.write(getInput)
 
+    return
+
 
 def Answer(ToAnswer):
     tag = []
     text = []
+    url = ""
 
     selfLearning(ToAnswer)
 
-    if ToAnswer == "Search":
-        webbrowser_open('https://www.google.ru/search?q=' + str(EditSearch(Chat_Input, ToAnswer)), new=1)
+    if ToAnswer == "Exit":
+        Output.setNum(0)
+
+    elif ToAnswer == "Search":
+        url = "https://www.google.ru/search?q="
+        webbrowser_open( url + str(EditSearch(Chat_Input, ToAnswer)), new=1)
     
     elif ToAnswer == "Youtube":
-        webbrowser_open('http://www.youtube.com/results?search_query=' + str(Stemm(EditSearch(Chat_Input, ToAnswer))), new=1)
+        url = "http://www.youtube.com/results?search_query="
+        webbrowser_open( url + str(Stemm(EditSearch(Chat_Input, ToAnswer))), new=1)
         
+    # here we can get an empty answer, when the user says a phrase like "open" and nothing more
     elif ToAnswer == "Open" and EditSearch(Chat_Input,  ToAnswer) != '':
         try:
-            Popen(EditedOpen(EditSearch(Chat_Input, ToAnswer)))
+            Popen( getProgrammPath( EditSearch(Chat_Input, ToAnswer ) ) )
             
         except FileNotFoundError:
-        
             if EditedOpen(EditSearch(Chat_Input)) == 1:
-                from modules.exceptions_chat import except_for_add
-                except_for_add()
+                from modules.exceptions_chat import programmNotFound
 
-                search = EditedOpen(EditSearch(Chat_Input, ToAnswer))
+                programmNotFound()
+                getProgrammPath(EditSearch(Chat_Input, ToAnswer))
 
-        except OSError as e:
-            if(e.winerror == 87):
+        except OSError as os:
+            if(os.winerror == 87):
                 ToAnswer = "Unknown"
 
-    elif ToAnswer == "Exit":
-        Output.setNum(0)
-        
-        
+
     # --- Get answer ---
     for line in ANfile:
-
-           
         row = line.split(' @ ')
         tag.append(row[0])
 
@@ -241,18 +239,15 @@ def Answer(ToAnswer):
 
 
 '''
-Net search functions
-
-The processing function of the search query in the search engines.
-
-User input is supplied to the function input and unnecessary search words are removed from it. 
-For example: Find music on YouTube - it will be just music
-
-
+For request editing
 '''
-
-
-def EditedOpen(search):
+def getProgrammPath(search):
+    ''' Get the programm's path
+    The function parse the file from the database
+    with the names of programs and paths to .exe file
+    If the file contains the specified program, 
+    the function returns the path to the exe program.
+    '''
     Name = ''
     Link = ''
 
@@ -267,28 +262,40 @@ def EditedOpen(search):
                
     if search in Name:
         return Link
+    
+    else:
+        return
 
 
 def EditSearch(Input, ToAnswer = ''):
+    '''Input editing
+    Removes from the user input phrases that are in the database.
+    This results in a clean query for a program search operation or a web query.
+
+    Example:
+            Input: open Google, find summer wallpaper
+            Result: Google, summer wallpaper
+    '''
+
     global clearSearch
+    deleteTextFromInput = []
+
     for i in clearSearch:
         
         row = i.split(' @ ')
        
         if ToAnswer == "Youtube" and "Youtube" in i:
-            text.append(row[0])
-            
+            deleteTextFromInput.append(row[0])     
             
         elif ToAnswer == "Search" and "Search" in i:
-            text.append(row[0])
-
+            deleteTextFromInput.append(row[0])
 
         elif ToAnswer == "Open" and "Open" in i:
-            text.append(row[0])
+            deleteTextFromInput.append(row[0])
            
 
-    for item in text:
-        if item in text and item in Input:              
+    for item in deleteTextFromInput:
+        if item in deleteTextFromInput and item in Input:              
             An = Input.replace(item, '')
 
             
