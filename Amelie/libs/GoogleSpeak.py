@@ -14,7 +14,7 @@ from os         import path as os_path
 from os         import remove
 from time       import sleep
 
-from libs.AudioManagement import playAudio
+from libs.AudioManagement import playAudio, initAudio
 
 
 
@@ -35,6 +35,7 @@ def speak(speech):
     answer.save(file)
 
     #play sound
+    initAudio()
     playAudio(file)
 
     if speech.getNum() == 0:

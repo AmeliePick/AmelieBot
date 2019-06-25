@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import pyglet
-from pyglet.media import Player
-import pyglet
 
-from os import getenv
+from os             import getenv
+from pyglet.media   import Player
 
 
-def playAudio(sound, reps=1):
-    #TODO: REBUILD HERE
+def initAudio():
+
     dir = "libs/"
     dll_name = ""
     
@@ -18,6 +17,9 @@ def playAudio(sound, reps=1):
         dll_name = "avbin.dll"
 
     pyglet.lib.load_library(dir + dll_name)
+
+
+def playAudio(sound, reps=1):
 
     player = Player()
     song = pyglet.media.load(sound,streaming=False)
