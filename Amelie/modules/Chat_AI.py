@@ -12,7 +12,6 @@ User input is also processed for search engines. Unnecessary part of the phrase 
 from webbrowser     import open as webbrowser_open
 from os             import _exit
 from subprocess     import Popen
-from re             import sub
 from time           import sleep
 
 from random         import choice
@@ -25,7 +24,8 @@ from sklearn.linear_model               import SGDClassifier
 from sklearn.pipeline                   import Pipeline
 from sklearn                            import model_selection
 
-from libs.AIChatKit import getProgrammPath, EditSearch
+from libs.AIChatKit     import dataSet, ANfile, checkLang
+from libs.AIChatKit     import getProgrammPath, EditSearch
 from libs.configParser  import SettingsControl
 from libs.Stem_Res      import Stemm
 from .request_obj       import Output
@@ -118,9 +118,8 @@ def open_AI(Something):
 
     #give a type of input
     mass = []
-    
-    
     mass.append(Something)
+
 
     global Chat_Input
     Chat_Input = Something
@@ -139,27 +138,13 @@ def open_AI(Something):
 Functions for processing user input based on request type, self-learning
 For example: Hi Amelie - Hello. How are you? - I'm fine, and you?
 '''
-def selfLearning(InputType):
-    global checkLang
-    getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
 
-    if checkLang == "RU":
-        with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
-            train.write(getInput)
-
-    elif checkLang == "EN":
-        with open("../DataBase/DataSet_EN.json", "a") as train:
-            train.write(getInput)
-
-    return
 
 
 def Answer(ToAnswer):
     tag = []
     text = []
     url = ""
-
-    selfLearning(ToAnswer)
 
     if ToAnswer == "Exit":
         Output.setNum(0)

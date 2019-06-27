@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from configparser import ConfigParser
-from os           import path as os_path
+from os import path as os_path
+import configparser
 
 '''
 Module for creating and parsing the settings file
@@ -9,16 +9,6 @@ Using the module "configparser" creates a file with specific fields and their pr
 The second function reads the value of the required parameter and returns its value for further verification in the chat file(Chat_AI.py).
 
 '''
-
-
-
-
-
-
-
-
-
-
 
 
 class settings:
@@ -33,7 +23,9 @@ class settings:
 
     ReadFile = ''
     lang = ''
-    config = ConfigParser()
+    path = ''
+    config = configparser.ConfigParser()
+
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -43,59 +35,30 @@ class settings:
         return cls.instance
 
 
-
-    def createConfig(self, path):
-        '''
-        Create a config file
-        '''
-
-        self.config.add_section("Settings")
-
-        with open(path, "w") as config_file:
-            self.config.write(config_file)
-
-
-    def getConfig(self, path, option = "NONE"):
+    def getConfig(self, path: str, option: str):
         '''
         Getting values from settings
         '''
 
         self.config.read(path)
 
-        if(option == "lang"):
-            lang = self.config.get("Settings", "language")
-
-            return lang
-
-        if(option == "ver"):
-            newVer = self.config.get("Settings", "ver")
-
-            return newVer
-
-        if(option == "modules"):
-            modules = self.config.get("Settings", "modules")
-
-            return modules
+        return self.config.get("Settings", option)
 
 
-    def setConfig(self, path, option, value):
+    def setConfig(self, path: str, option: str, value):
         '''
         Sets the values of settings in the configuration file
         '''
 
         self.config.read(path)
 
-        if(option == "lang"):
-            self.config.set("Settings", "language", value)
+        if not self.config.has_section(option):
+            self.config.set("Settings", option, value)
 
-        elif(option == "ver"):
-            self.config.set("Settings", "ver", value)
-
-        elif(option == "modules"):
-            self.config.set("Settings", "modules", value)
-
-        with open(path, "w") as config_file:
-            self.config.write(config_file)
+            with open(path, "w") as config_file:
+                self.config.write(config_file)
+        
+        return
 
 
     def Print(self, value):
@@ -116,14 +79,18 @@ class settings:
                 return ''.join(text)
 
 
-    def createSetting(self):
-        createSettings = open("settings.ini", 'a')
+    def createSetting(self, path: str):
+        self.path = path
+
+        createSettings = open(path, 'a')
         createSettings.close()
 
-        self.createConfig("settings.ini")
+        self.config.add_section("Settings")
+        with open(path, "w") as config_file:
+            self.config.write(config_file)
 
 
-    def setLang(self, path):
+    def setLang(self, path: str):
         '''
         path -- The path where the configuration file is located
         '''
@@ -158,19 +125,17 @@ class settings:
         first launch of the application, the user 
         is prompted to select the bot language.
         '''
-    
-        if not os_path.exists("settings.ini"):
+        path = "settings.ini"
 
-            self.createSetting()
+        if not os_path.exists(path):
 
-            path = "settings.ini"
-    
+            self.createSetting(path)
+
 
             self.setConfig(path, "ver", "2.5.2")
             self.setLang(path)
 
-        elif os_path.exists("settings.ini"):
-            path = "settings.ini"
+        elif os_path.exists(path):
             ReadHandle = ''
 
             # Check for empty settings
@@ -197,6 +162,6 @@ class settings:
         elif self.lang == "EN":
             with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
                 self.ReadFile = file.readlines()
-
+        
 
 SettingsControl = settings()

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*
 
-from libs.configParser import SettingsControl
+
 
 '''
 For request editing
 '''
 def LangChoice():
     #--- Language check --- 
+    from libs.configParser import SettingsControl
+
     global dataSet, clearSearch, ANfile
     global checkLang
 
@@ -63,6 +65,7 @@ def EditSearch(Input, ToAnswer = ''):
             Input: open Google, find summer wallpaper
             Result: Google, summer wallpaper
     '''
+    from re import sub
 
     global clearSearch
     deleteTextFromInput = []
@@ -83,13 +86,29 @@ def EditSearch(Input, ToAnswer = ''):
 
     for item in deleteTextFromInput:
         if item in deleteTextFromInput and item in Input:              
-            An = Input.replace(item, '')
+            Editedtext = Input.replace(item, '')
 
             
     try:
-        An = sub('[?!]', '', An)
-
-        return An.lstrip().capitalize()
+        Editedtext = sub('[?!]', '', Editedtext)
 
     except:
-        return Input
+        Editedtext = Input
+
+
+    return Editedtext.lstrip().capitalize()
+
+
+def selfLearning(InputType):
+    global checkLang
+    getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
+
+    if checkLang == "RU":
+        with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
+            train.write(getInput)
+
+    elif checkLang == "EN":
+        with open("../DataBase/DataSet_EN.json", "a") as train:
+            train.write(getInput)
+
+    return
