@@ -4,20 +4,20 @@
 Log file maintenance
 '''
 from traceback      import format_exc
+from datetime       import datetime
 from sys            import exit as sys_exit
 
-import configparser
+from libs.configParser      import Config
 
 
 
-class SessionLog:
+
+class SessionLog(Config):
     ''' The class is a singleton
 
 
     '''
 
-    path = ''
-    config = configparser.ConfigParser()
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -27,33 +27,24 @@ class SessionLog:
         return cls.instance
 
 
-
-    def __init__():
-        path = "session_journal.log"
-        if not sys_exit(path):
-            log =  configParser.settings()
-
-            log.createSetting(path)
-            log.createConfig(path)
-
-
-    def setConfig(self, option: str):
-
-        self.config.read(path)
-
-        if not self.config.has_section(option):
-            self.config.set(option, value)
-
-            
-
-
-    def SessionCollector(option: str, value):
+    def SessionCollector(option: str, value) -> None:
         pass
 
+    def __init__(self):
+        path = "session_journal.log"
+
+        if not sys_exit(path):
+            log =  configParser.settings()
+            log.createSetting(path)
 
 
+        # clearing the session log file from old records
+        with open(self.path, 'w') as log_file:
+            log.file.close()
 
-
+        # Set the date of the bot's latest start
+        date = datetime.now()
+        self.setConfig("Latest Start", date)
 
 
 

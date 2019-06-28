@@ -3,7 +3,7 @@
 # === Program start module ===
 
 from libs.configParser import SettingsControl
-from .Chat_AI import LangChoice
+from libs.AIChatKit import LangChoice
 
 
 '''

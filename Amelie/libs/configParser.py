@@ -10,34 +10,13 @@ The second function reads the value of the required parameter and returns its va
 
 '''
 
-
-class settings:
-    ''' The class is a singleton
-
-    ReadFile --- Stores data from 
-    a file considering language settings
-
-    lang --- Stores the current language setting
-
-    '''
-
-    ReadFile = ''
-    lang = ''
-    path = ''
+class Config:
     config = configparser.ConfigParser()
-
-
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(settings, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instance
-
+    path = ''
 
     def getConfig(self, path: str, option: str):
-        '''
-        Getting values from settings
+        ''' Getting values from settings
+
         '''
 
         self.config.read(path)
@@ -45,9 +24,9 @@ class settings:
         return self.config.get("Settings", option)
 
 
-    def setConfig(self, path: str, option: str, value):
-        '''
-        Sets the values of settings in the configuration file
+    def setConfig(self, path: str, option: str, value) -> None:
+        ''' Sets the values of settings in the configuration file
+
         '''
 
         self.config.read(path)
@@ -61,13 +40,48 @@ class settings:
         return
 
 
-    def Print(self, value):
+    def createSetting(self, path: str) -> None:
+        self.path = path
+
+        createSettings = open(path, 'a')
+        createSettings.close()
+
+        self.config.add_section("Settings")
+        with open(path, "w") as config_file:
+            self.config.write(config_file)
+
+        return
+
+
+class settings(Config):
+    ''' The class is a singleton
+
+    ReadFile --- Stores data from a file considering language settings
+
+    lang     --- Stores the current language setting
+
+    '''
+
+    ReadFile = ''
+    lang = ''
+
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(settings, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instance
+
+
+    def Print(self, value: str) -> str:
         '''
         The function for service expressions, 
         so that when changing the language, 
         the text in the whole program changes
 
-        value - Value of expression
+        value - name of expression
+
         '''
         
         text = []
@@ -79,20 +93,17 @@ class settings:
                 return ''.join(text)
 
 
-    def createSetting(self, path: str):
-        self.path = path
+        '''If the error in the name of the expression
+           By recursion it finds the value of the expression by tag "error"
 
-        createSettings = open(path, 'a')
-        createSettings.close()
-
-        self.config.add_section("Settings")
-        with open(path, "w") as config_file:
-            self.config.write(config_file)
+        '''
+        return self.Print("error")
 
 
-    def setLang(self, path: str):
+    def setLang(self, path: str) -> None:
         '''
         path -- The path where the configuration file is located
+
         '''
 
         # Default settings
@@ -117,13 +128,12 @@ class settings:
                 continue
 
 
-    def checkSettings(self):
+    def checkSettings(self) -> None:
         ''' language selection
-        A configuration file is created.
-        Further from it all information is read. 
-        If the file is empty, which means this is the 
-        first launch of the application, the user 
+        A configuration file is created. Further from it all information is read. 
+        If the file is empty, which means this is the first launch of the application, the user 
         is prompted to select the bot language.
+
         '''
         path = "settings.ini"
 
