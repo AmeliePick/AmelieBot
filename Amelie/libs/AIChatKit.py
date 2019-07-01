@@ -99,16 +99,24 @@ def EditSearch(Input, ToAnswer = ''):
     return Editedtext.lstrip().capitalize()
 
 
-def selfLearning(InputType):
+def selfLearning(text: dict) -> None:
+    ''' Word processing and write down to DB's file
+
+    '''
+
     global checkLang
-    getInput = str(Chat_Input) + ' @ ' + InputType + "\n"
+    getInput = []
+
+    
+    for txt, tag in text.items():
+        mask = '\n' + txt + ' @ ' + tag
+        getInput.append(mask)
+
 
     if checkLang == "RU":
         with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
-            train.write(getInput)
+            train.writelines(getInput)
 
     elif checkLang == "EN":
         with open("../DataBase/DataSet_EN.json", "a") as train:
-            train.write(getInput)
-
-    return
+            train.writelines(getInput)

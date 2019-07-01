@@ -25,7 +25,7 @@ from sklearn.pipeline                   import Pipeline
 from sklearn                            import model_selection
 
 from libs.AIChatKit     import dataSet, ANfile, checkLang
-from libs.AIChatKit     import getProgrammPath, EditSearch
+from libs.AIChatKit     import getProgrammPath, EditSearch, selfLearning
 from libs.configParser  import SettingsControl
 from libs.Stem_Res      import Stemm
 from .request_obj       import Output
@@ -38,6 +38,8 @@ Functions for creating and training the neural network to recognize the type of 
 For example: What is the weather today? - Weather. Where is Paris? - Location
 
 '''
+dataSet_tmp = {}
+
 def AI():
     global dataSet
 
@@ -131,6 +133,9 @@ def open_AI(Something):
         
     ToAnswer = ''.join(pred).replace('\n', '')
 
+    global dataSet_tmp
+    dataSet_tmp[Chat_Input] = ToAnswer
+
     return ToAnswer
 
 
@@ -142,10 +147,14 @@ For example: Hi Amelie - Hello. How are you? - I'm fine, and you?
 
 
 def Answer(ToAnswer):
+    global Chat_Input
+    global dataSet_tmp
+    
     tag = []
     text = []
     url = ""
 
+  
     if ToAnswer == "Exit":
         Output.setNum(0)
 
@@ -185,6 +194,11 @@ def Answer(ToAnswer):
     try:
         Output.setText(choice(text))
         print ("\n<---", Output.getOut())
+
+        # add phrases in DB
+        if Output.getNum() == 0 :
+            selfLearning(dataSet_tmp)
+            dataSet_tmp.clear()
 
     except IndexError:
             Unknown = []
