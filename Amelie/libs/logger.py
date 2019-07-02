@@ -5,7 +5,7 @@ Log file maintenance
 '''
 from traceback      import format_exc
 from datetime       import datetime
-from sys            import exit as sys_exit
+from os             import path as os_path
 
 from libs.configParser      import Config
 
@@ -17,36 +17,48 @@ class SessionLog(Config):
 
 
     '''
-
+    section = "Records"
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(settings, cls).__new__(cls)
+            cls.instance = super(SessionLog, cls).__new__(cls)
             return cls.instance
             
         return cls.instance
 
 
-    def SessionCollector(option: str, value) -> None:
-        pass
+    def SessionCollector(self, option: str, value: str) -> None:
+        self.setConfig(self.path, option, value, self.section)
+
 
     def __init__(self):
+        super().__init__()
+
         path = "session_journal.log"
+        section = "Records"
 
-        if not sys_exit(path):
-            log =  configParser.settings()
-            log.createSetting(path)
+        if not os_path.exists(path):
+            self.createSetting(path, self.section)
 
+        else:
+            # clearing the session log file from old records
+            with open(path, 'w') as log_file:
+                log_file.close()
+            self.config.add_section(self.section)
+            self.path = path
 
-        # clearing the session log file from old records
-        with open(self.path, 'w') as log_file:
-            log.file.close()
 
         # Set the date of the bot's latest start
         date = datetime.now()
-        self.setConfig("Latest Start", date)
+        self.setConfig(path, "Latest start", str(date), section)
 
 
+    def __del__(self):
+        with open(path, "w") as log_file:
+            self.config.write(log_file)
+
+
+sessionLogger = SessionLog()
 
 
 def LogWrite():

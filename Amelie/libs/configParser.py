@@ -11,7 +11,7 @@ The second function reads the value of the required parameter and returns its va
 '''
 
 class Config:
-    config = configparser.ConfigParser()
+    config = ''
     path = ''
 
     def getConfig(self, path: str, option: str):
@@ -24,15 +24,16 @@ class Config:
         return self.config.get("Settings", option)
 
 
-    def setConfig(self, path: str, option: str, value) -> None:
+    def setConfig(self, path: str, option: str, value, section: str) -> None:
         ''' Sets the values of settings in the configuration file
 
         '''
 
         self.config.read(path)
 
+
         if not self.config.has_section(option):
-            self.config.set("Settings", option, value)
+            self.config.set(section, option, value)
 
             with open(path, "w") as config_file:
                 self.config.write(config_file)
@@ -40,17 +41,21 @@ class Config:
         return
 
 
-    def createSetting(self, path: str) -> None:
+    def createSetting(self, path: str, section: str) -> None:
         self.path = path
 
         createSettings = open(path, 'a')
         createSettings.close()
 
-        self.config.add_section("Settings")
+        self.config.add_section(section)
         with open(path, "w") as config_file:
             self.config.write(config_file)
 
         return
+
+
+    def __init__(self):
+        self.config = configparser.ConfigParser()
 
 
 class settings(Config):
@@ -163,6 +168,7 @@ class settings(Config):
 
 
     def __init__(self):
+        super().__init__()
         self.checkSettings()
         self.lang = self.getConfig("settings.ini", "lang")
         if self.lang == "RU":
