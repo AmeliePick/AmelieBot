@@ -25,19 +25,13 @@ from modules.set_username       import set_username
 from libs.configParser          import SettingsControl
 from libs.update                import checkUpdate, download
 from libs.logger                import LogWrite
+from libs.time                  import stopWatch
 
 
 def restart():
     #restart of the bot
     exe = executable
     execl(exe, exe, *argv)
-
-
-
-
-
-
-
 
 
 
@@ -93,6 +87,7 @@ def main():
                 print(SettingsControl.Print("Learning"))
 
                 if SettingsControl.getConfig("settings.ini", "lang") == "RU":
+                    stopWatch.start()
                     from modules.Chat_AI_with_syn import speechRU, calibration
                     calibration()
 
@@ -101,6 +96,7 @@ def main():
                         continue
 
                 else:
+                    stopWatch.start()
                     from modules.Chat_AI_with_syn import speech, calibration
                     calibration()
 
@@ -110,6 +106,8 @@ def main():
 
             elif On == "N" or On ==  "n":
                 print(str(SettingsControl.Print("Learning")))
+
+                stopWatch.start()
                 from modules.Chat_AI import Enter, open_AI, Answer
 
                 while(True):

@@ -16,8 +16,7 @@ from time           import sleep
 
 from random         import choice
 from numpy          import random, arange
-from pickle         import dump
-from pickle         import load
+from pickle         import dump, load
 
 from sklearn.feature_extraction.text    import TfidfVectorizer
 from sklearn.linear_model               import SGDClassifier
@@ -29,6 +28,8 @@ from libs.AIChatKit     import getProgrammPath, EditSearch, selfLearning
 from libs.configParser  import SettingsControl
 from libs.Stem_Res      import Stemm
 from .request_obj       import Output
+from libs.time          import stopWatch
+from libs.logger        import sessionLogger
 
 
 
@@ -38,8 +39,6 @@ Functions for creating and training the neural network to recognize the type of 
 For example: What is the weather today? - Weather. Where is Paris? - Location
 
 '''
-dataSet_tmp = {}
-
 def AI():
     global dataSet
 
@@ -90,8 +89,16 @@ def training(Edit, Val_split = 0.1):
 
 
 def Enter():
+    global stopWatch
+    global sessionLogger
+
     while(True):
         try:
+            if(stopWatch):
+                sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
+                del(sessionLogger)
+                stopWatch = None
+
             Input = str(input('\n---> ').capitalize())
             
             if Input == '' or Input == '\n':
@@ -108,6 +115,7 @@ def Enter():
         return Input
 
 
+dataSet_tmp = {}
 def open_AI(Something):
     data = AI()
     D = training(data)
