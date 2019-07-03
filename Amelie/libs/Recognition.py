@@ -2,7 +2,7 @@
 from os import system
 import speech_recognition as sr
 from .configParser import SettingsControl
-from libs.AudioManagement import playAudio
+from libs.AudioManagement import *
 
 '''
 Regonizer module
@@ -17,6 +17,7 @@ if SettingsControl.getConfig("settings.ini", "lang") == "RU":
 else:
     valuelang = "en_US"
 
+initAudio() #TODO: to rebuild 
 
 # Microphone and Recognition
 r = sr.Recognizer()
@@ -32,9 +33,6 @@ def calibration():
 
 
 def REG():
-    global Chat_Input
-
-
     #Listening to the microphone
     with micro as source:
         playAudio('../Res/Sounds/readytohear.mp3')
