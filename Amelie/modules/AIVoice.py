@@ -7,16 +7,16 @@ The function returns the value from REG in the open_AI (for typing a question) i
 '''
 
 
-from modules.Chat_AI        import Answer, open_AI
+from modules.chatMain       import openChat
 from libs.Recognition       import REG, calibration
 from libs.Speak             import speak
 from libs.GoogleSpeak       import speak as RUSpeak
 
 def speech():
 
-    return speak(Answer(open_AI(REG())))
+    return speak( openChat(REG()) )
 
 def speechRU():
     
-    return RUSpeak(Answer(open_AI(REG())))
+    return RUSpeak( openChat(REG()) )
 
