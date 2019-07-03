@@ -88,7 +88,7 @@ def main():
 
                 if SettingsControl.getConfig("settings.ini", "lang") == "RU":
                     stopWatch.start()
-                    from modules.Chat_AI_with_syn import speechRU, calibration
+                    from modules.AIVoice import speechRU, calibration
                     calibration()
 
                     while (True):
@@ -97,7 +97,7 @@ def main():
 
                 else:
                     stopWatch.start()
-                    from modules.Chat_AI_with_syn import speech, calibration
+                    from modules.AIVoice import speech, calibration
                     calibration()
 
                     while (True):
@@ -108,10 +108,10 @@ def main():
                 print(str(SettingsControl.Print("Learning")))
 
                 stopWatch.start()
-                from modules.Chat_AI import Enter, open_AI, Answer
+                from modules.chatMain import openChat
 
                 while(True):
-                    Chat = Answer(open_AI(Enter()))
+                    Chat = openChat()
 
                     if Chat.getNum() == 0:
                         sleep(1)
