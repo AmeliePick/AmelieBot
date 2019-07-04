@@ -22,17 +22,20 @@ from os     import remove
 
 from modules.entry_input        import start
 from modules.set_username       import set_username
+from modules.AIProcessing       import answer
+from modules.AICore             import chatOBJ
+
 from libs.configParser          import SettingsControl
 from libs.update                import checkUpdate, download
 from libs.logger                import LogWrite
 from libs.time                  import stopWatch
 
 
+
 def restart():
     #restart of the bot
     exe = executable
     execl(exe, exe, *argv)
-
 
 
 def getUpdate():
@@ -55,11 +58,14 @@ def getUpdate():
     print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
 
 
+def launchChat(voice: str = ""):
+        chatOBJ.Enter(voice)
+        chatOBJ.open_AI()
+
+        return answer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getDataSet_new())
+
+
 def main():
-
-
-    # ----- Bot -----
-
     print ( 70 * "_")
     print ("\t\t                         _ _       \n" +
            "\t\t    /\                  | (_)      \n" +
@@ -71,7 +77,6 @@ def main():
 
 
     getUpdate()
-
     set_username()
 
     # ----- Start the bot -----
@@ -81,42 +86,35 @@ def main():
     #--- Chat
     print(SettingsControl.Print("Voice_control"))
     On = input ("--> ")
+    print(SettingsControl.Print("Learning"))
+
     while (True):
         try:
             if On == "Y" or On ==  "y":
-                print(SettingsControl.Print("Learning"))
+                from libs.Recognition   import REG, calibration
 
                 if SettingsControl.getConfig("settings.ini", "lang") == "RU":
-                    stopWatch.start()
-                    from modules.AIVoice import speechRU, calibration
-                    calibration()
+                    from libs.RuSpeak import speak
 
+                    calibration()
                     while (True):
-                        speechRU()
+                        speak(launchChat(REG()))
                         continue
-
                 else:
-                    stopWatch.start()
-                    from modules.AIVoice import speech, calibration
-                    calibration()
+                    from libs.Speak import speak
 
+                    calibration()
                     while (True):
-                        speech()
+                        speak(launchChat(REG()))
                         continue
 
             elif On == "N" or On ==  "n":
-                print(str(SettingsControl.Print("Learning")))
-
                 stopWatch.start()
-                from modules.chatMain import openChat
-
                 while(True):
-                    Chat = openChat()
-
+                    Chat = launchChat()
                     if Chat.getNum() == 0:
                         sleep(1)
-                        _exit(0)
-                    
+                        _exit(0)          
             else:
                 print(SettingsControl.Print("WrongInput"))
                 On = input("--> ")
