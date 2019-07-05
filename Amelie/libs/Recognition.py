@@ -39,17 +39,19 @@ def REG():
         print(SettingsControl.Print("SaySTH"))
         audio = r.listen(source)
 
-        #Speech to text recording
-    try:
-        Chat_Input = r.recognize_google(audio, language=valuelang)
-        print("---> ", Chat_Input)
+    #Speech to text recording
+    while(True):
+        try:
+            Chat_Input = r.recognize_google(audio, language=valuelang)
+            print("---> ", Chat_Input)
         
-        return Chat_Input.capitalize()
+            return Chat_Input.capitalize()
 
-    except sr.UnknownValueError:
-        print(SettingsControl.Print("errSay"))
-        system("pause")
+        except sr.UnknownValueError:
+            print(SettingsControl.Print("errSay"))
+            system("pause")
+            continue
 
-    except sr.RequestError:
-        raise ConnectionError 
+        except sr.RequestError:
+            raise ConnectionError 
         
