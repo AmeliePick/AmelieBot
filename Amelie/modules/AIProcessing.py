@@ -5,7 +5,7 @@ from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
 
 from libs.Stem_Res      import Stemm
-from .AIFiles           import *
+from .AIFiles           import dataSet, clearSearch, ANfile, checkLang
 
 class Answer:
     ''' The class is a singleton
@@ -63,6 +63,7 @@ def LangChoice():
     with open("../DataBase/DataSet_"+postfix, "r", encoding="utf8") as train:
         for line in train:
             dataSet.append(line)
+
     
     with open ("../DataBase/ClearSearch"+postfix, "r") as file:
         for line in file:
@@ -72,6 +73,7 @@ def LangChoice():
     with open ("../DataBase/answers"+postfix, "r") as Afile:
         for line in Afile:
             ANfile.append(line)
+
 
     return
 
@@ -178,7 +180,6 @@ For example: Hi Amelie - Hello. How are you? - I'm fine, and you?
 Output = Answer()
 
 def answer(input: str, inputType: str, dataSet_new: dict) -> Answer:
-    
     tag = []
     text = []
     url = ""

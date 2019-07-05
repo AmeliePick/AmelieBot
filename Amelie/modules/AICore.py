@@ -16,19 +16,13 @@ from sklearn.feature_extraction.text    import TfidfVectorizer #slow loading
 from sklearn.linear_model               import SGDClassifier
 from sklearn.pipeline                   import Pipeline
 
-from libs.time          import stopWatch
-from libs.logger        import sessionLogger
-from .AIFiles           import dataSet, checkLang
-
+from .AIFiles   import dataSet, checkLang
 
 class Chat:
-    input:          str
-    inputType:      str
-    dataSet_new:    dict
-
     input = ""
     inputType = ""
     dataSet_new = {}
+
 
     def getInput(self) -> str:
         return self.input
@@ -46,7 +40,7 @@ class Chat:
     For example: What is the weather today? - Weather. Where is Paris? - Location
 
     '''
-    def AI(self):
+    def AI(self) -> dict:
         global dataSet
 
         Edit = {'text': [], 'tag':[]}
@@ -60,13 +54,11 @@ class Chat:
         return Edit
 
 
-    def training(self, Edit, Val_split = 0.1):
+    def training(self, Edit, Val_split = 0.1) -> dict:
         global checkLang
 
         lenght = len(Edit['text'])
-    
         indexes = arange(lenght)
-
         random.shuffle(indexes)
 
         X = [Edit['text'][i]
@@ -81,8 +73,6 @@ class Chat:
         filename = 'modelEN.sav'
         if checkLang == "RU":
             filename = 'model.sav'
-
-
         dump(nb_valid_samples, open("models/"+filename, 'wb'))
     
         #load the model from disk
@@ -96,16 +86,7 @@ class Chat:
 
 
     def Enter(self, voice: str = "") -> None:
-        global stopWatch
-        global sessionLogger
-
         while(True):
-            if(stopWatch):
-                sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
-
-                del(sessionLogger)
-                stopWatch = None
-            
             if(voice == ""):
                 self.input = str(input('\n---> ').capitalize())
                 if self.input == '' or self.input == '\n' or self.input == ' ':
@@ -140,5 +121,3 @@ class Chat:
         self.inputType = ''.join(pred).replace('\n', '')
 
         self.dataSet_new[self.input] = self.inputType
-
-chatOBJ = Chat()
