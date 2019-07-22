@@ -17,8 +17,6 @@ if SettingsControl.getConfig("settings.ini", "lang") == "RU":
 else:
     valuelang = "en_US"
 
-initAudio() #TODO: to rebuild 
-
 # Microphone and Recognition
 r = sr.Recognizer()
 micro = sr.Microphone()
@@ -28,8 +26,13 @@ def calibration():
      #Noise calibration
      print(SettingsControl.Print("Silence"))
 
-     with micro as source:
-        r.adjust_for_ambient_noise(source)
+     try:
+         with micro as source:
+            r.adjust_for_ambient_noise(source)
+     except OSError:
+        print(SettingsControl.Print("microAccesDenied"))
+        system("pause")
+        calibration()
 
 
 def REG():
