@@ -22,10 +22,9 @@ from os     import remove
 
 from modules.entry_input        import start
 from modules.set_username       import set_username
-from modules.AIProcessing       import answer
-from modules.AICore             import chatOBJ
 
 from libs.configParser          import SettingsControl
+from libs.logger                import sessionLogger
 from libs.update                import checkUpdate, download
 from libs.logger                import LogWrite
 from libs.time                  import stopWatch
@@ -58,11 +57,7 @@ def getUpdate():
     print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
 
 
-def launchChat(voice: str = ""):
-        chatOBJ.Enter(voice)
-        chatOBJ.open_AI()
 
-        return answer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getDataSet_new())
 
 
 def main():
@@ -86,12 +81,37 @@ def main():
     #--- Chat
     print(SettingsControl.Print("Voice_control"))
     On = input ("--> ")
+
     print(SettingsControl.Print("Learning"))
+    stopWatch.start()
+    from modules.AIProcessing       import answer
+    from modules.AICore             import Chat
+
+    chatOBJ = Chat()
+
+
+    def launchChat(voice: str = ""):
+        global stopWatch
+        global sessionLogger
+
+        if(stopWatch):
+            sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
+
+            del(sessionLogger)
+            stopWatch = None
+        chatOBJ.Enter(voice)
+        chatOBJ.open_AI()
+
+        return answer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getDataSet_new())
+    
 
     while (True):
         try:
             if On == "Y" or On ==  "y":
                 from libs.Recognition   import REG, calibration
+                from libs.AudioManagement import initAudio
+
+                initAudio()
 
                 if SettingsControl.getConfig("settings.ini", "lang") == "RU":
                     from libs.RuSpeak import speak
@@ -109,10 +129,9 @@ def main():
                         continue
 
             elif On == "N" or On ==  "n":
-                stopWatch.start()
                 while(True):
-                    Chat = launchChat()
-                    if Chat.getNum() == 0:
+                    сhat = launchChat()
+                    if сhat.getNum() == 0:
                         sleep(1)
                         _exit(0)          
             else:
