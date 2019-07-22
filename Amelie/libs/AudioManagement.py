@@ -3,12 +3,13 @@
 import pyglet
 
 from os             import getenv
-from pyglet.media   import Player
+from .pyglet.player  import Player
+
 
 
 def initAudio():
 
-    dir = "libs/"
+    dir = "libs\\"
     dll_name = ""
     
     if ("64" in getenv('PROCESSOR_ARCHITECTURE')) or ("64" in getenv('PROCESSOR_ARCHITEW6432')): 
@@ -20,15 +21,19 @@ def initAudio():
 
 
 def playAudio(sound, reps=1):
-
     player = Player()
-    song = pyglet.media.load(sound,streaming=False)
-    for i in range(reps):
-        player.queue(song)
+    _song = pyglet.media.load(sound)
+    player.queue(_song)
   
     player.play()
+    
     def callback(dt):
         pyglet.app.exit()
-  
-    pyglet.clock.schedule_once(callback,song.duration*reps)
+
+    pyglet.clock.schedule_once(callback, _song.duration*reps)
     pyglet.app.run()
+
+    return player
+
+    
+    
