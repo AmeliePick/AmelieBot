@@ -24,3 +24,4 @@ isUpdate # I have new updates ^-^
 istUpdate # No new updates
 crash # An unexpected error has occurred. Rebooting...
 error # Error ¯\_(-_-)_/¯
+microAccesDenied # enable/disable the access to the microphone in Setting > Confidentiality > Microphone(Windows 10)
