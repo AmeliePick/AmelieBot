@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pyglet
+from time   import sleep
 
 from os             import getenv
 from .pyglet.player  import Player
@@ -31,7 +32,10 @@ def playAudio(sound, reps=1):
         pyglet.app.exit()
 
     pyglet.clock.schedule_once(callback, _song.duration*reps)
-    pyglet.app.run()
+    #TODO: fix here for TTSWatson response
+    #pyglet.app.run()
+    sleep(0.5)
+    
 
     return player
 
