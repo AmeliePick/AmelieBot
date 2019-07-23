@@ -36,14 +36,14 @@ def calibration():
 
 
 def REG():
-    #Listening to the microphone
-    with micro as source:
-        playAudio('../Res/Sounds/readytohear.mp3')
-        print(SettingsControl.Print("SaySTH"))
-        audio = r.listen(source)
-
-    #Speech to text recording
     while(True):
+        #Listening to the microphone
+        with micro as source:
+            playAudio('../Res/Sounds/readytohear.mp3')
+            print(SettingsControl.Print("SaySTH"))
+            audio = r.listen(source)
+
+        #Speech to text recording
         try:
             Chat_Input = r.recognize_google(audio, language=valuelang)
             print("---> ", Chat_Input)
