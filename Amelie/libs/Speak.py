@@ -4,9 +4,9 @@
 
 from pyaudio import PyAudio
 from requests import get
-from sys import exit
 from ibm_watson import TextToSpeechV1
-from libs.AudioManagement import *
+
+from libs.AudioManagement import playAudio, _exit
 
 
 
@@ -25,9 +25,10 @@ def speak(Answer):
         audio = text_to_speech.synthesize(text=Answer.getOut(), voice='en-US_AllisonVoice', accept='audio/mp3')
         audio_file.write(audio.get_result().content)
 
-    playAudio('sound.mp3')
+
+    player = playAudio('sound.mp3')
 
         
     
     if Answer.getNum() == 0:
-        exit(0)
+        _exit('sound.mp3', player)
