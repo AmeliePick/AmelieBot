@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 
-import pyglet
+from pyglet.lib         import load_library
+from pyglet.app         import exit, _run
+from pyglet.media       import load
+from pyglet.clock       import schedule_once
+
+from .pyglet.player     import Player
+
 from time               import sleep
-from sys                import exit
+from sys                import exit as sys_exit
 from os                 import getenv
 from os                 import path as os_path
 from os                 import remove
-from .pyglet.player     import Player
-from .pyglet.app        import _run
 
+from .time              import Stopwatch
 
-
+timer = Stopwatch()
 
 def initAudio():
 
@@ -22,23 +27,27 @@ def initAudio():
     else:
         dll_name = "avbin.dll"
 
-    pyglet.lib.load_library(dir + dll_name)
+    load_library(dir + dll_name)
 
 
 def playAudio(sound, reps=1):
     player = Player()
-    _song = pyglet.media.load(sound)
+    _song = load(sound)
     player.queue(_song)
   
+    
     player.play()
+    timer.start()
     
     def callback(dt):
-        pyglet.app.exit()
+        exit()
 
-    pyglet.clock.schedule_once(callback, _song.duration*reps)
-    pyglet.app._run()
-    
-    #TODO: delay while music is playing
+    schedule_once(callback, _song.duration*reps)
+    _run()
+
+    while timer.stop() < _song.duration:
+        continue
+    player.stop()
 
     return player
 
@@ -62,4 +71,4 @@ def _exit(file: str, player: Player) -> None:
         
         remove(file)
 
-    exit(0)
+    sys_exit(0)

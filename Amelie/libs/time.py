@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-''' The module for work with time
-
-'''
-
 import time
 
 class Stopwatch:
@@ -14,9 +10,8 @@ class Stopwatch:
         self.sec = time.time()
 
 
-    def stop(self):
-        self.sec = time.time() - self.sec 
-        return int(self.sec)
+    def stop(self): 
+        return int(time.time() - self.sec)
 
 
 stopWatch = Stopwatch()
