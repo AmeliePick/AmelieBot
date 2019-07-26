@@ -133,10 +133,18 @@ def EditSearch(Input, ToAnswer = ''):
            
 
     for item in deleteTextFromInput:
-        if item in deleteTextFromInput and item in Input:              
+        if item in Input:
             Editedtext = Input.replace(item, '')
+        elif item.capitalize() in Input: 
+            Editedtext = Input.replace(item.capitalize(), '')
+        elif item.lower() in Input:
+            Editedtext = Input.replace(item.lower(), '')
+        else:
+            continue
 
-            
+        break
+        
+    
     try:
         Editedtext = sub('[?!]', '', Editedtext)
 
@@ -144,7 +152,7 @@ def EditSearch(Input, ToAnswer = ''):
         Editedtext = Input
 
 
-    return Editedtext.lstrip().capitalize()
+    return Editedtext.lstrip()
 
 
 def selfLearning(text: dict) -> None:

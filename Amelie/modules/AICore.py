@@ -88,7 +88,7 @@ class Chat:
     def Enter(self, voice: str = "") -> None:
         while(True):
             if(voice == ""):
-                self.input = str(input('\n---> ').capitalize())
+                self.input = str(input('\n---> '))
                 if self.input == '' or self.input == '\n' or self.input == ' ':
                     continue
                 else:
@@ -110,7 +110,7 @@ class Chat:
 
         #give a type of input
         mass = []
-        mass.append(self.input)
+        mass.append(self.input.capitalize())
 
 
         try:
