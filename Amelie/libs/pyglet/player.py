@@ -71,8 +71,12 @@ class Player(pyglet.event.EventDispatcher):
 
         self._audio_player = None
 
+
         # Desired play state (not an indication of actual state).
         self._playing = False
+
+        # Shows the current status of the player (playing music or not playing)
+        self.isPlaying = False
 
         self._paused_time = 0.0
 
@@ -102,7 +106,16 @@ class Player(pyglet.event.EventDispatcher):
 
         self._set_playing(self._playing)
 
-    def _set_playing(self, playing):
+
+    def clear_queue(self):
+        if self._groups:
+            del self._groups[0]
+
+    def delete_source(self):
+        del self.source
+
+
+    def _set_playing(self, playing: bool):
         #stopping = self._playing and not playing
         #starting = not self._playing and playing
 
@@ -113,6 +126,7 @@ class Player(pyglet.event.EventDispatcher):
             if not self._audio_player:
                 self._create_audio_player()
             self._audio_player.play()
+            self.isPlaying = True
 
             if source.video_format:
                 if not self._texture:
@@ -151,6 +165,13 @@ class Player(pyglet.event.EventDispatcher):
         """
         self._set_playing(True)
 
+    def getPlaying(self):
+        if(self._audio_player):
+            self.isPlaying = True
+            
+        else:
+            self.isPlaying = False
+
     def pause(self):
         """
         Pause playback of the current source.
@@ -158,6 +179,7 @@ class Player(pyglet.event.EventDispatcher):
         This has no effect if the player is already paused.
         """
         self._set_playing(False)
+        self.isPlaying = False
 
         if self._audio_player:
             time = self._audio_player.get_time()
@@ -165,18 +187,22 @@ class Player(pyglet.event.EventDispatcher):
             if time is not None:
                 self._paused_time = time
 
+    def stop(self):
+        if self._audio_player:
+            self._audio_player.stop()
+
     def delete(self):
         """Tear down the player and any child objects."""
         if self._audio_player:
             self._audio_player.stop()   # added by AmeliePick
             self._playing = False       # added by AmeliePick
+            self.isPlaying = False
             self._audio_player.delete()
             self._audio_player = None
-            self.source.__del__()
-            
+            if self.source:
+                self.delete_source()
 
-        while self._groups:
-            del self._groups[0]
+        print("exit")
 
     def next_source(self):
         """
