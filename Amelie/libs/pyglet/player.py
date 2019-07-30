@@ -80,9 +80,11 @@ class Player(pyglet.event.EventDispatcher):
 
         self._paused_time = 0.0
 
+
     def __del__(self):
         """Release the Player resources."""
         self.delete()
+
 
     def queue(self, source):
         """
@@ -111,8 +113,9 @@ class Player(pyglet.event.EventDispatcher):
         if self._groups:
             del self._groups[0]
 
+
     def delete_source(self):
-        del self.source
+        self.source.__del__()
 
 
     def _set_playing(self, playing: bool):
@@ -123,8 +126,8 @@ class Player(pyglet.event.EventDispatcher):
         source = self.source
 
         if playing and source:
-            if not self._audio_player:
-                self._create_audio_player()
+            self._audio_player = None
+            self._create_audio_player()
             self._audio_player.play()
             self.isPlaying = True
 
@@ -189,20 +192,21 @@ class Player(pyglet.event.EventDispatcher):
 
     def stop(self):
         if self._audio_player:
+            self._set_playing(False)
             self._audio_player.stop()
+
 
     def delete(self):
         """Tear down the player and any child objects."""
-        if self._audio_player:
-            self._audio_player.stop()   # added by AmeliePick
-            self._playing = False       # added by AmeliePick
-            self.isPlaying = False
+        if self._audio_player:    
+            self.isPlaying = False  # added by AmeliePick
             self._audio_player.delete()
             self._audio_player = None
             if self.source:
-                self.delete_source()
+                self.source.__del__()
+                self.source.__
 
-        print("exit")
+            print("exit")
 
     def next_source(self):
         """

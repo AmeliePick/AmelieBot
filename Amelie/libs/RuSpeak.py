@@ -27,7 +27,8 @@ def speak(speech):
     answer.save(file)
 
     #play sound
-    player = playAudio(file)
+    playAudio(file)
 
     if speech.getNum() == 0:
-        _exit(file, player)
+        _exit(file)
+        print("exit_speak")

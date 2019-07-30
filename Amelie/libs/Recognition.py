@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*
-from os import system
+import pyaudio
+import wave
 import speech_recognition as sr
-from .configParser import SettingsControl
-from libs.AudioManagement import *
+from os                     import system
+from .time                  import Stopwatch
+from .configParser          import SettingsControl
+from libs.AudioManagement   import *
+
+timer = Stopwatch()
 
 '''
 Regonizer module
@@ -39,10 +44,12 @@ def REG():
     while(True):
         #Listening to the microphone
         with micro as source:
+            print("Reg player")
             playAudio('../Res/Sounds/readytohear.mp3')
             print(SettingsControl.Print("SaySTH"))
             audio = r.listen(source)
 
+            print("Done")
         #Speech to text recording
         try:
             Chat_Input = r.recognize_google(audio, language=valuelang)

@@ -25,10 +25,9 @@ def speak(Answer):
         audio = text_to_speech.synthesize(text=Answer.getOut(), voice='en-US_AllisonVoice', accept='audio/mp3')
         audio_file.write(audio.get_result().content)
 
-
-    player = playAudio('sound.mp3')
+    playAudio('sound.mp3')
 
         
     
     if Answer.getNum() == 0:
-        _exit('sound.mp3', player)
+        _exit('sound.mp3')

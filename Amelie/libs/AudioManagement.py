@@ -16,6 +16,7 @@ from os                 import remove
 from .time              import Stopwatch
 
 timer = Stopwatch()
+player = Player()
 
 def initAudio():
 
@@ -31,7 +32,7 @@ def initAudio():
 
 
 def playAudio(sound, reps=1):
-    player = Player()
+    global player
     _song = load(sound)
     player.queue(_song)
   
@@ -47,12 +48,12 @@ def playAudio(sound, reps=1):
 
     while timer.stop() < _song.duration:
         continue
-    player.stop()
+    player.stop() # deleting the player here!
+    player.clear_queue()
 
-    return player
 
-
-def _exit(file: str, player: Player) -> None:
+def _exit(file: str) -> None:
+    global player
     if os_path.exists(file):
         ''' We can use song.__del__()
         # Delete the source of AVbin, close the file and stop the thread.
@@ -68,7 +69,8 @@ def _exit(file: str, player: Player) -> None:
         '''
 
         player.delete()
+        player = None
         
         remove(file)
 
-    sys_exit(0)
+    return sys_exit(0)
