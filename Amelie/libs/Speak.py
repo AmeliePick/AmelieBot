@@ -21,13 +21,13 @@ text_to_speech = TextToSpeechV1(
 
 def speak(Answer):
 
-    with open('sound.mp3', 'wb') as audio_file:
-        audio = text_to_speech.synthesize(text=Answer.getOut(), voice='en-US_AllisonVoice', accept='audio/mp3')
+    with open('TEMP/sound.wav', 'wb') as audio_file:
+        audio = text_to_speech.synthesize(text=Answer.getOut(), voice='en-US_AllisonVoice', accept='audio/wav')
         audio_file.write(audio.get_result().content)
 
-    playAudio('sound.mp3')
+    playAudio('TEMP/sound.wav')
 
         
     
     if Answer.getNum() == 0:
-        _exit('sound.mp3')
+        _exit('TEMP/sound.wav')
