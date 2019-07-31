@@ -12,12 +12,12 @@ def checkUpdate():
     try:
         # get config file
         response = urlopen('http://ameliepick.ml/AmelieBot/update.ini')
-        with open ("t.ini", 'wb') as tmp:
+        with open ("TEMP/t.ini", 'wb') as tmp:
             tmp.write(response.read())
 
         # if a new version is it, change version in this config file
-        if(SettingsControl.getConfig('t.ini', "ver") != SettingsControl.getConfig("settings.ini", "ver")):
-            SettingsControl.setConfig("settings.ini", "ver", SettingsControl.getConfig('t.ini', "ver"))
+        if(SettingsControl.getConfig('TEMP/t.ini', "ver") != SettingsControl.getConfig("settings.ini", "ver")):
+            SettingsControl.setConfig("settings.ini", "ver", SettingsControl.getConfig('TEMP/t.ini', "ver"))
             return True
 
     except:
@@ -31,7 +31,7 @@ def download(response):
     '''
     if response == True:
         # getting list of new files
-        R = SettingsControl.getConfig('t.ini', "modules").split();
+        R = SettingsControl.getConfig('TEMP/t.ini', "modules").split();
         getModules = []
         for i in R:
             getModules.append(i)
@@ -45,12 +45,12 @@ def download(response):
                 return 1
 
             # paste from new file to temp file
-            with open('tmp_file.py', 'wb') as tmp:
+            with open('TEMP/tmp_file.py', 'wb') as tmp:
                 tmp.write(getFile.read())
 
             # rewrite local file
             with open(file, 'w') as mergeFile:
-                with open('tmp_file.py', 'r') as tmp2:
+                with open('TEMP/tmp_file.py', 'r') as tmp2:
                     mergeFile.write(tmp2.read())
 
         

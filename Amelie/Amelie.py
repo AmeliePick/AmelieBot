@@ -20,6 +20,8 @@ from os     import execl
 from os     import _exit
 from os     import remove
 
+from memory_profiler import memory_usage
+
 from modules.entry_input        import start
 from modules.set_username       import set_username
 
@@ -44,20 +46,24 @@ def getUpdate():
         print(SettingsControl.Print("isUpdate"))
         sleep(2)
         download(isupdate)
-        remove("tmp_file.py")
+        remove("TEMP/tmp_file.py")
 
         restart()
 
     else:
         print(SettingsControl.Print("istUpdate"), '\n')
 
-    if os_path.exists("t.ini"):
-        remove("t.ini")
+    if os_path.exists("TEMP/t.ini"):
+        remove("TEMP/t.ini")
 
     print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
 
 
-
+maxRAMUsage = memory_usage()
+def RAMCheck():
+    global maxRAMUsage
+    if(memory_usage() > maxRAMUsage):
+        maxRAMUsage = memory_usage()
 
 
 def main():
@@ -97,7 +103,7 @@ def main():
         if(stopWatch):
             sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
 
-            del(sessionLogger)
+            #del(sessionLogger)
             stopWatch = None
         chatOBJ.Enter(voice)
         chatOBJ.open_AI()
@@ -119,6 +125,7 @@ def main():
                     calibration()
                     while (True):
                         speak(launchChat(REG()))
+                        RAMCheck()
                         continue
                 else:
                     from libs.Speak import speak
@@ -126,6 +133,7 @@ def main():
                     calibration()
                     while (True):
                         speak(launchChat(REG()))
+                        RAMCheck()
                         continue
 
             elif On == "N" or On ==  "n":
@@ -141,6 +149,7 @@ def main():
 
 
         except SystemExit:
+            sessionLogger.SessionCollector( "max RAM usage", str(maxRAMUsage) )
             _exit(0)
 
 
