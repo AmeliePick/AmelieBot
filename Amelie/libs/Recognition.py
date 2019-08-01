@@ -44,12 +44,10 @@ def REG():
     while(True):
         #Listening to the microphone
         with micro as source:
-            print("Reg player")
-            playAudio('../Res/Sounds/readytohear.mp3')
+            playAudio('../Res/Sounds/readytohear.wav')
             print(SettingsControl.Print("SaySTH"))
             audio = r.listen(source)
 
-            print("Done")
         #Speech to text recording
         try:
             Chat_Input = r.recognize_google(audio, language=valuelang)

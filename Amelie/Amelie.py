@@ -115,9 +115,6 @@ def main():
         try:
             if On == "Y" or On ==  "y":
                 from libs.Recognition   import REG, calibration
-                from libs.AudioManagement import initAudio
-
-                initAudio()
 
                 if SettingsControl.getConfig("settings.ini", "lang") == "RU":
                     from libs.RuSpeak import speak
