@@ -130,21 +130,45 @@ def EditSearch(Input, ToAnswer = ''):
 
         elif ToAnswer == "Open" and "Open" in i:
             deleteTextFromInput.append(row[0])
-           
-
+     
+    modified = False
     for item in deleteTextFromInput:
         if item in Input:
             Editedtext = Input.replace(item, '')
-        elif item.capitalize() in Input: 
-            Editedtext = Input.replace(item.capitalize(), '')
-        elif item.lower() in Input:
-            Editedtext = Input.replace(item.lower(), '')
+        elif item.capitalize() in Input.capitalize(): 
+            Editedtext = Input.capitalize().replace(item.capitalize(), '')
+            modified = True
+
         else:
             continue
 
+        Editedtext = Editedtext.lstrip()
+
         break
         
-    
+    clearText = [] # Original words
+    wordLen = 0
+    text = []
+    if modified:
+        # word breakdown
+        word = []
+        for char in Input:
+            if char == ' ':
+                clearText.append(''.join(word))
+                word.clear()
+            else:
+                word.append(char)
+        clearText.append(''.join(word))
+
+        # Search for original spelling
+        # word --- is an original word
+        for word in clearText:
+            if word.lower() in Editedtext.lower():
+                text.append(word)
+                
+        Editedtext = ' '.join(text)
+
+
     try:
         Editedtext = sub('[?!]', '', Editedtext)
 

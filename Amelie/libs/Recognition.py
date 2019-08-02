@@ -53,7 +53,7 @@ def REG():
             Chat_Input = r.recognize_google(audio, language=valuelang)
             print("---> ", Chat_Input)
         
-            return Chat_Input.capitalize()
+            return Chat_Input
 
         except sr.UnknownValueError:
             print(SettingsControl.Print("errSay"))
