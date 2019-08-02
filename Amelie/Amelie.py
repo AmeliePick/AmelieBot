@@ -102,9 +102,8 @@ def main():
 
         if(stopWatch):
             sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
-
-            #del(sessionLogger)
             stopWatch = None
+
         chatOBJ.Enter(voice)
         chatOBJ.open_AI()
 
@@ -144,25 +143,25 @@ def main():
                 On = input("--> ")
                 continue
 
+        except MemoryError:
+            print(SettingsControl.Print("error"))
+            continue
 
         except SystemExit:
             sessionLogger.SessionCollector( "max RAM usage", str(maxRAMUsage) )
             _exit(0)
 
+        except ConnectionError:
+            print(SettingsControl.Print("service_error"))
+      
+        except OSError:
+            print(SettingsControl.Print("errMicro"))
 
         except Exception:
             LogWrite()
             print(SettingsControl.Print("crash"))
 
             restart()
-
-
-        except ConnectionError:
-            print(SettingsControl.Print("service_error"))
-
-                
-        except OSError:
-            print(SettingsControl.Print("errMicro"))
 
 
         print(SettingsControl.Print("Voice_control"))
