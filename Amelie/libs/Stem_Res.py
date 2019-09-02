@@ -8,14 +8,13 @@ Gets the final response from the query processing function and converts it
 
 '''
 
-import Stemmer
+from Stemmer import Stemmer
 
 
 def Stemm(EditSearch):
 
-    stemmer = Stemmer.Stemmer('russian')
+    stemmer = Stemmer('russian')
     Getting = stemmer.stemWord(EditSearch)
-
 
     return Getting
 
