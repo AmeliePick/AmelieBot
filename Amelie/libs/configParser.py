@@ -41,7 +41,9 @@ class Config:
         return
 
 
-    def createSetting(self, path: str, section: str) -> None:
+    def createSettings(self, path: str, section: str) -> None:
+        ''' Create the settings file and add first section to that
+        '''
         self.path = path
 
         createSettings = open(path, 'a')
@@ -67,7 +69,7 @@ class settings(Config):
 
     '''
 
-    ReadFile = ''
+    serviceexpressions = ''
     lang = ''
 
 
@@ -90,7 +92,7 @@ class settings(Config):
         '''
         
         text = []
-        for line in self.ReadFile:
+        for line in self.serviceexpressions:
             row = line.split(' # ')
 
             if row[0] == value:
@@ -105,27 +107,27 @@ class settings(Config):
         return self.Print("error")
 
 
-    def setLang(self, path: str) -> None:
+    def setLanguage(self, path: str) -> None:
         '''
         path -- The path where the configuration file is located
 
         '''
 
         # Default settings
-        self.setConfig(path, "lang", "-")
+        self.setConfig(path, "lang", "-", "Settings")
 
-        choose_lang = input("Choose language [RU] of [EN]: ") #delete this
+        choose_lang = input(self.Print("C_lang"))
 
         while(True):
 
             if choose_lang == "RU":
                 value = "RU"
-                self.setConfig(path, "lang", value)
+                self.setConfig(path, "lang", value, "Settings")
                 break
 
             elif choose_lang == "EN":
                 value = "EN"
-                self.setConfig(path, "lang", value)
+                self.setConfig(path, "lang", value, "Settings")
                 break
 
             else:
@@ -133,7 +135,7 @@ class settings(Config):
                 continue
 
 
-    def checkSettings(self) -> None:
+    def setDefaultSettings(self) -> None:
         ''' language selection
         A configuration file is created. Further from it all information is read. 
         If the file is empty, which means this is the first launch of the application, the user 
@@ -144,11 +146,11 @@ class settings(Config):
 
         if not os_path.exists(path):
 
-            self.createSetting(path)
+            self.createSetting(path, "Settings")
 
 
-            self.setConfig(path, "ver", "2.5.2")
-            self.setLang(path)
+            self.setConfig(path, "ver", "2.5.2", "Settings")
+            self.setLanguage(path)
 
         elif os_path.exists(path):
             ReadHandle = ''
@@ -157,10 +159,10 @@ class settings(Config):
             with open(path, 'r') as handle:
                 ReadHandle = handle.read()
 
-            if ReadHandle == '':
+            if ReadHandle == '' or ReadHandle == '\n':
                 # set the default settings
                 self.createConfig("settings.ini")
-                self.setConfig(path, "ver", "2.5.2")
+                self.setConfig(path, "ver", "2.5.2", "Settings")
                 self.setLang(path)
 
             if self.getConfig(path, "lang") == '-':
@@ -169,15 +171,15 @@ class settings(Config):
 
     def __init__(self):
         super().__init__()
-        self.checkSettings()
+        self.defaultSettings()
         self.lang = self.getConfig("settings.ini", "lang")
         if self.lang == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
-                self.ReadFile = file.readlines()
+                self.serviceexpressions = file.readlines()
 
         elif self.lang == "EN":
             with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
-                self.ReadFile = file.readlines()
+                self.serviceexpressions = file.readlines()
         
 
 SettingsControl = settings()
