@@ -22,44 +22,53 @@ if SettingsControl.getConfig("settings.ini", "lang") == "RU":
 else:
     valuelang = "en_US"
 
-# Microphone and Recognition
-r = sr.Recognizer()
-micro = sr.Microphone()
 
 
-def calibration():
-     #Noise calibration
-     print(SettingsControl.Print("Silence"))
 
-     try:
-         with micro as source:
-            r.adjust_for_ambient_noise(source)
-     except OSError:
-        print(SettingsControl.Print("microAccesDenied"))
-        system("pause")
-        calibration()
+class SpeechRecognition():
+
+    def __init__(self):
+        # Microphone and Recognition
+        self.r = sr.Recognizer()
+        self.micro = sr.Microphone()
 
 
-def REG():
-    while(True):
-        #Listening to the microphone
-        with micro as source:
-            playAudio('../Res/Sounds/readytohear.wav')
-            print(SettingsControl.Print("SaySTH"))
-            audio = r.listen(source)
+    def calibration(self):
+         #Noise calibration
+         print(SettingsControl.Print("Silence"))
 
-        #Speech to text recording
-        try:
-            Chat_Input = r.recognize_google(audio, language=valuelang)
-            print("---> ", Chat_Input)
-        
-            return Chat_Input
-
-        except sr.UnknownValueError:
-            print(SettingsControl.Print("errSay"))
+         try:
+             with self.micro as source:
+                self.r.adjust_for_ambient_noise(source)
+         except OSError:
+            print(SettingsControl.Print("microAccesDenied"))
             system("pause")
-            continue
+            calibration()
 
-        except sr.RequestError:
-            raise ConnectionError 
+
+    def REG(self):
+        while(True):
+            #Listening to the microphone
+            with self.micro as source:
+                playAudio('../Res/Sounds/readytohear.wav')
+                print(SettingsControl.Print("SaySTH"))
+                audio = self.r.listen(source)
+
+            #Speech to text recording
+            try:
+                Chat_Input = self.r.recognize_google(audio, language=valuelang)
+                print("---> ", Chat_Input)
         
+                return Chat_Input
+
+            except sr.UnknownValueError:
+                print(SettingsControl.Print("errSay"))
+                system("pause")
+                continue
+
+            except sr.RequestError:
+                raise ConnectionError 
+
+
+
+speechRecognition = SpeechRecognition()
