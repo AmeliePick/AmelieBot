@@ -22,8 +22,8 @@ from os     import remove
 
 from memory_profiler import memory_usage
 
-from modules.entry_input        import start
-from modules.set_username       import set_username
+
+from modules.AIProcessing       import LangChoice
 
 from libs.configParser          import SettingsControl
 from libs.logger                import sessionLogger
@@ -59,6 +59,31 @@ def getUpdate():
     print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
 
 
+# === Username installation module ===
+def set_username():
+    if os_path.exists("../DataBase/username.json"):
+        username = ''
+        with open("../DataBase/username.json", 'r') as file_user:
+            username = file_user.read()
+
+        if (username == ""):
+            print(SettingsControl.Print("getName"))
+            username = input("> ")
+
+        if (username != ""):
+            with open("../DataBase/username.json", "w") as writeUsername:
+                writeUsername.write(username)
+            print ("\n Welcome, "+ username + "!")
+
+        else:
+            print (SettingsControl.Print("emptyName"))
+            set_username()
+
+    else:
+        with open("../DataBase/username.json", 'w') as file_user:
+            file_user.close()
+        set_username()
+
 maxRAMUsage = memory_usage()
 def RAMCheck():
     global maxRAMUsage
@@ -66,7 +91,9 @@ def RAMCheck():
         maxRAMUsage = memory_usage()
 
 
+
 def main():
+     # ----- Start the bot -----
     print ( 70 * "_")
     print ("\t\t                         _ _       \n" +
            "\t\t    /\                  | (_)      \n" +
@@ -76,15 +103,16 @@ def main():
            "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
     print ( 70 * "_")
 
-
+    SettingsControl.defaultSettings()
     getUpdate()
     set_username()
+    
+    
+    
 
-    # ----- Start the bot -----
-    start()
-
-
-    #--- Chat
+   
+  
+    # --- Chat ---
     print(SettingsControl.Print("Voice_control"))
     On = input ("--> ")
 
@@ -104,6 +132,7 @@ def main():
             sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
             stopWatch = None
 
+        LangChoice()
         chatOBJ.Enter(voice)
         chatOBJ.open_AI()
 
@@ -113,22 +142,22 @@ def main():
     while (True):
         try:
             if On == "Y" or On ==  "y":
-                from libs.Recognition   import REG, calibration
+                from libs.Recognition   import speechRecognition
 
                 if SettingsControl.getConfig("settings.ini", "lang") == "RU":
                     from libs.RuSpeak import speak
 
-                    calibration()
+                    speechRecognition.calibration()
                     while (True):
-                        speak(launchChat(REG()))
+                        speak(launchChat(speechRecognition.REG()))
                         RAMCheck()
                         continue
                 else:
                     from libs.Speak import speak
 
-                    calibration()
+                    speechRecognition.calibration()
                     while (True):
-                        speak(launchChat(REG()))
+                        speak(launchChat(speechRecognition.REG()))
                         RAMCheck()
                         continue
 
@@ -155,7 +184,7 @@ def main():
             print(SettingsControl.Print("service_error"))
       
         except OSError:
-            print(SettingsControl.Print("errMicro"))
+            print(SettingsControl.Print("error"))
 
         except Exception:
             LogWrite()

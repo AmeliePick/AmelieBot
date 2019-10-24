@@ -12,7 +12,7 @@ User input is also processed for search engines. Unnecessary part of the phrase 
 from numpy          import random, arange #slow loading
 from pickle         import dump, load
 
-from sklearn.feature_extraction.text    import TfidfVectorizer #slow loading
+from sklearn.feature_extraction.text    import TfidfVectorizer
 from sklearn.linear_model               import SGDClassifier
 from sklearn.pipeline                   import Pipeline
 
