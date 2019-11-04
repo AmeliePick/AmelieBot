@@ -9,7 +9,7 @@ User input is also processed for search engines. Unnecessary part of the phrase 
 
 '''
 
-from numpy          import random, arange #slow loading
+from numpy          import random, arange
 from pickle         import dump, load
 
 from sklearn.feature_extraction.text    import TfidfVectorizer
@@ -19,13 +19,13 @@ from sklearn.pipeline                   import Pipeline
 from .AIFiles   import dataSet, checkLang
 
 class Chat:
-    input = ""
-    inputType = ""
-    dataSet_new = {}
+    input_ = ""
+    inputType_ = ""
+    dataSet_new_ = {}
 
 
     def getInput(self) -> str:
-        return self.input
+        return self.input_
 
 
     def getInputType(self) -> str:
@@ -88,13 +88,13 @@ class Chat:
     def Enter(self, voice: str = "") -> None:
         while(True):
             if(voice == ""):
-                self.input = str(input('\n---> '))
-                if self.input == '' or self.input == '\n' or self.input == ' ':
+                self.input_ = str(input('\n---> '))
+                if self.input == '' or self.input_ == '\n' or self.input_ == ' ':
                     continue
                 else:
                     break
             else:
-                self.input = voice
+                self.input_ = voice
                 break
 
 
@@ -109,15 +109,15 @@ class Chat:
         predicted = text_clf.predict( D['test']['x'] )
 
         #give a type of input
-        mass = []
-        mass.append(self.input.capitalize())
+        input = []
+        input.append(self.input.capitalize())
 
 
         try:
-            pred = text_clf.predict(mass)
+            pred = text_clf.predict(input)
         except:
             return "Pause"
         
-        self.inputType = ''.join(pred).replace('\n', '')
+        self.inputType_ = ''.join(pred).replace('\n', '')
 
-        self.dataSet_new[self.input] = self.inputType
+        self.dataSet_new[self.input_] = self.inputType_

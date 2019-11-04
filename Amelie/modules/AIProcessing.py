@@ -10,14 +10,14 @@ from .AIFiles           import dataSet, clearSearch, ANfile, checkLang
 class Answer:
     ''' The class is a singleton
 
-    num --- for request processing logic
-    if num == 0 > This means exit from the application.
+    code --- for request processing logic
+    if code == 0 > This means exit from the application.
 
     output --- text for answer to user
 
     '''
-    num = 1
-    output = ''
+    code_ = 1
+    output_ = ''
     
 
     def __new__(cls):
@@ -28,26 +28,25 @@ class Answer:
         return cls.instance
 
 
-    def setNum(self, num):
-        self.num = num
+    def setNum(self, code) -> None:
+        self.code_ = code
 
 
-    def setText(self, txt):
-        self.output = txt
+    def setText(self, txt) -> None:
+        self.output_ = txt
 
 
-    def getNum(self):
-        return self.num
+    def getCode(self) -> int:
+        return self.code_
 
 
-    def getOut(self):
-        return self.output
+    def getOut(self) -> str:
+        return self.output_
 
 
+''' For request editing
 '''
-For request editing
-'''
-def LangChoice():
+def LangChoice() -> None:
     #--- Language check --- 
     from libs.configParser import SettingsControl
 
@@ -78,7 +77,7 @@ def LangChoice():
     return
 
 
-def getProgrammPath(search):
+def getProgrammPath(search) -> str:
     ''' Get the programm's path
     The function parse the file from the database
     with the names of programs and paths to .exe file
@@ -104,7 +103,7 @@ def getProgrammPath(search):
         return
 
 
-def EditSearch(Input, ToAnswer = ''):
+def EditSearch(Input, ToAnswer = '') -> str:
     '''Input editing
     Removes from the user input phrases that are in the database.
     This results in a clean query for a program search operation or a web query.
