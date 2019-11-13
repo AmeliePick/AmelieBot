@@ -13,7 +13,7 @@ class Answer:
     code --- for request processing logic
     if code == 0 > This means exit from the application.
 
-    output --- text for answer to user
+    self --- text for answer to user
 
     '''
     code_ = 1
@@ -28,7 +28,8 @@ class Answer:
         return cls.instance
 
 
-    def setNum(self, code) -> None:
+
+    def setCode(self, code) -> None:
         self.code_ = code
 
 
@@ -40,14 +41,84 @@ class Answer:
         return self.code_
 
 
-    def getOut(self) -> str:
+    def getOutput(self) -> str:
         return self.output_
 
 
-''' For request editing
-'''
+
+def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
+        answerType = []
+        answerText = []
+        url = ""
+        output = Answer()
+
+  
+        if inputType == "Exit":
+            output.setCode(0)
+
+        elif inputType == "Search":
+            url = "https://www.google.ru/search?q="
+            webbrowser_open( url + str(EditSearch(input, inputType)), new=1)
+    
+        elif inputType == "Youtube":
+            url = "http://www.youtube.com/results?search_query="
+            webbrowser_open( url + str(Stemm(EditSearch(input, inputType))), new=1)
+        
+        # here we can get an empty answer, when the user says a phrase like "open" and nothing more
+        elif inputType == "Open" and EditSearch(input,  inputType) != '':
+            try:
+                Popen( getProgrammPath( EditSearch(input, inputType ) ) )
+            
+            except FileNotFoundError:
+                if EditedOpen(EditSearch(input)) == 1:
+                    from modules.exceptions_chat import programmNotFound
+
+                    programmNotFound()
+                    getProgrammPath(EditSearch(input, inputType))
+
+            except OSError as os:
+                if(os.winerror == 87):
+                    inputType = "Unknown"
+
+
+        # --- Get answer ---
+        for line in ANfile:
+            row = line.split(' @ ')
+            answerType.append(row[0])
+
+            if inputType in line:
+                answerText.append(row[1])
+
+        try:
+            output.setText(choice(answerText))
+            print ("\n<---", output.getOutput())
+
+            # add phrases in DB
+            if output.getCode() == 0 :
+                selfLearning(sessionInput)
+                sessionInput.clear()
+
+        except IndexError:
+                Unknown = []
+
+                for i in ANfile:
+                    row = i.split(' @ ')
+
+                    if "Unknown" in i:
+                        Unknown.append(row[1])
+
+                output.setText(choice(Unknown))
+                print ("\n<---", output.getOutput())
+        
+
+        return output
+
+
+
 def LangChoice() -> None:
-    #--- Language check --- 
+    ''' Check language choice.
+    Fill in the fields with the necessary data based on the choice of language.
+    '''
     from libs.configParser import SettingsControl
 
     global dataSet, clearSearch, ANfile
@@ -58,6 +129,7 @@ def LangChoice() -> None:
     postfix = "EN.json"
     if checkLang == "RU":
         postfix = "RU.json"
+
 
     with open("../DataBase/DataSet_"+postfix, "r", encoding="utf8") as train:
         for line in train:
@@ -105,13 +177,14 @@ def getProgrammPath(search) -> str:
 
 def EditSearch(Input, ToAnswer = '') -> str:
     '''Input editing
-    Removes from the user input phrases that are in the database.
+    Removes from the user input the stop words.
     This results in a clean query for a program search operation or a web query.
 
     Example:
             Input: open Google, find summer wallpaper
             Result: Google, summer wallpaper
     '''
+
     from re import sub
 
     global clearSearch
@@ -186,10 +259,10 @@ def selfLearning(text: dict) -> None:
     global checkLang
     getInput = []
 
-    
+    # Fill the array all inputs phrases
     for txt, tag in text.items():
-        mask = '\n' + txt + ' @ ' + tag
-        getInput.append(mask)
+        statement = '\n' + txt + ' @ ' + tag
+        getInput.append(statement)
 
 
     if checkLang == "RU":
@@ -204,74 +277,5 @@ def selfLearning(text: dict) -> None:
 
 
 
-'''
-Functions for processing user input based on request type, self-learning
-For example: Hi Amelie - Hello. How are you? - I'm fine, and you?
-'''
-Output = Answer()
-
-def answer(input: str, inputType: str, dataSet_new: dict) -> Answer:
-    tag = []
-    text = []
-    url = ""
-
-  
-    if inputType == "Exit":
-        Output.setNum(0)
-
-    elif inputType == "Search":
-        url = "https://www.google.ru/search?q="
-        webbrowser_open( url + str(EditSearch(input, inputType)), new=1)
-    
-    elif inputType == "Youtube":
-        url = "http://www.youtube.com/results?search_query="
-        webbrowser_open( url + str(Stemm(EditSearch(input, inputType))), new=1)
-        
-    # here we can get an empty answer, when the user says a phrase like "open" and nothing more
-    elif inputType == "Open" and EditSearch(input,  inputType) != '':
-        try:
-            Popen( getProgrammPath( EditSearch(input, inputType ) ) )
-            
-        except FileNotFoundError:
-            if EditedOpen(EditSearch(input)) == 1:
-                from modules.exceptions_chat import programmNotFound
-
-                programmNotFound()
-                getProgrammPath(EditSearch(input, inputType))
-
-        except OSError as os:
-            if(os.winerror == 87):
-                inputType = "Unknown"
 
 
-    # --- Get answer ---
-    for line in ANfile:
-        row = line.split(' @ ')
-        tag.append(row[0])
-
-        if inputType in line:
-            text.append(row[1])
-
-    try:
-        Output.setText(choice(text))
-        print ("\n<---", Output.getOut())
-
-        # add phrases in DB
-        if Output.getNum() == 0 :
-            selfLearning(dataSet_new)
-            dataSet_new.clear()
-
-    except IndexError:
-            Unknown = []
-
-            for i in ANfile:
-                row = i.split(' @ ')
-
-                if "Unknown" in i:
-                    Unknown.append(row[1])
-
-            Output.setText(choice(Unknown))
-            print ("\n<---", Output.getOut())
-        
-
-    return Output
