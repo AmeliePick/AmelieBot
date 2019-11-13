@@ -11,8 +11,8 @@ The second function reads the value of the required parameter and returns its va
 '''
 
 class Config:
-    config = ''
-    path = ''
+    config: configparser.ConfigParser()
+    path: str
 
     def getConfig(self, path: str, option: str):
         ''' Getting values from settings
@@ -60,17 +60,14 @@ class Config:
         self.config = configparser.ConfigParser()
 
 
-class settings(Config):
+class Settings(Config):
     ''' The class is a singleton
-
-    ReadFile --- Stores data from a file considering language settings
-
-    lang     --- Stores the current language setting
+    lang - Stores the current language setting
 
     '''
 
-    serviceexpressions = ''
     lang = ''
+
 
 
     def __new__(cls):
@@ -81,62 +78,32 @@ class settings(Config):
         return cls.instance
 
 
-    def Print(self, value: str) -> str:
-        '''
-        The function for service expressions, 
-        so that when changing the language, 
-        the text in the whole program changes
-
-        value - name of expression
-
-        '''
-        
-        text = []
-        for line in self.serviceexpressions:
-            row = line.split(' # ')
-
-            if row[0] == value:
-                text.append(row[1])
-                return ''.join(text)
-
-
-        '''If the error in the name of the expression
-           By recursion it finds the value of the expression by tag "error"
-
-        '''
-        return self.Print("error")
-
-
+    
     def setLanguage(self, path: str) -> None:
         '''
         path -- The path where the configuration file is located
 
         '''
 
-        # Default settings
-        self.setConfig(path, "lang", "-", "Settings")
-
-        choose_lang = input(self.Print("C_lang"))
-
+        self.lang = input("Choose language [RU] of [EN]: ")
         while(True):
 
-            if choose_lang == "RU":
-                value = "RU"
-                self.setConfig(path, "lang", value, "Settings")
+            if self.lang == "RU":                
                 break
 
-            elif choose_lang == "EN":
-                value = "EN"
-                self.setConfig(path, "lang", value, "Settings")
+            elif self.lang == "EN":
                 break
 
             else:
-                choose_lang = input("Choose language [RU] of [EN]: ") #delete this
+                self.lang = input("Choose language [RU] of [EN]: ") #delete this
                 continue
 
 
-    def setDefaultSettings(self) -> None:
-        ''' language selection
+        self.setConfig(path, "lang",  self.lang, "Settings")
+
+        
+    def checkSettingsInfo(self) -> None:
+        ''' Checking the validity of the settings file
         A configuration file is created. Further from it all information is read. 
         If the file is empty, which means this is the first launch of the application, the user 
         is prompted to select the bot language.
@@ -146,7 +113,7 @@ class settings(Config):
 
         if not os_path.exists(path):
 
-            self.createSetting(path, "Settings")
+            self.createSettings(path, "Settings")
 
 
             self.setConfig(path, "ver", "2.5.2", "Settings")
@@ -163,23 +130,71 @@ class settings(Config):
                 # set the default settings
                 self.createConfig("settings.ini")
                 self.setConfig(path, "ver", "2.5.2", "Settings")
-                self.setLang(path)
+                self.setLanguage(path)
 
             if self.getConfig(path, "lang") == '-':
-                self.setLang(path)
+                self.setLanguage(path)
+
+        return
 
 
     def __init__(self):
         super().__init__()
-        self.defaultSettings()
+        
+        self.checkSettingsInfo()
+
         self.lang = self.getConfig("settings.ini", "lang")
         if self.lang == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
-                self.serviceexpressions = file.readlines()
+                self.serviceExpressions = file.readlines()
 
         elif self.lang == "EN":
             with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
-                self.serviceexpressions = file.readlines()
-        
+                self.serviceExpressions = file.readlines()
 
-SettingsControl = settings()
+        return
+
+          
+
+class Printer:
+    serviceExpressions: str
+
+
+    def __init__(self, settings: Settings):
+        if settings.getConfig("settings.ini", "lang") == "RU":
+            with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
+                self.serviceExpressions = file.readlines()
+
+        elif settings.getConfig("settings.ini", "lang") == "EN":
+            with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
+                self.serviceExpressions = file.readlines()
+
+
+    def Print(self, value: str) -> str:
+        '''
+        The function for service expressions, 
+        so that when changing the language, 
+        the text in the whole program changes
+
+        value - name of expression
+
+        '''
+
+        text = []
+        for line in self.serviceExpressions:
+            row = line.split(' # ')
+
+            if row[0] == value:
+                text.append(row[1])
+                return ''.join(text)
+
+
+        '''If the error in the name of the expression
+           By recursion it finds the value of the expression by tag "error"
+
+        '''
+        return self.Print("error")
+
+SettingsControl = Settings()
+
+DisplayText = Printer(SettingsControl)
