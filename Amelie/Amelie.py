@@ -103,7 +103,6 @@ def main():
            "\t\t/_/    \_\_| |_| |_|\___|_|_|\___| ")
     print ( 70 * "_")
 
-    SettingsControl.defaultSettings()
     getUpdate()
     set_username()
     
@@ -118,12 +117,13 @@ def main():
 
     print(SettingsControl.Print("Learning"))
     stopWatch.start()
-    from modules.AIProcessing       import answer
+    from modules.AIProcessing       import getAnswer
     from modules.AICore             import Chat
 
+    LangChoice()
     chatOBJ = Chat()
 
-
+    # inline function
     def launchChat(voice: str = ""):
         global stopWatch
         global sessionLogger
@@ -132,11 +132,11 @@ def main():
             sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
             stopWatch = None
 
-        LangChoice()
+        
         chatOBJ.Enter(voice)
         chatOBJ.open_AI()
 
-        return answer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getDataSet_new())
+        return getAnswer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getSessionInput())
     
 
     while (True):
@@ -164,7 +164,7 @@ def main():
             elif On == "N" or On ==  "n":
                 while(True):
                     сhat = launchChat()
-                    if сhat.getNum() == 0:
+                    if сhat.getCode() == 0:
                         sleep(1)
                         _exit(0)          
             else:
