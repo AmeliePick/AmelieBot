@@ -21,7 +21,7 @@ def checkUpdate():
             return True
 
     except:
-        print(SettingsControl.Print("service_error"))
+        print(DisplayText.print("service_error"))
         return False
      
 
@@ -41,7 +41,7 @@ def download(response):
             try:
                 getFile = urlopen('http://ameliepick.ml/AmelieBot/'+file)
             except:
-                print(SettingsControl.Print("WrongPath"))
+                print(DisplayText.print("WrongPath"))
                 return 1
 
             # paste from new file to temp file
@@ -54,7 +54,7 @@ def download(response):
                     mergeFile.write(tmp2.read())
 
         
-        print(SettingsControl.Print("Yupdate"))
+        print(DisplayText.print("Yupdate"))
         sleep(1.5)
         return 0
 

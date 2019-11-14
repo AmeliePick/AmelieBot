@@ -72,7 +72,7 @@ class Settings(Config):
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(settings, cls).__new__(cls)
+            cls.instance = super(Settings, cls).__new__(cls)
             return cls.instance
             
         return cls.instance
@@ -115,7 +115,7 @@ class Settings(Config):
 
             self.createSettings(path, "Settings")
 
-
+            # set the default settings
             self.setConfig(path, "ver", "2.5.2", "Settings")
             self.setLanguage(path)
 
@@ -156,11 +156,28 @@ class Settings(Config):
 
           
 
-class Printer:
+class MessagePrinter:
+    ''' The class is a singleton
+    Printing messages in current language
+    
+    serviceExpressions - the DB file
+
+    '''
     serviceExpressions: str
 
 
+
+    def __new__(cls, settings: Settings):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(MessagePrinter, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instance
+
+
     def __init__(self, settings: Settings):
+        super().__init__()
+
         if settings.getConfig("settings.ini", "lang") == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
@@ -168,9 +185,10 @@ class Printer:
         elif settings.getConfig("settings.ini", "lang") == "EN":
             with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
+        return
+    
 
-
-    def Print(self, value: str) -> str:
+    def print(self, value: str) -> str:
         '''
         The function for service expressions, 
         so that when changing the language, 
@@ -195,6 +213,8 @@ class Printer:
         '''
         return self.Print("error")
 
+
+
 SettingsControl = Settings()
 
-DisplayText = Printer(SettingsControl)
+DisplayText = MessagePrinter(SettingsControl)

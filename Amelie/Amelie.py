@@ -25,7 +25,7 @@ from memory_profiler import memory_usage
 
 from modules.AIProcessing       import LangChoice
 
-from libs.configParser          import SettingsControl
+from libs.configParser          import SettingsControl, DisplayText
 from libs.logger                import sessionLogger
 from libs.update                import checkUpdate, download
 from libs.logger                import LogWrite
@@ -43,7 +43,7 @@ def getUpdate():
     # --- Check updates ---
     isupdate  = checkUpdate()
     if isupdate:
-        print(SettingsControl.Print("isUpdate"))
+        print(DisplayText.print("isUpdate"))
         sleep(2)
         download(isupdate)
         remove("TEMP/tmp_file.py")
@@ -51,7 +51,7 @@ def getUpdate():
         restart()
 
     else:
-        print(SettingsControl.Print("istUpdate"), '\n')
+        print(DisplayText.print("istUpdate"), '\n')
 
     if os_path.exists("TEMP/t.ini"):
         remove("TEMP/t.ini")
@@ -67,7 +67,7 @@ def set_username():
             username = file_user.read()
 
         if (username == ""):
-            print(SettingsControl.Print("getName"))
+            print(DisplayText.print("getName"))
             username = input("> ")
 
         if (username != ""):
@@ -76,7 +76,7 @@ def set_username():
             print ("\n Welcome, "+ username + "!")
 
         else:
-            print (SettingsControl.Print("emptyName"))
+            print (DisplayText.print("emptyName"))
             set_username()
 
     else:
@@ -112,10 +112,10 @@ def main():
    
   
     # --- Chat ---
-    print(SettingsControl.Print("Voice_control"))
+    print(DisplayText.print("Voice_control"))
     On = input ("--> ")
 
-    print(SettingsControl.Print("Learning"))
+    print(DisplayText.print("Learning"))
     stopWatch.start()
     from modules.AIProcessing       import getAnswer
     from modules.AICore             import Chat
@@ -168,12 +168,12 @@ def main():
                         sleep(1)
                         _exit(0)          
             else:
-                print(SettingsControl.Print("WrongInput"))
+                print(DisplayText.print("WrongInput"))
                 On = input("--> ")
                 continue
 
         except MemoryError:
-            print(SettingsControl.Print("error"))
+            print(DisplayText.print("error"))
             continue
 
         except SystemExit:
@@ -181,19 +181,19 @@ def main():
             _exit(0)
 
         except ConnectionError:
-            print(SettingsControl.Print("service_error"))
+            print(DisplayText.print("service_error"))
       
         except OSError:
-            print(SettingsControl.Print("error"))
+            print(DisplayText.print("error"))
 
         except Exception:
             LogWrite()
-            print(SettingsControl.Print("crash"))
+            print(DisplayText.print("crash"))
 
             restart()
 
 
-        print(SettingsControl.Print("Voice_control"))
+        print(DisplayText.print("Voice_control"))
         On = input ("--> ")
 
 

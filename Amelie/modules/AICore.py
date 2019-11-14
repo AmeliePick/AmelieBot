@@ -21,7 +21,7 @@ from .AIFiles   import dataSet, checkLang
 class Chat:
     input_ = ""
     inputType_ = ""
-    dataSet_new_ = {}
+    sessionInput_ = {}
 
 
     def getInput(self) -> str:
@@ -29,10 +29,10 @@ class Chat:
 
 
     def getInputType(self) -> str:
-        return self.inputType
+        return self.inputType_
 
-    def getDataSet_new(self) -> dict:
-        return self.dataSet_new
+    def getSessionInput(self) -> dict:
+        return self.sessionInput_
 
 
     '''
@@ -89,7 +89,7 @@ class Chat:
         while(True):
             if(voice == ""):
                 self.input_ = str(input('\n---> '))
-                if self.input == '' or self.input_ == '\n' or self.input_ == ' ':
+                if self.input_ == '' or self.input_ == '\n' or self.input_ == ' ':
                     continue
                 else:
                     break
@@ -110,7 +110,7 @@ class Chat:
 
         #give a type of input
         input = []
-        input.append(self.input.capitalize())
+        input.append(self.input_.capitalize())
 
 
         try:
@@ -120,4 +120,4 @@ class Chat:
         
         self.inputType_ = ''.join(pred).replace('\n', '')
 
-        self.dataSet_new[self.input_] = self.inputType_
+        self.sessionInput_[self.input_] = self.inputType_

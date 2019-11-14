@@ -4,7 +4,7 @@ from random             import choice
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
 
-from libs.Stem_Res      import Stemm
+from libs.Stemming      import Stemm
 from .AIFiles           import dataSet, clearSearch, ANfile, checkLang
 
 class Answer:

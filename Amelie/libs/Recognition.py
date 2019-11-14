@@ -35,13 +35,13 @@ class SpeechRecognition():
 
     def calibration(self):
          #Noise calibration
-         print(SettingsControl.Print("Silence"))
+         print(DisplayText.print("Silence"))
 
          try:
              with self.micro as source:
                 self.r.adjust_for_ambient_noise(source)
          except OSError:
-            print(SettingsControl.Print("microAccesDenied"))
+            print(DisplayText.print("microAccesDenied"))
             system("pause")
             calibration()
 
@@ -51,7 +51,7 @@ class SpeechRecognition():
             #Listening to the microphone
             with self.micro as source:
                 playAudio('../Res/Sounds/readytohear.wav')
-                print(SettingsControl.Print("SaySTH"))
+                print(DisplayText.print("SaySTH"))
                 audio = self.r.listen(source)
 
             #Speech to text recording
@@ -62,7 +62,7 @@ class SpeechRecognition():
                 return Chat_Input
 
             except sr.UnknownValueError:
-                print(SettingsControl.Print("errSay"))
+                print(DisplayText.print("errSay"))
                 system("pause")
                 continue
 
