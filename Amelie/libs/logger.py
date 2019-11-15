@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+''' Log file maintenance module
 '''
-Log file maintenance
-'''
+
+
 from traceback      import format_exc
 from datetime       import datetime
 from os             import path as os_path
@@ -13,11 +14,14 @@ from libs.configParser      import Config
 
 
 class SessionLog(Config):
-    ''' The class is a singleton
-
+    ''' Collects data from the current session and generates a session log file
+    The class is a singleton
+    section - the default section in log file
 
     '''
-    section = "Records"
+    section: str
+
+
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -27,7 +31,13 @@ class SessionLog(Config):
         return cls.instance
 
 
-    def SessionCollector(self, option: str, value: str) -> None:
+    def sessionCollector(self, option: str, value: str) -> None:
+        ''' Write in a config a parameter from the current session.
+        option - title of recording.
+        value - the value of recording/parameter.
+
+        '''
+
         self.setConfig(self.path, option, value, self.section)
 
 
@@ -35,13 +45,13 @@ class SessionLog(Config):
         super().__init__()
 
         path = "session_journal.log"
-        section = "Records"
+        self.section = "Records"
 
         if not os_path.exists(path):
-            self.createSetting(path, self.section)
+            self.createSettings(path, self.section)
 
         else:
-            # clearing the session log file from old records
+            # Clearing the session log file from old records
             with open(path, 'w') as log_file:
                 log_file.close()
             self.config.add_section(self.section)
@@ -56,13 +66,20 @@ class SessionLog(Config):
     def __del__(self):
         with open(path, "w") as log_file:
             self.config.write(log_file)
+        return
 
 
-sessionLogger = SessionLog()
 
+def LogWrite() -> None:
+    ''' Collects data from traceback when error is happen and writes to log file
 
-def LogWrite():
+    '''
+
     with open("Amelie_log.log", 'a') as log:
         log.write(10*'-'+'\n'+ str(format_exc()+'\n'))
 
     return
+
+
+
+sessionLogger = SessionLog()

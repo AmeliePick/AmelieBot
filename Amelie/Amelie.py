@@ -149,7 +149,7 @@ def main():
 
                     speechRecognition.calibration()
                     while (True):
-                        speak(launchChat(speechRecognition.REG()))
+                        speak(launchChat(speechRecognition.recognize()))
                         RAMCheck()
                         continue
                 else:
@@ -157,7 +157,7 @@ def main():
 
                     speechRecognition.calibration()
                     while (True):
-                        speak(launchChat(speechRecognition.REG()))
+                        speak(launchChat(speechRecognition.recognize()))
                         RAMCheck()
                         continue
 

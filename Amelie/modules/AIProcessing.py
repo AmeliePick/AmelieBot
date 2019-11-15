@@ -4,7 +4,7 @@ from random             import choice
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
 
-from libs.Stemming      import Stemm
+from libs.Stemming      import stemming
 from .AIFiles           import dataSet, clearSearch, ANfile, checkLang
 
 class Answer:
@@ -62,7 +62,7 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
     
         elif inputType == "Youtube":
             url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(Stemm(EditSearch(input, inputType))), new=1)
+            webbrowser_open( url + str(stemming(EditSearch(input, inputType))), new=1)
         
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
         elif inputType == "Open" and EditSearch(input,  inputType) != '':
