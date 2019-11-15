@@ -2,11 +2,9 @@
 from os import path as os_path
 import configparser
 
-'''
-Module for creating and parsing the settings file
-Using the module "configparser" creates a file with specific fields and their properties.
-
-The second function reads the value of the required parameter and returns its value for further verification in the chat file(Chat_AI.py).
+''' Module for creating and parsing the settings file
+Settings class - for work with settings file.
+MessagePrinter class - for work with service expressions
 
 '''
 
@@ -14,7 +12,9 @@ class Config:
     config: configparser.ConfigParser()
     path: str
 
-    def getConfig(self, path: str, option: str):
+
+
+    def getConfig(self, path: str, option: str) -> str:
         ''' Getting values from settings
 
         '''
@@ -24,7 +24,7 @@ class Config:
         return self.config.get("Settings", option)
 
 
-    def setConfig(self, path: str, option: str, value, section: str) -> None:
+    def setConfig(self, path: str, option: str, value: str, section: str) -> None:
         ''' Sets the values of settings in the configuration file
 
         '''
@@ -65,7 +65,6 @@ class Settings(Config):
     lang - Stores the current language setting
 
     '''
-
     lang = ''
 
 
@@ -95,7 +94,7 @@ class Settings(Config):
                 break
 
             else:
-                self.lang = input("Choose language [RU] of [EN]: ") #delete this
+                self.lang = input("Choose language [RU] of [EN]: ")
                 continue
 
 
@@ -154,7 +153,7 @@ class Settings(Config):
 
         return
 
-          
+      
 
 class MessagePrinter:
     ''' The class is a singleton

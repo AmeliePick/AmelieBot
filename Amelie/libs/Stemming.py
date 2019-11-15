@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
 
-'''
+''' Stemming module
+From different words converts one thing. For example: mats - will mat.
 
-Stemming module. From different words converts one thing. For example: mats - will Mat
-
-Gets the final response from the query processing function and converts it
+Works only on russian language.
 
 '''
 
 from Stemmer import Stemmer
 
 
-def Stemm(EditSearch):
+def stemming(EditSearch: str) -> str:
 
     stemmer = Stemmer('russian')
-    Getting = stemmer.stemWord(EditSearch)
 
-    return Getting
-
-
-
+    return stemmer.stemWord(EditSearch)

@@ -1,31 +1,23 @@
 # -*- coding: utf-8 -*
-import pyaudio
-import wave
-import speech_recognition as sr
-from os                     import system
-from .time                  import Stopwatch
-from .configParser          import SettingsControl
-from libs.AudioManagement   import *
 
-timer = Stopwatch()
-
-'''
-Regonizer module
-
+''' Recognizer module
 Listens to speech, converts to text and sends it to the chat module for processing.
 
 '''
 
-# check lang
-if SettingsControl.getConfig("settings.ini", "lang") == "RU":
-    valuelang = "RU"
-else:
-    valuelang = "en_US"
 
+import pyaudio, wave
+import speech_recognition as sr
+
+from os                     import system
+from .configParser          import SettingsControl, DisplayText
+from libs.AudioManagement   import *
 
 
 
 class SpeechRecognition():
+    ''' Recognize the speech and convert it in the text.
+    '''
 
     def __init__(self):
         # Microphone and Recognition
@@ -33,8 +25,11 @@ class SpeechRecognition():
         self.micro = sr.Microphone()
 
 
-    def calibration(self):
-         #Noise calibration
+    def calibration(self) -> None:
+         ''' Noise calibration.
+
+         '''
+
          print(DisplayText.print("Silence"))
 
          try:
@@ -44,22 +39,24 @@ class SpeechRecognition():
             print(DisplayText.print("microAccesDenied"))
             system("pause")
             calibration()
+         return
+    
 
-
-    def REG(self):
+    def recognize(self) -> None:
         while(True):
-            #Listening to the microphone
+            # Listening to the microphone
+            playAudio('../Res/Sounds/readytohear.wav')
+            print(DisplayText.print("SaySTH"))
+
             with self.micro as source:
-                playAudio('../Res/Sounds/readytohear.wav')
-                print(DisplayText.print("SaySTH"))
                 audio = self.r.listen(source)
 
-            #Speech to text recording
+            # Speech to text recording
             try:
-                Chat_Input = self.r.recognize_google(audio, language=valuelang)
-                print("---> ", Chat_Input)
+                input_ = self.r.recognize_google(audio, language=SettingsControl.getConfig("settings.ini", "lang"))
+                print("---> ", input_)
         
-                return Chat_Input
+                return input_
 
             except sr.UnknownValueError:
                 print(DisplayText.print("errSay"))
@@ -68,6 +65,8 @@ class SpeechRecognition():
 
             except sr.RequestError:
                 raise ConnectionError 
+
+            return
 
 
 
