@@ -45,8 +45,12 @@ class Chat:
 
         Edit = {'text': [], 'tag':[]}
         for line in dataSet:
+            if(line == '' or line == '\n' or line == ' '):
+                continue
+
             row = line.split(' @ ')
-        
+            
+            
             Edit['text'] += [row[0]]
             Edit['tag'] += [row[1]]
     

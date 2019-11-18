@@ -33,34 +33,33 @@ from libs.time                  import stopWatch
 
 
 
-def restart():
+def restart() -> None:
     #restart of the bot
     exe = executable
     execl(exe, exe, *argv)
 
 
-def getUpdate():
+def getUpdate() -> None:
     # --- Check updates ---
     isupdate  = checkUpdate()
     if isupdate:
         print(DisplayText.print("isUpdate"))
-        sleep(2)
-        download(isupdate)
-        remove("TEMP/tmp_file.py")
+        sleep(1.5)
 
+        download(isupdate)
         restart()
 
     else:
         print(DisplayText.print("istUpdate"), '\n')
 
-    if os_path.exists("TEMP/t.ini"):
-        remove("TEMP/t.ini")
+    #TODO: remove here
+    if os_path.exists("TEMP/UpdateConfig.ini"):
+        remove("TEMP/UpdateConfig.ini")
 
     print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
 
 
-# === Username installation module ===
-def set_username():
+def set_username() -> None:
     if os_path.exists("../DataBase/username.json"):
         username = ''
         with open("../DataBase/username.json", 'r') as file_user:
@@ -85,14 +84,14 @@ def set_username():
         set_username()
 
 maxRAMUsage = memory_usage()
-def RAMCheck():
+def RAMCheck() -> None:
     global maxRAMUsage
     if(memory_usage() > maxRAMUsage):
         maxRAMUsage = memory_usage()
+    return
 
 
-
-def main():
+def main() -> int:
      # ----- Start the bot -----
     print ( 70 * "_")
     print ("\t\t                         _ _       \n" +
@@ -109,27 +108,25 @@ def main():
     
     
 
-   
-  
     # --- Chat ---
     print(DisplayText.print("Voice_control"))
     On = input ("--> ")
 
     print(DisplayText.print("Learning"))
     stopWatch.start()
-    from modules.AIProcessing       import getAnswer
+    from modules.AIProcessing       import getAnswer, Answer
     from modules.AICore             import Chat
 
     LangChoice()
     chatOBJ = Chat()
 
     # inline function
-    def launchChat(voice: str = ""):
+    def launchChat(voice: str = "") -> Answer:
         global stopWatch
         global sessionLogger
 
         if(stopWatch):
-            sessionLogger.SessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
+            sessionLogger.sessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
             stopWatch = None
 
         
@@ -172,6 +169,7 @@ def main():
                 On = input("--> ")
                 continue
 
+
         except MemoryError:
             print(DisplayText.print("error"))
             continue
@@ -195,6 +193,8 @@ def main():
 
         print(DisplayText.print("Voice_control"))
         On = input ("--> ")
+
+    return 0
 
 
 if __name__ == '__main__':
