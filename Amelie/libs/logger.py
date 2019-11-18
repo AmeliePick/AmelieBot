@@ -60,7 +60,7 @@ class SessionLog(Config):
 
         # Set the date of the bot's latest start
         date = datetime.now()
-        self.setConfig(path, "Latest start", str(date), section)
+        self.setConfig(path, "Latest start", str(date), self.section)
 
 
     def __del__(self):

@@ -15,6 +15,9 @@ def playAudio(sound: str, reps=1) -> None:
 
 
 def _exit(file: str, second_file = "") -> None:
+    ''' Remove the sound(temporary) files
+    '''
+
     if os_path.exists(file):
         remove(file)
 
