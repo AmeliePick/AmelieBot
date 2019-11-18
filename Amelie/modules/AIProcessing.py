@@ -7,6 +7,9 @@ from subprocess         import Popen
 from libs.Stemming      import stemming
 from .AIFiles           import dataSet, clearSearch, ANfile, checkLang
 
+
+
+
 class Answer:
     ''' The class is a singleton
 
@@ -261,7 +264,7 @@ def selfLearning(text: dict) -> None:
 
     # Fill the array all inputs phrases
     for txt, tag in text.items():
-        statement = '\n' + txt + ' @ ' + tag
+        statement = txt + ' @ ' + tag + '\n'
         getInput.append(statement)
 
 

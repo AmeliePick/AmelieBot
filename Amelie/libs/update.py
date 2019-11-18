@@ -1,45 +1,53 @@
 # -*- coding: utf-8 -*-
+
+''' Update module
+Check the list of updated files on the server and download new files and replace it in the local directories.
+
+'''
+
+
 from urllib.request import urlopen
 from .configParser import SettingsControl
 from re import sub
 from time import sleep
 
 
-def checkUpdate():
+def checkUpdate() -> bool:
     '''
     Getting config file and check versions
     '''
     try:
         # get config file
         response = urlopen('http://ameliepick.ml/AmelieBot/update.ini')
-        with open ("TEMP/t.ini", 'wb') as tmp:
+        with open ("TEMP/UpdateConfig.ini", 'wb') as tmp:
             tmp.write(response.read())
 
         # if a new version is it, change version in this config file
-        if(SettingsControl.getConfig('TEMP/t.ini', "ver") != SettingsControl.getConfig("settings.ini", "ver")):
-            SettingsControl.setConfig("settings.ini", "ver", SettingsControl.getConfig('TEMP/t.ini', "ver"))
+        if(SettingsControl.getConfig('TEMP/UpdateConfig.ini', "ver") != SettingsControl.getConfig("settings.ini", "ver")):
+            SettingsControl.setConfig("settings.ini", "ver", SettingsControl.getConfig('TEMP/UpdateConfig.ini', "ver"))
             return True
 
     except:
         print(DisplayText.print("service_error"))
         return False
-     
+    return
 
-def download(response):
+
+def download(response: bool) -> int:
     '''
-    response --- new version flag
+    response - new version flag
     '''
     if response == True:
         # getting list of new files
-        R = SettingsControl.getConfig('TEMP/t.ini', "modules").split();
-        getModules = []
-        for i in R:
-            getModules.append(i)
+        filesList = SettingsControl.getConfig('TEMP/UpdateConfig.ini', "modules").split();
+        modules = []
+        for i in filesList:
+            modules.append(i)
             
         # download new files
-        for file in getModules:
+        for module in modules:
             try:
-                getFile = urlopen('http://ameliepick.ml/AmelieBot/'+file)
+                getFile = urlopen('http://ameliepick.ml/AmelieBot/'+module)
             except:
                 print(DisplayText.print("WrongPath"))
                 return 1
@@ -55,6 +63,7 @@ def download(response):
 
         
         print(DisplayText.print("Yupdate"))
+        remove("TEMP/tmp_file.py")
         sleep(1.5)
         return 0
 
