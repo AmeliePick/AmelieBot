@@ -5,11 +5,15 @@ Check the list of updated files on the server and download new files and replace
 
 '''
 
+from re                 import sub
+from os                 import remove
+from os                 import path as os_path
+from time               import sleep
+from urllib.request     import urlopen
 
-from urllib.request import urlopen
-from .configParser import SettingsControl
-from re import sub
-from time import sleep
+from .logger            import LogWrite
+from .configParser      import SettingsControl, DisplayText
+
 
 
 def checkUpdate() -> bool:
@@ -23,11 +27,13 @@ def checkUpdate() -> bool:
             tmp.write(response.read())
 
         # if a new version is it, change version in this config file
-        if(SettingsControl.getConfig('TEMP/UpdateConfig.ini', "ver") != SettingsControl.getConfig("settings.ini", "ver")):
-            SettingsControl.setConfig("settings.ini", "ver", SettingsControl.getConfig('TEMP/UpdateConfig.ini', "ver"))
+        NewVersion = SettingsControl.getConfig('TEMP/UpdateConfig.ini',  "Settings", "ver")
+        if SettingsControl.getConfig("settings.ini", "ver") != NewVersion:
+            SettingsControl.setConfig("settings.ini", "Settings", "ver", NewVersion)
             return True
 
     except:
+        LogWrite()
         print(DisplayText.print("service_error"))
         return False
     return
@@ -36,19 +42,22 @@ def checkUpdate() -> bool:
 def download(response: bool) -> int:
     '''
     response - new version flag
+
     '''
+
     if response == True:
         # getting list of new files
-        filesList = SettingsControl.getConfig('TEMP/UpdateConfig.ini', "modules").split();
+        filesList = SettingsControl.getConfig('TEMP/UpdateConfig.ini',"Settings" "modules").split();
         modules = []
-        for i in filesList:
-            modules.append(i)
+        for line in filesList:
+            modules.append(line)
             
         # download new files
         for module in modules:
             try:
                 getFile = urlopen('http://ameliepick.ml/AmelieBot/'+module)
             except:
+                LogWrite()
                 print(DisplayText.print("WrongPath"))
                 return 1
 
@@ -63,7 +72,12 @@ def download(response: bool) -> int:
 
         
         print(DisplayText.print("Yupdate"))
-        remove("TEMP/tmp_file.py")
+
+        if os_path.exists("TEMP/UpdateConfig.ini"):
+            remove("TEMP/UpdateConfig.ini")
+
+        if os_path.exists("TEMP/tmp_file.py"):
+            remove("TEMP/tmp_file.py")
         sleep(1.5)
         return 0
 

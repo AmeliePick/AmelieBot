@@ -53,10 +53,9 @@ def getUpdate() -> None:
         print(DisplayText.print("istUpdate"), '\n')
 
     #TODO: remove here
-    if os_path.exists("TEMP/UpdateConfig.ini"):
-        remove("TEMP/UpdateConfig.ini")
+    
 
-    print("AmelieBot " + SettingsControl.getConfig("settings.ini", "ver"), '\n')
+    print("AmelieBot " + SettingsControl.getConfig("settings.ini", "Settings", "ver"), '\n')
 
 
 def set_username() -> None:
