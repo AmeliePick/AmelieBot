@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+
 from os import path as os_path
 import configparser
+
+
 
 ''' Module for creating and parsing the settings file
 Settings class - for work with settings file.
@@ -14,29 +17,31 @@ class Config:
 
 
 
-    def getConfig(self, path: str, option: str) -> str:
+    def getConfig(self, path: str, section: str, option: str) -> str:
         ''' Getting values from settings
 
         '''
 
+        self.config.remove_section(section)
         self.config.read(path)
 
-        return self.config.get("Settings", option)
+        return self.config.get(section, option)
 
 
-    def setConfig(self, path: str, option: str, value: str, section: str) -> None:
+    def setConfig(self, path: str, section: str, option: str, value: str, ) -> None:
         ''' Sets the values of settings in the configuration file
 
         '''
 
+        self.config.remove_section(section)
         self.config.read(path)
 
 
-        if not self.config.has_section(option):
+        if self.config.has_section(section):
             self.config.set(section, option, value)
 
-            with open(path, "w") as config_file:
-                self.config.write(config_file)
+        with open(path, "w") as config_file:
+            self.config.write(config_file)
         
         return
 
@@ -65,7 +70,7 @@ class Settings(Config):
     lang - Stores the current language setting
 
     '''
-    lang = ''
+    lang: str
 
 
 
@@ -98,7 +103,7 @@ class Settings(Config):
                 continue
 
 
-        self.setConfig(path, "lang",  self.lang, "Settings")
+        self.setConfig(path, "Settings", "lang",  self.lang,)
 
         
     def checkSettingsInfo(self) -> None:
@@ -108,14 +113,18 @@ class Settings(Config):
         is prompted to select the bot language.
 
         '''
+        
+
         path = "settings.ini"
+        AppVersion = self.getConfig("Version/AppSetup.ini", "Setup", "Version")
+        self.config.remove_section("Setup")
 
         if not os_path.exists(path):
 
             self.createSettings(path, "Settings")
 
             # set the default settings
-            self.setConfig(path, "ver", "2.5.2", "Settings")
+            self.setConfig(path,"Settings", "ver", AppVersion)
             self.setLanguage(path)
 
         elif os_path.exists(path):
@@ -127,11 +136,14 @@ class Settings(Config):
 
             if ReadHandle == '' or ReadHandle == '\n':
                 # set the default settings
+
+                
+
                 self.createConfig("settings.ini")
-                self.setConfig(path, "ver", "2.5.2", "Settings")
+                self.setConfig(path, "Settings", "ver", AppVersion)
                 self.setLanguage(path)
 
-            if self.getConfig(path, "lang") == '-':
+            if self.getConfig(path, "Settings", "lang") == '-':
                 self.setLanguage(path)
 
         return
@@ -142,7 +154,7 @@ class Settings(Config):
         
         self.checkSettingsInfo()
 
-        self.lang = self.getConfig("settings.ini", "lang")
+        self.lang = self.getConfig("settings.ini", "Settings", "lang")
         if self.lang == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
@@ -177,11 +189,11 @@ class MessagePrinter:
     def __init__(self, settings: Settings):
         super().__init__()
 
-        if settings.getConfig("settings.ini", "lang") == "RU":
+        if settings.getConfig("settings.ini", "Settings", "lang") == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
 
-        elif settings.getConfig("settings.ini", "lang") == "EN":
+        elif settings.getConfig("settings.ini", "Settings", "lang") == "EN":
             with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
         return
