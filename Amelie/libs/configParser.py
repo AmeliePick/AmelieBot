@@ -16,31 +16,51 @@ class Config:
     path: str
 
 
+    def __init__(self):
+        self.config = configparser.ConfigParser()
+        return
 
-    def getConfig(self, path: str, section: str, option: str) -> str:
+
+    def setSection(self, section: str) -> None:
+        ''' Set the new section in file
+
+        '''
+
+        self.config.read(self.path);
+
+        if not self.config.has_section(section):
+            self.config.add_section(section)
+        
+            with open(self.path, "w") as config_file:
+                self.config.write(config_file)
+        return
+
+
+    def getConfig(self, section: str, option: str, path = "") -> str:
         ''' Getting values from settings
 
         '''
 
-        self.config.remove_section(section)
-        self.config.read(path)
+        if path == "":
+            self.config.read(self.path)
+        else:
+            self.config.read(path)
 
         return self.config.get(section, option)
 
 
-    def setConfig(self, path: str, section: str, option: str, value: str, ) -> None:
+    def setConfig(self, section: str, option: str, value: str, ) -> None:
         ''' Sets the values of settings in the configuration file
 
         '''
 
-        self.config.remove_section(section)
-        self.config.read(path)
+        self.config.read(self.path)
 
 
         if self.config.has_section(section):
             self.config.set(section, option, value)
 
-        with open(path, "w") as config_file:
+        with open(self.path, "w") as config_file:
             self.config.write(config_file)
         
         return
@@ -55,19 +75,67 @@ class Config:
         createSettings.close()
 
         self.config.add_section(section)
-        with open(path, "w") as config_file:
+        with open(self.path, "w") as config_file:
             self.config.write(config_file)
 
         return
 
 
-    def __init__(self):
-        self.config = configparser.ConfigParser()
+    def swapFile(self, file_path: str) -> None:
+        ''' Change the file path
+
+        '''
+
+        self.path = file_path
+        
+        return
+
+
+    def cleanConfig(self) -> None:
+        ''' Remove all items from config
+
+        '''
+
+        sectionsList: list
+
+        sectionsList = self.config.sections()
+
+        for section in sectionsList:
+            self.config.remove_section(section)
+
+        return
+
+
+
+class IniParser(Config):
+    ''' The class is a singleton.
+    Parser for reading another config files.
+
+    '''
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(IniParser, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instance
+
+
+    def getConfig_(self, section, option, path = '') -> str:
+
+        value = self.getConfig(section, option, path)
+
+        self.cleanConfig()
+
+        return value
+
 
 
 class Settings(Config):
     ''' The class is a singleton
-    lang - Stores the current language setting
+    Parser for settings file.
+
+    lang - Stores the current language setting.
 
     '''
     lang: str
@@ -81,9 +149,8 @@ class Settings(Config):
             
         return cls.instance
 
-
     
-    def setLanguage(self, path: str) -> None:
+    def setLanguage(self) -> None:
         '''
         path -- The path where the configuration file is located
 
@@ -103,7 +170,7 @@ class Settings(Config):
                 continue
 
 
-        self.setConfig(path, "Settings", "lang",  self.lang,)
+        self.setConfig("Settings", "lang",  self.lang)
 
         
     def checkSettingsInfo(self) -> None:
@@ -114,20 +181,20 @@ class Settings(Config):
 
         '''
         
+        AppVersion = iniParser.getConfig_("Setup", "Version", "Version/AppSetup.ini")
 
         path = "settings.ini"
-        AppVersion = self.getConfig("Version/AppSetup.ini", "Setup", "Version")
-        self.config.remove_section("Setup")
+        self.swapFile(path)
 
-        if not os_path.exists(path):
+        if not os_path.exists(self.path):
 
-            self.createSettings(path, "Settings")
+            self.createSettings(self.path, "Settings")
 
             # set the default settings
-            self.setConfig(path,"Settings", "ver", AppVersion)
-            self.setLanguage(path)
+            self.setConfig("Settings", "ver", AppVersion)
+            self.setLanguage()
 
-        elif os_path.exists(path):
+        elif os_path.exists(self.path):
             ReadHandle = ''
 
             # Check for empty settings
@@ -136,15 +203,12 @@ class Settings(Config):
 
             if ReadHandle == '' or ReadHandle == '\n':
                 # set the default settings
+                self.setSection("Settings")
+                self.setConfig("Settings", "ver", AppVersion)
+                self.setLanguage()
 
-                
-
-                self.createConfig("settings.ini")
-                self.setConfig(path, "Settings", "ver", AppVersion)
-                self.setLanguage(path)
-
-            if self.getConfig(path, "Settings", "lang") == '-':
-                self.setLanguage(path)
+            if self.getConfig("Settings", "lang") == '-':
+                self.setLanguage()
 
         return
 
@@ -154,7 +218,7 @@ class Settings(Config):
         
         self.checkSettingsInfo()
 
-        self.lang = self.getConfig("settings.ini", "Settings", "lang")
+        self.lang = self.getConfig("Settings", "lang")
         if self.lang == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
@@ -189,11 +253,11 @@ class MessagePrinter:
     def __init__(self, settings: Settings):
         super().__init__()
 
-        if settings.getConfig("settings.ini", "Settings", "lang") == "RU":
+        if settings.getConfig("Settings", "lang") == "RU":
             with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
 
-        elif settings.getConfig("settings.ini", "Settings", "lang") == "EN":
+        elif settings.getConfig("Settings", "lang") == "EN":
             with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
                 self.serviceExpressions = file.readlines()
         return
@@ -225,6 +289,8 @@ class MessagePrinter:
         return self.Print("error")
 
 
+
+iniParser = IniParser()
 
 SettingsControl = Settings()
 
