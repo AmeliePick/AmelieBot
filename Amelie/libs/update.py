@@ -12,7 +12,7 @@ from time               import sleep
 from urllib.request     import urlopen
 
 from .logger            import LogWrite
-from .configParser      import SettingsControl, DisplayText
+from .configParser      import iniParser, SettingsControl, DisplayText
 
 
 
@@ -27,9 +27,9 @@ def checkUpdate() -> bool:
             tmp.write(response.read())
 
         # if a new version is it, change version in this config file
-        NewVersion = SettingsControl.getConfig('TEMP/UpdateConfig.ini',  "Settings", "ver")
-        if SettingsControl.getConfig("settings.ini", "ver") != NewVersion:
-            SettingsControl.setConfig("settings.ini", "Settings", "ver", NewVersion)
+        NewVersion = iniParser.getConfig_(  "Settings", "ver", "TEMP/UpdateConfig.ini")
+        if SettingsControl.getConfig("Settings", "ver") != NewVersion:
+            SettingsControl.setConfig("Settings", "ver", NewVersion)
             return True
 
     except:
@@ -47,7 +47,7 @@ def download(response: bool) -> int:
 
     if response == True:
         # getting list of new files
-        filesList = SettingsControl.getConfig('TEMP/UpdateConfig.ini',"Settings" "modules").split();
+        filesList = iniParser.getConfig_('TEMP/UpdateConfig.ini',"Settings" "modules").split();
         modules = []
         for line in filesList:
             modules.append(line)

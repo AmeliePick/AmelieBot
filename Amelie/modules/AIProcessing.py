@@ -127,7 +127,7 @@ def LangChoice() -> None:
     global dataSet, clearSearch, ANfile
     global checkLang
 
-    checkLang = SettingsControl.getConfig("settings.ini", "Settings", "lang")
+    checkLang = SettingsControl.getConfig("Settings", "lang")
 
     postfix = "EN.json"
     if checkLang == "RU":

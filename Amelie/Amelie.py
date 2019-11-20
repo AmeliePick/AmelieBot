@@ -55,7 +55,7 @@ def getUpdate() -> None:
     #TODO: remove here
     
 
-    print("AmelieBot " + SettingsControl.getConfig("settings.ini", "Settings", "ver"), '\n')
+    print("AmelieBot " + SettingsControl.getConfig("Settings", "ver"), '\n')
 
 
 def set_username() -> None:
