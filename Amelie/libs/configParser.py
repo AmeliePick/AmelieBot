@@ -192,6 +192,7 @@ class Settings(Config):
 
             # set the default settings
             self.setConfig("Settings", "ver", AppVersion)
+            self.setConfig("Settings", "lang", '-')
             self.setLanguage()
 
         elif os_path.exists(self.path):
