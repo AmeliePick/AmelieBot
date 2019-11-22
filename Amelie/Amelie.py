@@ -92,6 +92,9 @@ def RAMCheck() -> None:
 
 def main() -> int:
      # ----- Start the bot -----
+    global stopWatch
+    global sessionLogger
+
     print ( 70 * "_")
     print ("\t\t                         _ _       \n" +
            "\t\t    /\                  | (_)      \n" +
@@ -107,40 +110,36 @@ def main() -> int:
     
     
 
-    # --- Chat ---
-    print(DisplayText.print("Voice_control"))
-    On = input ("--> ")
+   
 
     print(DisplayText.print("Learning"))
     stopWatch.start()
     from modules.AIProcessing       import getAnswer, Answer
     from modules.AICore             import Chat
+    sessionLogger.sessionCollector( "Chat loading(sec)", str(stopWatch.stop()) )
+    stopWatch = None
+
 
     LangChoice()
     chatOBJ = Chat()
 
     # inline function
     def launchChat(voice: str = "") -> Answer:
-        global stopWatch
-        global sessionLogger
-
-        if(stopWatch):
-            sessionLogger.sessionCollector( "Chat Duration(sec)", str(stopWatch.stop()) )
-            stopWatch = None
-
-        
         chatOBJ.Enter(voice)
         chatOBJ.open_AI()
 
         return getAnswer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getSessionInput())
     
 
+    # --- Chat ---
+    print(DisplayText.print("Voice_control"))
+    On = input ("--> ")
     while (True):
         try:
             if On == "Y" or On ==  "y":
                 from libs.Recognition   import speechRecognition
 
-                if SettingsControl.getConfig("settings.ini", "lang") == "RU":
+                if SettingsControl.getConfig("Settings", "lang") == "RU":
                     from libs.RuSpeak import speak
 
                     speechRecognition.calibration()
@@ -181,6 +180,7 @@ def main() -> int:
             print(DisplayText.print("service_error"))
       
         except OSError:
+            LogWrite()
             print(DisplayText.print("error"))
 
         except Exception:

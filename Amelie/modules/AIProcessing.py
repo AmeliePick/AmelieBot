@@ -61,23 +61,33 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
 
         elif inputType == "Search":
             url = "https://www.google.ru/search?q="
-            webbrowser_open( url + str(EditSearch(input, inputType)), new=1)
+            webbrowser_open( url + str(EditInput(input, inputType)), new=1)
     
         elif inputType == "Youtube":
             url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(stemming(EditSearch(input, inputType))), new=1)
+            webbrowser_open( url + str(stemming(EditInput(input, inputType))), new=1)
         
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
-        elif inputType == "Open" and EditSearch(input,  inputType) != '':
+        elif inputType == "Open" and EditInput(input,  inputType) != '':
             try:
-                Popen( getProgrammPath( EditSearch(input, inputType ) ) )
+                Popen( getProgrammPath( EditInput(input, inputType ) ) )
             
             except FileNotFoundError:
-                if EditedOpen(EditSearch(input)) == 1:
                     from modules.exceptions_chat import programmNotFound
+                    
+                    while(True):
+                        try:
+                            if programmNotFound() != 0:
+                                Popen( getProgrammPath( EditInput(input, inputType ) ) )
+                                break
 
-                    programmNotFound()
-                    getProgrammPath(EditSearch(input, inputType))
+                            else:
+                                #change input type
+                                break
+
+                        except FileNotFoundError:
+                            continue
+
 
             except OSError as os:
                 if(os.winerror == 87):
@@ -159,8 +169,8 @@ def getProgrammPath(search) -> str:
     If the file contains the specified program, 
     the function returns the path to the exe program.
     '''
-    Name = ''
-    Link = ''
+    Name: str
+    Link: str
 
     with open('../DataBase/added_programms.json', 'r') as File:
         for line in File:
@@ -171,14 +181,13 @@ def getProgrammPath(search) -> str:
                 Link = str(row[1])
                 Name = str(row[0])
                
-    if search in Name:
-        return Link
+                if search == Name:
+                    return Link.replace('\n', '')
     
-    else:
-        return
+    raise FileNotFoundError
 
 
-def EditSearch(Input, ToAnswer = '') -> str:
+def EditInput(Input, ToAnswer = '') -> str:
     '''Input editing
     Removes from the user input the stop words.
     This results in a clean query for a program search operation or a web query.

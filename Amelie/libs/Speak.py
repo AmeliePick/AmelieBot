@@ -19,17 +19,17 @@ text_to_speech = TextToSpeechV1(
     url='https://stream.watsonplatform.net/text-to-speech/api')
 
 
-def speak(Answer: Answer) ->None:
+def speak(answer) -> None:
     ''' Convert text to speech, save it in .wav file and play it.
-
+    answer: Answer - The object of bot answer
     '''
 
     with open('TEMP/sound.wav', 'wb') as audio_file:
-        audio = text_to_speech.synthesize(text=Answer.getOutput(), voice='en-US_AllisonVoice', accept='audio/wav')
+        audio = text_to_speech.synthesize(text=answer.getOutput(), voice='en-US_AllisonVoice', accept='audio/wav')
         audio_file.write(audio.get_result().content)
 
     playAudio('TEMP/sound.wav')
     
-    if Answer.getCode() == 0:
+    if answer.getCode() == 0:
         _exit('TEMP/sound.wav')
     return
