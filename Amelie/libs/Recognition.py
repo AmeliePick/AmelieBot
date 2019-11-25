@@ -2,7 +2,6 @@
 
 ''' Recognizer module
 Listens to speech, converts to text and sends it to the chat module for processing.
-
 '''
 
 
@@ -27,7 +26,6 @@ class SpeechRecognition():
 
     def calibration(self) -> None:
          ''' Noise calibration.
-
          '''
 
          print(DisplayText.print("Silence"))
@@ -53,7 +51,7 @@ class SpeechRecognition():
 
             # Speech to text recording
             try:
-                input_ = self.r.recognize_google(audio, language=SettingsControl.getConfig("settings.ini", "lang"))
+                input_ = self.r.recognize_google(audio, language=SettingsControl.getConfig("Settings", "lang"))
                 print("---> ", input_)
         
                 return input_

@@ -16,7 +16,7 @@ from libs.AudioManagement import playAudio, _exit
 
 
 
-def speak(speech: Answer) -> None:
+def speak(speech) -> None:
     ''' Create .mp3 file with user input and play it.
 
     '''
