@@ -173,7 +173,7 @@ def main() -> int:
             continue
 
         except SystemExit:
-            sessionLogger.SessionCollector( "max RAM usage", str(maxRAMUsage) )
+            sessionLogger.sessionCollector( "max RAM usage", str(maxRAMUsage) )
             _exit(0)
 
         except ConnectionError:
