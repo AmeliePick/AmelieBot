@@ -1,0 +1,27 @@
+getName # What is your name?
+emptyName # (!) Name can't be empty :D
+start # Hi, I'm Amelie. Start me? Press [Y] of [N]
+sayHello # Salute! What I'm capable of, you can find out right now =D
+bye # Thinking... Now you are working, bye =D
+tryAgain # (!) Try again - [Y] or [N]
+Unknown # I can't understand you =(
+WrongPath # Wrong path
+WrongInput # Try again
+Learning # There is a bot learning...
+Voice_control # Enable voice? [Y] or [N]
+WrongInput_menu # Enter [Y] or [N] please ^-^
+C_lang # Choose language [RU] of [EN]: 
+n_found # I have not found such a program
+addPr # =D can you add it to my database and I'll open it next time. Add a program? [Y] or [N]
+errMicro # Microphone is not defined
+Silence # A couple of seconds of silence ...
+SaySTH # Say something
+errSay # Bot did not hear the phrase
+service_error # Service error. No Internet connection
+Nupdate # No updates
+Yupdate # Updates are success installed. Rebooting...
+isUpdate # I have new updates ^-^
+istUpdate # No new updates
+crash # An unexpected error has occurred. Rebooting...
+error # Error ¯\_(-_-)_/¯
+microAccesDenied # enable/disable the access to the microphone in Setting > Confidentiality > Microphone(Windows 10)
