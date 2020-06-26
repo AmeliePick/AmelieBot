@@ -21,6 +21,7 @@ class Config:
         return
 
 
+
     def setSection(self, section: str) -> None:
         ''' Set the new section in file
 
@@ -36,6 +37,7 @@ class Config:
         return
 
 
+
     def getConfig(self, section: str, option: str, path = "") -> str:
         ''' Getting values from settings
 
@@ -47,6 +49,7 @@ class Config:
             self.config.read(path)
 
         return self.config.get(section, option)
+
 
 
     def setConfig(self, section: str, option: str, value: str, ) -> None:
@@ -66,6 +69,7 @@ class Config:
         return
 
 
+
     def swapFile(self, file_path: str) -> None:
         ''' Change the file path
 
@@ -74,6 +78,7 @@ class Config:
         self.path = file_path
         
         return
+
 
 
     def cleanConfig(self) -> None:
@@ -93,10 +98,12 @@ class Config:
 
 
 class IniParser(Config):
-    ''' The class is a singleton.
-    Parser for reading another config files.
+    ''' Parser to read another config files
+
+    The class is a singleton.
 
     '''
+
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -104,6 +111,7 @@ class IniParser(Config):
             return cls.instance
             
         return cls.instance
+
 
 
     def _getConfig(self, section, option, path = "") -> str:
@@ -125,13 +133,34 @@ class IniParser(Config):
 
 
 class Settings(Config):
-    ''' The class is a singleton
-    Parser for settings file.
+    ''' Parser for settings file.
+    The class is a singleton.
+    
 
-    lang - Stores the current language setting.
+    lang: Current language setting.
 
     '''
+
+
     lang: str
+
+
+
+    def __init__(self):
+        super().__init__()
+        
+        self.checkSettingsInfo()
+
+        self.lang = self.getConfig("Settings", "lang")
+        if self.lang == "RU":
+            with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
+                self.serviceExpressions = file.readlines()
+
+        elif self.lang == "EN":
+            with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
+                self.serviceExpressions = file.readlines()
+
+        return
 
 
 
@@ -143,9 +172,12 @@ class Settings(Config):
         return cls.instance
 
 
+
     def createSettings(self, path: str, section: str) -> None:
         ''' Create the settings file and add first section to that
         '''
+
+
         self.path = path
 
         handleSettings = open(path, 'w')
@@ -158,11 +190,13 @@ class Settings(Config):
         return
 
     
+
     def setLanguage(self) -> None:
         '''
-        path -- The path where the configuration file is located
+        path: The path where the configuration file is located.
 
         '''
+
 
         self.lang = input("Choose language [RU] of [EN]: ")
         while(True):
@@ -180,12 +214,12 @@ class Settings(Config):
 
         self.setConfig("Settings", "lang",  self.lang)
 
+        return
+
+
         
     def checkSettingsInfo(self) -> None:
-        ''' Checking the validity of the settings file
-        A configuration file is created. Further from it all information is read. 
-        If the file is empty, which means this is the first launch of the application, the user 
-        is prompted to select the bot language.
+        ''' Checking the validity of the settings file.
 
         '''
         
@@ -222,31 +256,17 @@ class Settings(Config):
         return
 
 
-    def __init__(self):
-        super().__init__()
-        
-        self.checkSettingsInfo()
-
-        self.lang = self.getConfig("Settings", "lang")
-        if self.lang == "RU":
-            with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
-                self.serviceExpressions = file.readlines()
-
-        elif self.lang == "EN":
-            with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
-                self.serviceExpressions = file.readlines()
-
-        return
-
-      
 
 class MessagePrinter:
-    ''' The class is a singleton
-    Printing messages in current language
-    
-    serviceExpressions - the DB file
+    ''' Printing messages in current language
+
+    The class is a singleton.
+
+    serviceExpressions: the data from the data base file.
 
     '''
+
+
     serviceExpressions: str
 
 
@@ -257,6 +277,7 @@ class MessagePrinter:
             return cls.instance
             
         return cls.instance
+
 
 
     def __init__(self, settings: Settings):
@@ -272,13 +293,11 @@ class MessagePrinter:
         return
     
 
-    def print(self, value: str) -> str:
-        '''
-        The function for service expressions, 
-        so that when changing the language, 
-        the text in the whole program changes
 
-        value - name of expression
+    def print(self, value: str) -> str:
+        ''' Print the text of expression by given value
+
+        value: name of the expression.
 
         '''
 
@@ -291,9 +310,9 @@ class MessagePrinter:
                 return ''.join(text)
 
 
-        '''If the error in the name of the expression
-           By recursion it finds the value of the expression by tag "error"
-
+        '''
+        If the error exist in the name of the expression
+        By recursion it finds the value of the expression by "error" tag
         '''
         return self.Print("error")
 

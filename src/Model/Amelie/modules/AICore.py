@@ -18,78 +18,96 @@ from sklearn.pipeline                   import Pipeline
 
 from .AIFiles   import dataSet, checkLang
 
+
+
 class Chat:
     input_ = ""
     inputType_ = ""
     sessionInput_ = {}
 
-
-    def getInput(self) -> str:
-        return self.input_
+    text_clf = None
 
 
-    def getInputType(self) -> str:
-        return self.inputType_
 
-    def getSessionInput(self) -> dict:
-        return self.sessionInput_
+    def __init__(self):
+        super().__init__()
 
+        def parseDataBase() -> dict:
+            global dataSet
 
-    '''
-    Functions for creating and training the neural network to recognize the type of input. 
-    For example: What is the weather today? - Weather. Where is Paris? - Location
+            Edit = {'text': [], 'tag':[]}
+            for line in dataSet:
+                if(line == '' or line == '\n' or line == ' '):
+                    continue
 
-    '''
-    def AI(self) -> dict:
-        global dataSet
-
-        Edit = {'text': [], 'tag':[]}
-        for line in dataSet:
-            if(line == '' or line == '\n' or line == ' '):
-                continue
-
-            row = line.split(' @ ')
+                row = line.split(' @ ')
             
             
-            Edit['text'] += [row[0]]
-            Edit['tag'] += [row[1]]
+                Edit['text'] += [row[0]]
+                Edit['tag'] += [row[1]]
     
         
-        return Edit
+            return Edit
 
 
-    def training(self, Edit, Val_split = 0.1) -> dict:
-        global checkLang
 
-        lenght = len(Edit['text'])
-        indexes = arange(lenght)
-        random.shuffle(indexes)
+        def training(Edit, Val_split = 0.1) -> dict:
+            global checkLang
 
-        X = [Edit['text'][i]
-        for i in indexes ]
-        Y = [Edit['tag'][i]
-        for i in indexes]
+            lenght = len(Edit['text'])
+            indexes = arange(lenght)
+            random.shuffle(indexes)
 
-        nb_valid_samples = int(Val_split * lenght)
+            X = [Edit['text'][i] for i in indexes]
+            Y = [Edit['tag'][i]  for i in indexes]
+
+            nb_valid_samples = int(Val_split * lenght)
 
 
-        #save the model to disk
-        filename = 'modelEN.sav'
-        if checkLang == "RU":
-            filename = 'model.sav'
-        dump(nb_valid_samples, open("models/"+filename, 'wb'))
+            #save the model to disk
+            filename = 'modelEN.sav'
+            if checkLang == "RU":
+                filename = 'model.sav'
+            dump(nb_valid_samples, open("models/"+filename, 'wb'))
     
-        #load the model from disk
-        loaded_model = load(open("models/"+filename, 'rb'))
+            #load the model from disk
+            loaded_model = load(open("models/"+filename, 'rb'))
   
 
-        return { 
-            'train': { 'x': X[:-loaded_model], 'y': Y[:-loaded_model]  },
-            'test': { 'x': X[-loaded_model:], 'y': Y[-loaded_model:]  }
-        }
+            return { 
+                'train': { 'x': X[:-loaded_model], 'y': Y[:-loaded_model]  },
+                'test': { 'x': X[-loaded_model:], 'y': Y[-loaded_model:]  }
+            }
+
+
+
+        # Do train n-network
+        data = parseDataBase()
+        trained = training(data)
+        self.text_clf = Pipeline([
+                        ('tfidf', TfidfVectorizer()),
+                        ('clf', SGDClassifier(loss='hinge')),
+                        ])
+        self.text_clf.fit(trained['train']['x'], trained['train']['y'])
+        self.text_clf.predict( trained['test']['x'] )
+
+
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Chat, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instance
+
 
 
     def Enter(self, voice: str = "") -> None:
+        ''' Get the user input(text/voice)
+
+        '''
+
+
         while(True):
             if(voice == ""):
                 self.input_ = str(input('\n---> '))
@@ -102,26 +120,33 @@ class Chat:
                 break
 
 
-    def open_AI(self) -> None:
-        data = self.AI()
-        D = self.training(data)
-        text_clf = Pipeline([
-                        ('tfidf', TfidfVectorizer()),
-                        ('clf', SGDClassifier(loss='hinge')),
-                        ])
-        text_clf.fit(D['train']['x'], D['train']['y'])
-        predicted = text_clf.predict( D['test']['x'] )
 
-        #give a type of input
+    def launch(self) -> None:
+        # give a type of input
         input = []
         input.append(self.input_.capitalize())
 
 
         try:
-            pred = text_clf.predict(input)
+            pred = self.text_clf.predict(input)
         except:
             return "Pause"
         
         self.inputType_ = ''.join(pred).replace('\n', '')
 
         self.sessionInput_[self.input_] = self.inputType_
+
+
+
+    def getInput(self) -> str:
+        return self.input_
+
+
+
+    def getInputType(self) -> str:
+        return self.inputType_
+
+
+
+    def getSessionInput(self) -> dict:
+        return self.sessionInput_
