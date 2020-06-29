@@ -11,14 +11,19 @@ from .AIFiles           import dataSet, clearSearch, ANfile, checkLang
 
 
 class Answer:
-    ''' The class is a singleton
+    ''' The chat's answer formation
 
-    code --- for request processing logic
-    if code == 0 > This means exit from the application.
+    The class is a singleton.
 
-    self --- text for answer to user
+    code: State value.
+          0 means to exit from app.
+          1 means to continue work.
+
 
     '''
+
+
+
     code_ = 1
     output_ = ''
     
@@ -36,12 +41,15 @@ class Answer:
         self.code_ = code
 
 
+
     def setText(self, txt) -> None:
         self.output_ = txt
 
 
+
     def getCode(self) -> int:
         return self.code_
+
 
 
     def getOutput(self) -> str:
@@ -50,7 +58,8 @@ class Answer:
 
 
 def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
-        answerType = []
+    #TODO: refactor this
+
         answerText = []
         url = ""
         output = Answer()
@@ -61,16 +70,16 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
 
         elif inputType == "Search":
             url = "https://www.google.ru/search?q="
-            webbrowser_open( url + str(EditInput(input, inputType)), new=1)
+            webbrowser_open( url + str(EditInput(input)), new=1)
     
         elif inputType == "Youtube":
             url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(stemming(EditInput(input, inputType))), new=1)
+            webbrowser_open( url + str(stemming(EditInput(input))), new=1)
         
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
-        elif inputType == "Open" and EditInput(input,  inputType) != '':
+        elif inputType == "Open" and EditInput(input) != '':
             try:
-                Popen( getProgrammPath( EditInput(input, inputType ) ) )
+                Popen( getProgrammPath( EditInput(input) ) )
             
             except FileNotFoundError:
                     from modules.exceptions_chat import programmNotFound
@@ -78,7 +87,7 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
                     while(True):
                         try:
                             if programmNotFound() != 0:
-                                Popen( getProgrammPath( EditInput(input, inputType ) ) )
+                                Popen( getProgrammPath( EditInput(input) ) )
                                 break
 
                             else:
@@ -94,10 +103,9 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
                     inputType = "Unknown"
 
 
-        # --- Get answer ---
+        # get answer
         for line in ANfile:
             row = line.split(' @ ')
-            answerType.append(row[0])
 
             if inputType in line:
                 answerText.append(row[1])
@@ -107,9 +115,9 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
             print ("\n<---", output.getOutput())
 
             # add phrases in DB
-            if output.getCode() == 0 :
-                selfLearning(sessionInput)
-                sessionInput.clear()
+            selfLearning(input + " @ " + inputType)
+            sessionInput.clear()
+                
 
         except IndexError:
                 Unknown = []
@@ -128,10 +136,13 @@ def getAnswer(input: str, inputType: str, sessionInput: dict) -> Answer:
 
 
 
+
 def LangChoice() -> None:
     ''' Check language choice.
-    Fill in the fields with the necessary data based on the choice of language.
+
     '''
+
+
     from modules.configParser import SettingsControl
 
     global dataSet, clearSearch, ANfile
@@ -151,7 +162,7 @@ def LangChoice() -> None:
     
     with open ("../DataBase/ClearSearch"+postfix, "r") as file:
         for line in file:
-            clearSearch.append(line)
+            clearSearch.append(line.replace('\n', ''))
         
 
     with open ("../DataBase/answers"+postfix, "r") as Afile:
@@ -162,13 +173,13 @@ def LangChoice() -> None:
     return
 
 
-def getProgrammPath(search) -> str:
-    ''' Get the programm's path
-    The function parse the file from the database
-    with the names of programs and paths to .exe file
-    If the file contains the specified program, 
-    the function returns the path to the exe program.
+
+def getProgrammPath(search: str) -> str:
+    ''' Get the path to the executable file
+
     '''
+
+
     Name: str
     Link: str
 
@@ -187,103 +198,55 @@ def getProgrammPath(search) -> str:
     raise FileNotFoundError
 
 
-def EditInput(Input, ToAnswer = '') -> str:
-    '''Input editing
-    Removes from the user input the stop words.
-    This results in a clean query for a program search operation or a web query.
+
+def EditInput(input: str) -> str:
+    ''' Removes from the user input the stop words.
 
     Example:
-            Input: open Google, find summer wallpaper
-            Result: Google, summer wallpaper
+            Input: open Google, find summer wallpapers
+            Result: Google, summer wallpapers
     '''
+
 
     from re import sub
 
     global clearSearch
-    deleteTextFromInput = []
 
-    for i in clearSearch:
+    stopPhrase = ''
+    for row in clearSearch:
+        if ((input.capitalize()).find(row.capitalize()) != -1):
+            stopPhrase = row.replace('\n', '')
+            break
+
+
+    if stopPhrase == '':
+        return input
+    else:
+        result = list(input)
+        for i in range(input.capitalize().find(row.capitalize()), len(stopPhrase)):
+                       result[i] = ''
+
         
-        row = i.split(' @ ')
-       
-        if ToAnswer == "Youtube" and "Youtube" in i:
-            deleteTextFromInput.append(row[0])     
-            
-        elif ToAnswer == "Search" and "Search" in i:
-            deleteTextFromInput.append(row[0])
-
-        elif ToAnswer == "Open" and "Open" in i:
-            deleteTextFromInput.append(row[0])
-     
-    modified = False
-    for item in deleteTextFromInput:
-        if item in Input:
-            Editedtext = Input.replace(item, '')
-        elif item.capitalize() in Input.capitalize(): 
-            Editedtext = Input.capitalize().replace(item.capitalize(), '')
-            modified = True
-
-        else:
-            continue
-
-        Editedtext = Editedtext.lstrip()
-
-        break
         
-    clearText = [] # Original words
-    wordLen = 0
-    text = []
-    if modified:
-        # word breakdown
-        word = []
-        for char in Input:
-            if char == ' ':
-                clearText.append(''.join(word))
-                word.clear()
-            else:
-                word.append(char)
-        clearText.append(''.join(word))
-
-        # Search for original spelling
-        # word --- is an original word
-        for word in clearText:
-            if word.lower() in Editedtext.lower():
-                text.append(word)
-                
-        Editedtext = ' '.join(text)
+        return sub('[?!]', '', ''.join(result))
 
 
-    try:
-        Editedtext = sub('[?!]', '', Editedtext)
 
-    except:
-        Editedtext = Input
-
-
-    return Editedtext.lstrip()
-
-
-def selfLearning(text: dict) -> None:
+def selfLearning(text: str) -> None:
     ''' Word processing and write down to DB's file
 
     '''
 
     global checkLang
-    getInput = []
-
-    # Fill the array all inputs phrases
-    for txt, tag in text.items():
-        statement = txt + ' @ ' + tag + '\n'
-        getInput.append(statement)
 
 
     if checkLang == "RU":
         with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
-            train.writelines(getInput)
+            train.writeline(text)
 
     elif checkLang == "EN":
         with open("../DataBase/DataSet_EN.json", "a") as train:
-            train.writelines(getInput)
+            train.writeline(text)
 
     return
 
