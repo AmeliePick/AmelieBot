@@ -8,7 +8,7 @@ from traceback      import format_exc
 from datetime       import datetime
 from os             import path as os_path
 
-from modules.configParser      import Config
+from .configParser      import Config
 
 
 

@@ -11,8 +11,8 @@ from os                 import path as os_path
 from time               import sleep
 from urllib.request     import urlopen
 
-from .sessionLog            import LogWrite
-from .configParser      import iniParser, SettingsControl, DisplayText
+from .tools.sessionLog  import LogWrite
+from .tools.configParser      import iniParser, SettingsControl, DisplayText
 
 
 

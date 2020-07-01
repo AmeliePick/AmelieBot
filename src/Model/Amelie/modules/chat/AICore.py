@@ -20,6 +20,7 @@ from sklearn.pipeline                   import Pipeline
 from random         import choice
 from webbrowser     import open as webbrowser_open
 from subprocess     import Popen
+from ..tools.oc      import fileManager
 
 from .stemming          import stemming
 
@@ -27,7 +28,7 @@ from .stemming          import stemming
 
 class Chat:
     # Storage for DB lines of stop words 
-    clearSearch = list()
+    stopWords = list()
 
     # Storage for DB lines
     dataSet = list()
@@ -118,10 +119,6 @@ class Chat:
 
 
 
-        
-
-
-
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(Chat, cls).__new__(cls)
@@ -151,33 +148,6 @@ class Chat:
 
 
     def getAnswer(self) -> str:
-        #TODO: refactor this
-
-        def getProgrammPath(search: str) -> str:
-            ''' Get the path to the executable file
-
-            '''
-
-
-            Name: str
-            Link: str
-
-            with open('../DataBase/added_programms.json', 'r') as File:
-                for line in File:
-            
-                    row = line.split(' = ')
-
-                    if search in line:
-                        Link = str(row[1])
-                        Name = str(row[0])
-               
-                        if search == Name:
-                            return Link.replace('\n', '')
-    
-            raise FileNotFoundError
-
-
-
         def EditInput(input: str) -> str:
             ''' Removes from the user input the stop words.
 
@@ -189,10 +159,8 @@ class Chat:
 
             from re import sub
 
-            global clearSearch
-
             stopPhrase = ''
-            for row in clearSearch:
+            for row in self.stopWords:
                 if ((input.capitalize()).find(row.capitalize()) != -1):
                     stopPhrase = row.replace('\n', '')
                     break
@@ -211,7 +179,7 @@ class Chat:
         
 
 
-        url = ""
+        url = str()
 
   
         if self.inputType_ == "Exit":
@@ -228,23 +196,10 @@ class Chat:
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
         elif self.inputType_ == "Open" and EditInput(self.input_) != '':
                 try:
-                    Popen( getProgrammPath( EditInput(self.input_) ) )
+                    Popen( fileManager.getProgrammPath( EditInput(self.input_) ) )
             
                 except FileNotFoundError:
-                        from .exceptions_chat import programmNotFound
-                    
-                        while(True):
-                            try:
-                                if programmNotFound() != 0:
-                                    Popen( getProgrammPath( EditInput(self.input_) ) )
-                                    break
-
-                                else:
-                                    #change input type
-                                    break
-
-                            except FileNotFoundError:
-                                continue
+                        pass
 
 
                 except OSError as os:
@@ -289,8 +244,6 @@ class Chat:
 
         '''
 
-        global checkLang
-
 
         if self.checkLang == "RU":
             with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
@@ -310,7 +263,7 @@ class Chat:
         '''
 
 
-        from modules.configParser import SettingsControl
+        from ..tools.configParser import SettingsControl
 
         self.checkLang = SettingsControl.getConfig("Settings", "lang")
 
@@ -324,9 +277,9 @@ class Chat:
                 self.dataSet.append(line.replace('\n', ''))
 
     
-        with open ("../DataBase/ClearSearch"+postfix, "r") as file:
+        with open ("../DataBase/stopWords"+postfix, "r") as file:
             for line in file:
-                self.clearSearch.append(line.replace('\n', ''))
+                self.stopWords.append(line.replace('\n', ''))
         
 
         with open ("../DataBase/answers"+postfix, "r") as file:
