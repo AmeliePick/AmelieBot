@@ -16,44 +16,37 @@ from sklearn.feature_extraction.text    import TfidfVectorizer
 from sklearn.linear_model               import SGDClassifier
 from sklearn.pipeline                   import Pipeline
 
-
+from .stemming          import stemming
 from random         import choice
 from webbrowser     import open as webbrowser_open
 from subprocess     import Popen
-from ..tools.oc      import fileManager
-
-from .stemming          import stemming
+from ..tools.oc     import fileManager
 
 
 
 class Chat:
-    # Storage for DB lines of stop words 
-    stopWords = list()
+    # DataBase info
+    dataSet:    list
+    stopWords:  list
+    answerText: list
 
-    # Storage for DB lines
-    dataSet = list()
-
-    # Storage for DB answer lines
-    answerText = list()
-
-    # Storages current language choice
-    checkLang = ""
-
-
-    input_ = str()
-    output = str()
-    inputType_ = str()
-    sessionInput_ = dict()
+    # App setup's info
     
 
-    text_clf = None
-
-    StateCode = 1   # 0 means to exit from app.
+    # Chat
+    input_: str
+    output: str
+    inputType_: str
+    sessionInput_: dict
+    
+    lang: str
+    text_clf: Pipeline
+    stateCode: int  # 0 means to exit from app.
                     # 1 means to continue work.
 
 
 
-    def __init__(self):
+    def __init__(self, appLanguage: str):
         super().__init__()
 
 
@@ -104,8 +97,10 @@ class Chat:
 
 
 
-        self.LangChoice()
+        self.lang = appLanguage
+        self.getDataFromDB()
 
+        self.stateCode = 1
 
         # Do train n-network
         data = parseDataSet()
@@ -125,25 +120,6 @@ class Chat:
             return cls.instance
             
         return cls.instance
-
-
-
-    def Enter(self, input_: str = "") -> None:
-        ''' Get the user input(text/voice)
-
-        '''
-
-
-        while(True):
-            if(input_ == ""):
-                self.input_ = str(input('\n---> '))
-                if self.input_ == '' or self.input_ == '\n' or self.input_ == ' ':
-                    continue
-                else:
-                    break
-            else:
-                self.input_ = input_
-                break
 
 
 
@@ -257,18 +233,14 @@ class Chat:
 
 
 
-    def LangChoice(self) -> None:
+    def getDataFromDB(self) -> None:
         ''' Check language choice and parse needed files.
 
         '''
 
 
-        from ..tools.configParser import SettingsControl
-
-        self.checkLang = SettingsControl.getConfig("Settings", "lang")
-
         postfix = "EN.json"
-        if self.checkLang == "RU":
+        if self.lang == "RU":
             postfix = "RU.json"
 
 
@@ -291,20 +263,24 @@ class Chat:
 
 
 
-    def inputAnalysis(self) -> None:
-        # give a type of input
+    def inputAnalysis(self, input_: str) -> None:
+
+        # if the input is garbage
+        if re.findall('\t, \n, \r, \s, w', input_) and len(input_) <= 3:
+            self.sessionInput_ = "Unknows"
+            return
+        
         input = []
         input.append(self.input_.capitalize())
 
 
-        try:
-            pred = self.text_clf.predict(input)
-        except:
-            return "Pause"
+        predicted = self.text_clf.predict(input)
         
-        self.inputType_ = ''.join(pred).replace('\n', '')
+        self.inputType_ = ''.join(predicted).replace('\n', '')
 
         self.sessionInput_[self.input_] = self.inputType_
+
+        return
 
     
 
@@ -312,9 +288,6 @@ class Chat:
         self.Enter(input_)
         self.inputAnalysis()
         return self.getAnswer()
-
-
-
 
 
 
