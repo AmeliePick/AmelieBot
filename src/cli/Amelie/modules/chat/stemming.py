@@ -11,7 +11,4 @@ from Stemmer import Stemmer
 
 
 def stemming(EditSearch: str) -> str:
-
-    stemmer = Stemmer('russian')
-
-    return stemmer.stemWord(EditSearch)
+    return Stemmer('russian').stemWord(EditSearch)
