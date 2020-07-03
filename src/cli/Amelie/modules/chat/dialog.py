@@ -1,3 +1,7 @@
+from ..tools.oc     import fileManager
+
+
+
 class Dialog():
     """ Printing messages in current language
 
@@ -30,6 +34,7 @@ class Dialog():
         return
     
 
+
     def getMessageBy(self, value: str) -> str:
         ''' Getting the text of expression by given value
 
@@ -55,11 +60,7 @@ class Dialog():
 
 
     def initByDataBase(self, appLanguage: str):
-        if languageValue == "RU":
-            with open("../DataBase/Service_expressionsRU.json", encoding='utf-8') as file:
-                self.serviceExpressions = file.readlines()
+        self.serviceExpressions = fileManager.readFile("../DataBase/Service_expressions"+appLanguage+".json")
 
-        elif languageValue == "EN":
-            with open("../DataBase/Service_expressionsEN.json", encoding='utf-8') as file:
-                self.serviceExpressions = file.readlines()
+
         return

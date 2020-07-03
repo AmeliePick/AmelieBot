@@ -155,6 +155,23 @@ class Chat:
         
 
 
+        def getProgrammPath(self, name: str) -> str:
+                ''' Get the path to the executable file
+
+                '''
+
+                
+                file = fileManager.readFile("../DataBase/added_programms.json")             
+                for line in file:
+                    row = line.split(" = ")
+                    
+                    if row[0].lower() in name.lower():
+                        return row[1].replace('\n', '')
+    
+                return ''
+
+
+
         url = str()
 
   
@@ -172,7 +189,7 @@ class Chat:
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
         elif self.inputType_ == "Open" and EditInput(self.input_) != '':
                 try:
-                    Popen( fileManager.getProgrammPath( EditInput(self.input_) ) )
+                    Popen( getProgrammPath( EditInput(self.input_) ) )
             
                 except FileNotFoundError:
                         pass
@@ -221,13 +238,9 @@ class Chat:
         '''
 
 
-        if self.checkLang == "RU":
-            with open("../DataBase/DataSet_RU.json", "a", encoding="utf8") as train:
-                train.write(text)
-
-        elif self.checkLang == "EN":
-            with open("../DataBase/DataSet_EN.json", "a") as train:
-                train.write(text)
+        with open("../DataBase/"+self.lang+".json", "a", encoding="utf8") as file:
+            file.write(text)
+            
 
         return
 
@@ -239,24 +252,15 @@ class Chat:
         '''
 
 
-        postfix = "EN.json"
-        if self.lang == "RU":
-            postfix = "RU.json"
-
-
-        with open("../DataBase/DataSet_"+postfix, "r", encoding="utf8") as file:
+        def readFileToList(listOBJ: list, file: str) -> None:
+            file = fileManager.readFile(file)
             for line in file:
-                self.dataSet.append(line.replace('\n', ''))
+                listOBJ.append(line.replace('\n', ''))
 
-    
-        with open ("../DataBase/stopWords"+postfix, "r") as file:
-            for line in file:
-                self.stopWords.append(line.replace('\n', ''))
-        
 
-        with open ("../DataBase/answers"+postfix, "r") as file:
-            for line in file:
-                self.answerText.append(line.replace('\n', ''))
+        readFileToList(self.dataSet, "../DataBase/DataSet_"+self.lang+".json")
+        readFileToList(self.stopWords, "../DataBase/stopWords"+self.lang+".json")
+        readFileToList(self.answerText, "../DataBase/answers"+self.lang+".json")
 
 
         return
@@ -277,15 +281,14 @@ class Chat:
         predicted = self.text_clf.predict(input)
         
         self.inputType_ = ''.join(predicted).replace('\n', '')
-
         self.sessionInput_[self.input_] = self.inputType_
+
 
         return
 
     
 
     def launch(self, input_ = "") -> str:
-        self.Enter(input_)
         self.inputAnalysis()
         return self.getAnswer()
 
