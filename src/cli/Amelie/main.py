@@ -23,11 +23,9 @@ from os     import remove
 from memory_profiler import memory_usage
 
 
-from modules.AIProcessing          import LangChoice
-from modules.configParser          import SettingsControl, DisplayText
-from modules.sessionLog            import sessionLogger
-from modules.update                import checkUpdate, download
-from modules.sessionLog            import LogWrite
+from modules.tools.configParser          import SettingsControl, DisplayText
+from modules.tools.sessionLog            import sessionLogger, LogWrite
+from modules.update                      import checkUpdate, download
 
 
 
@@ -110,19 +108,11 @@ def main() -> int:
    
 
     print(DisplayText.print("Learning"))
-    from modules.AIProcessing       import getAnswer, Answer
-    from modules.AICore             import Chat
+    from modules.chat.AICore    import Chat
 
-
-    LangChoice()
-    chatOBJ = Chat()
+    chat = Chat()
 
     # inline function
-    def launchChat(voice: str = "") -> Answer:
-        chatOBJ.Enter(voice)
-        chatOBJ.open_AI()
-
-        return getAnswer(chatOBJ.getInput(), chatOBJ.getInputType(), chatOBJ.getSessionInput())
     
 
     # --- Chat ---
@@ -138,7 +128,7 @@ def main() -> int:
 
                     speechRecognition.calibration()
                     while (True):
-                        speak(launchChat(speechRecognition.recognize()))
+                        speak(chat.launch(speechRecognition.recognize()))
                         RAMCheck()
                         continue
                 else:
@@ -146,19 +136,16 @@ def main() -> int:
 
                     speechRecognition.calibration()
                     while (True):
-                        speak(launchChat(speechRecognition.recognize()))
+                        speak(chat.launch(speechRecognition.recognize()))
                         RAMCheck()
                         continue
 
             elif On == "N" or On ==  "n":
                 while(True):
-                    сhat = launchChat()
-                    if сhat.getCode() == 0:
+                    chat.launch()
+                    if chat.getCode() == 0:
                         sleep(1)
-
-                        # Remove the temporary folder
-                        if os_path.isdir("TEMP"):
-                            os.rmdir("TEMP")
+                        
 
                         _exit(0)          
             else:
