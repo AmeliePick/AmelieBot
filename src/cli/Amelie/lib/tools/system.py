@@ -47,6 +47,3 @@ class FileManager:
     def __del__(self):
         if os_path.isdir("TEMP"):
             os.rmdir("TEMP")
-
-
-
