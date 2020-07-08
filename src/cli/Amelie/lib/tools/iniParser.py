@@ -1,37 +1,28 @@
 # -*- coding: utf-8 -*-
 
-from os import path as os_path
-from os import SEEK_END
+from os      import path as os_path
+from .system import FileManager
 import configparser
 
 
 
-''' Module for creating and parsing the settings file
-Settings class - for work with the settings file.
-'''
-
-
 class IniParser(object):
-    ''' Parser to read another config files
+    ''' Parse the .ini file.
     '''
 
-    #TODO: fix the not safety ctor.
 
 
     config: configparser.ConfigParser()
     path: str
 
 
-    # NOT SAFETY CONSTRUCTOR #
     def __init__(self, fileToParsePath: str):
         self.config = configparser.ConfigParser()
-
         
         
         # if the file is empty, here it will be an exception 
         if not os_path.exists(fileToParsePath):
-            handleSettings = open(fileToParsePath, 'w')
-            handleSettings.close()
+            FileManager.createFile(fileToParsePath)
 
         self.path = fileToParsePath     
         self.config.read(self.path)
