@@ -16,11 +16,11 @@ from sklearn.feature_extraction.text    import TfidfVectorizer
 from sklearn.linear_model               import SGDClassifier
 from sklearn.pipeline                   import Pipeline
 
-from .stemming          import stemming
-from random         import choice
-from webbrowser     import open as webbrowser_open
-from subprocess     import Popen
-from ..tools.oc     import fileManager
+from random             import choice
+from Stemmer            import Stemmer
+from webbrowser         import open as webbrowser_open
+from subprocess         import Popen
+from ..tools.system     import FileManager
 
 
 
@@ -52,7 +52,6 @@ class Chat:
 
         
         def parseDataSet() -> dict:
-
             Edit = {'text': [], 'tag':[]}
             for line in self.dataSet:
                 if(line == '' or line == '\n' or line == ' '):
@@ -81,13 +80,10 @@ class Chat:
 
 
             #save the model to disk
-            filename = 'modelEN.sav'
-            if self.checkLang == "RU":
-                filename = 'model.sav'
-            dump(nb_valid_samples, open("models/"+filename, 'wb'))
+            dump(nb_valid_samples, open("models/model"+ self.lang + ".sav", 'wb'))
     
             #load the model from disk
-            loaded_model = load(open("models/"+filename, 'rb'))
+            loaded_model = load(open("models/model"+ self.lang + ".sav", 'rb'))
   
 
             return { 
@@ -161,7 +157,7 @@ class Chat:
                 '''
 
                 
-                file = fileManager.readFile("../DataBase/added_programms.json")             
+                file = FileManager.readFile("../DataBase/added_programms.json")             
                 for line in file:
                     row = line.split(" = ")
                     
@@ -184,7 +180,7 @@ class Chat:
     
         elif self.inputType_ == "Youtube":
             url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(stemming(EditInput(self.input_))), new=1)
+            webbrowser_open( url + str(self.stemming(EditInput(self.input_))), new=1)
         
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
         elif self.inputType_ == "Open" and EditInput(self.input_) != '':
@@ -202,47 +198,33 @@ class Chat:
 
         # get answer
         try:
-                answerPharse = []
-                for line in self.answerText:
-                    row = line.split(" @ ")
+            answerPharse = []
+            for line in self.answerText:
+                row = line.split(" @ ")
 
-                    if row[0] == self.inputType_:
-                        answerPharse.append(row[1])
+                if row[0] == self.inputType_:
+                    answerPharse.append(row[1])
 
                 self.output = choice(answerPharse)
                 print ("\n<---", self.output)
 
                 # add phrases in DB
-                self.selfLearning(self.input_ + " @ " + self.inputType_)
+                FileManager.writeToFile(self.input_ + " @ " + self.inputType_, "../DataBase/" + self.lang + ".json")
                 
 
         except IndexError:
-                    Unknown = []
+            Unknown = []
 
-                    for i in self.answerText:
-                        row = i.split(" @ ")
+            for i in self.answerText:
+                row = i.split(" @ ")
 
-                        if row[0] == "Unknown":
-                            Unknown.append(row[1])
+                if row[0] == "Unknown":
+                    Unknown.append(row[1])
 
-                    self.output = choice(Unknown)
+            self.output = choice(Unknown)
         
 
         return self.output
-
-
-
-    def selfLearning(self, text: str) -> None:
-        ''' Word processing and write down to DB's file
-
-        '''
-
-
-        with open("../DataBase/"+self.lang+".json", "a", encoding="utf8") as file:
-            file.write(text)
-            
-
-        return
 
 
 
@@ -253,7 +235,7 @@ class Chat:
 
 
         def readFileToList(listOBJ: list, file: str) -> None:
-            file = fileManager.readFile(file)
+            file = FileManager.readFile(file)
             for line in file:
                 listOBJ.append(line.replace('\n', ''))
 
@@ -268,7 +250,6 @@ class Chat:
 
 
     def inputAnalysis(self, input_: str) -> None:
-
         # if the input is garbage
         if re.findall('\t, \n, \r, \s, w', input_) and len(input_) <= 3:
             self.sessionInput_ = "Unknows"
@@ -286,11 +267,16 @@ class Chat:
 
         return
 
-    
+
 
     def launch(self, input_ = "") -> str:
         self.inputAnalysis()
         return self.getAnswer()
+
+
+
+    def stemming(self, expression: str) -> str:
+        return Stemmer(self.lang).stemWord(expression)
 
 
 
