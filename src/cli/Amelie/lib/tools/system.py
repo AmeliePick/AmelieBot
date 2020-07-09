@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-'''
-Request module for adding a program to the database
-
-'''
 
 
 from os     import path as os_path
@@ -15,7 +11,6 @@ from os     import makedirs as os_makedirs
 class FileManager:
     ''' Providing the interface to work with file system
     '''
-
 
 
 

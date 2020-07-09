@@ -1,15 +1,19 @@
-from ..tools.oc     import fileManager
+# -*- coding: utf-8 -*-
+
+
+
+from ..tools.oc     import FileManager
 
 
 
 class Dialog():
-    """ Printing messages in current language
+    ''' Printing messages in current language
 
     The class is a singleton.
 
     serviceExpressions: the data from the data base file.
 
-    """
+    '''
 
 
 
@@ -26,23 +30,20 @@ class Dialog():
 
 
 
-    def __init__(self, languageValue: str):
+    def __init__(self, appLanguage: str):
         super().__init__()
 
-        initDataBase(languageValue)
+        self.serviceExpressions = FileManager.readFile("../DataBase/Service_expressions"+appLanguage+".json")
 
         return
     
 
 
-    def getMessageBy(self, value: str) -> str:
-        ''' Getting the text of expression by given value
-
-        value: name of the expression.
-
+    def getMessageBy(self, expression: str) -> str:
+        ''' Getting the text of expression by given expression
         '''
 
-        text = []
+        text = list()
         for line in self.serviceExpressions:
             row = line.split(' # ')
 
@@ -53,14 +54,6 @@ class Dialog():
 
         '''
         If the error exist in the name of the expression
-        By recursion it finds the value of the expression by "error" tag
+        By recursion it finds the value of the expression by "error" tag.
         '''
-        return self.Print("error")
-
-
-
-    def initByDataBase(self, appLanguage: str):
-        self.serviceExpressions = fileManager.readFile("../DataBase/Service_expressions"+appLanguage+".json")
-
-
-        return
+        return self.getMessageBy("error")

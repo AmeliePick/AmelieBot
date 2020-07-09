@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-''' Log file maintenance module
-'''
 
 
 from traceback      import format_exc
