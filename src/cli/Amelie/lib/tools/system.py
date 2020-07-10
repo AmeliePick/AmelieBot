@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-
+from shutil import rmtree as shutil_rmtree
 from os     import path as os_path
 from os     import remove
 from os     import makedirs as os_makedirs
@@ -79,6 +79,6 @@ class FileManager:
 
     def __del__(self):
         if os_path.isdir("TEMP"):
-            os.rmdir("TEMP")
+            shutil_rmtree("TEMP", ignore_errors = True)
 
         return
