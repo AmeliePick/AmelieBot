@@ -2,13 +2,16 @@
 
 
 
-from .lib.chat.dialog           import Dialog
-from .lib.chat.AICore           import Chat
-from .lib.tools.system          import FileManager
-from .lib.tools.iniParser       import IniParser
+from lib.chat.dialog           import Dialog
+from lib.chat.AICore           import Chat
+from lib.tools.system          import FileManager
+from lib.tools.logger          import Logger
+from lib.tools.runtime         import restart
+from lib.tools.iniParser       import IniParser
 
-from .lib.audio.processing      import playAudio, textToSpeech
-from .lib.tools.system          import readFile
+
+
+from lib.audio.processing      import playAudio, textToSpeech
 
 
 
@@ -16,9 +19,10 @@ class Amelie():
     """CLI version of AmelieBot"""
 
     chat: Chat
-    dialog: Message
+    dialog: Dialog
     iniParser: IniParser
     fileManager: FileManager
+    logger: Logger
     
 
 
@@ -27,6 +31,7 @@ class Amelie():
 
         self.fileManager = FileManager()
         self.iniParser = IniParser("settings.ini")
+        self.logger = Logger()
 
 
         language = self.iniParser.getValue("Settings", "lang")
@@ -61,12 +66,12 @@ class Amelie():
 
 
     def getMessageFor(self, expression: str) -> str:
-        return dialog.getMessageBy(expression)
+        return self.dialog.getMessageBy(expression)
 
 
 
     def getUsername(self) -> str:
-        return readFile("../DataBase/username.json")
+        return ''.join(self.fileManager.readFile("../DataBase/username.json"))
 
 
 
@@ -78,7 +83,23 @@ class Amelie():
 
 
     def isExit(self) -> Exception:
-        if self.chat.getStateCode():
-            raise SystemExit(0)\
+        if self.chat.getStateCode() == 0:
+            raise SystemExit(0)
 
         return
+
+
+
+    def writeToJournal(self, recordTitle: str, value: str) -> None:
+        self.logger.addRecord(recordTitle, value)
+
+        return
+
+
+
+    def writeLog(self) -> None:
+        self.logger.logWrite()
+
+
+    def restart() -> None:
+        restart()
