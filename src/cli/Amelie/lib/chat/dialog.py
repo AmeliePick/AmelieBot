@@ -2,7 +2,7 @@
 
 
 
-from ..tools.oc     import FileManager
+from ..tools.system     import FileManager
 
 
 
@@ -21,15 +21,6 @@ class Dialog():
 
 
 
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Dialog, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instance
-
-
-
     def __init__(self, appLanguage: str):
         super().__init__()
 
@@ -37,6 +28,15 @@ class Dialog():
 
         return
     
+
+
+    def __new__(cls, appLanguage: str):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Dialog, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instance
+
 
 
     def getMessageBy(self, expression: str) -> str:
@@ -47,7 +47,7 @@ class Dialog():
         for line in self.serviceExpressions:
             row = line.split(' # ')
 
-            if row[0] == value:
+            if row[0] == expression:
                 text.append(row[1])
                 return ''.join(text)
 

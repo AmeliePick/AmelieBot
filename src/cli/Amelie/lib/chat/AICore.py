@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 
-'''
-Chat is a neural network that classifies requests from the user. 
-Then, after processing the type of the question, it passes it to the answer function, 
-where the answer is processed and the operations are performed according to the input.
 
-User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
-
-'''
 
 from numpy          import random, arange
 from pickle         import dump, load
+from re             import sub
+from re             import findall as re_findall
 
 from sklearn.feature_extraction.text    import TfidfVectorizer
 from sklearn.linear_model               import SGDClassifier
@@ -24,24 +19,35 @@ from ..tools.system     import FileManager
 
 
 
-class Chat:
+class Chat(object):
+    '''
+    Chat is a neural network that classifies requests from the user. 
+    Then, after processing the type of the question, it passes it to the answer function, 
+    where the answer is processed and the operations are performed according to the input.
+
+    User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
+
+    '''
+
+
+
     # DataBase info
-    dataSet:    list
-    stopWords:  list
-    answerText: list
+    _dataSet:    list
+    _stopWords:  list
+    _answerText: list
 
     # App setup's info
     
 
     # Chat
-    input_: str
-    output: str
-    inputType_: str
-    sessionInput_: dict
+    _input: str
+    _output: str
+    _inputType: str
+    _sessionInput: dict
     
-    lang: str
-    text_clf: Pipeline
-    stateCode: int  # 0 means to exit from app.
+    _lang: str
+    _text_clf: Pipeline
+    _stateCode: int  # 0 means to exit from app.
                     # 1 means to continue work.
 
 
@@ -53,7 +59,7 @@ class Chat:
         
         def parseDataSet() -> dict:
             Edit = {'text': [], 'tag':[]}
-            for line in self.dataSet:
+            for line in self._dataSet:
                 if(line == '' or line == '\n' or line == ' '):
                     continue
 
@@ -80,10 +86,10 @@ class Chat:
 
 
             #save the model to disk
-            dump(nb_valid_samples, open("models/model"+ self.lang + ".sav", 'wb'))
+            dump(nb_valid_samples, open("models/model"+ self._lang + ".sav", 'wb'))
     
             #load the model from disk
-            loaded_model = load(open("models/model"+ self.lang + ".sav", 'rb'))
+            loaded_model = load(open("models/model"+ self._lang + ".sav", 'rb'))
   
 
             return { 
@@ -93,26 +99,34 @@ class Chat:
 
 
 
-        self.lang = appLanguage
+        self._lang = appLanguage
+
+        self._dataSet = list()
+        self._stopWords = list()
+        self._answerText = list()
         self.getDataFromDB()
 
-        self.stateCode = 1
+
+        self._input = str()
+        self._sessionInput = dict()
+
+        self._stateCode = int(1)
 
         # Do train n-network
         data = parseDataSet()
         trained = training(data)
-        self.text_clf = Pipeline([
+        self._text_clf = Pipeline([
                         ('tfidf', TfidfVectorizer()),
                         ('clf', SGDClassifier(loss='hinge')),
                         ])
-        self.text_clf.fit(trained['train']['x'], trained['train']['y'])
-        self.text_clf.predict( trained['test']['x'] )
+        self._text_clf.fit(trained['train']['x'], trained['train']['y'])
+        self._text_clf.predict( trained['test']['x'] )
 
 
 
-    def __new__(cls):
+    def __new__(cls, appLanguage: str):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Chat, cls).__new__(cls)
+            cls.instance = super(Chat, cls).__new__(Chat)
             return cls.instance
             
         return cls.instance
@@ -132,7 +146,7 @@ class Chat:
             from re import sub
 
             stopPhrase = ''
-            for row in self.stopWords:
+            for row in self._stopWords:
                 if ((input.capitalize()).find(row.capitalize()) != -1):
                     stopPhrase = row.replace('\n', '')
                     break
@@ -147,7 +161,7 @@ class Chat:
 
         
         
-                return sub('[?!]', '', ''.join(result))
+                return sub('[?!]', '', ''.join(result)).lstrip()
         
 
 
@@ -171,21 +185,21 @@ class Chat:
         url = str()
 
   
-        if self.inputType_ == "Exit":
-            self.StateCode = 0
+        if self._inputType == "Exit":
+            self._stateCode = 0
 
-        elif self.inputType_ == "Search":
+        elif self._inputType == "Search":
             url = "https://www.google.ru/search?q="
-            webbrowser_open( url + str(EditInput(self.input_)), new=1)
+            webbrowser_open( url + str(EditInput(self._input)), new=1)
     
-        elif self.inputType_ == "Youtube":
+        elif self._inputType == "Youtube":
             url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(self.stemming(EditInput(self.input_))), new=1)
+            webbrowser_open( url + str(self.stemming(EditInput(self._input))), new=1)
         
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
-        elif self.inputType_ == "Open" and EditInput(self.input_) != '':
+        elif self._inputType == "Open" and EditInput(self._input) != '':
                 try:
-                    Popen( getProgrammPath( EditInput(self.input_) ) )
+                    Popen( getProgrammPath( EditInput(self._input) ) )
             
                 except FileNotFoundError:
                         pass
@@ -193,29 +207,28 @@ class Chat:
 
                 except OSError as os:
                     if(os.winerror == 87):
-                        self.inputType_ = "Unknown"
+                        self._inputType = "Unknown"
 
 
         # get answer
         try:
             answerPharse = []
-            for line in self.answerText:
+            for line in self._answerText:
                 row = line.split(" @ ")
 
-                if row[0] == self.inputType_:
+                if row[0] == self._inputType:
                     answerPharse.append(row[1])
 
-                self.output = choice(answerPharse)
-                print ("\n<---", self.output)
+            self.output = choice(answerPharse)
 
-                # add phrases in DB
-                FileManager.writeToFile(self.input_ + " @ " + self.inputType_, "../DataBase/" + self.lang + ".json")
+            # add phrases in DB
+            FileManager.writeToFile(self._input + " @ " + self._inputType, "../DataBase/" + self._lang + ".json")
                 
 
         except IndexError:
             Unknown = []
 
-            for i in self.answerText:
+            for i in self._answerText:
                 row = i.split(" @ ")
 
                 if row[0] == "Unknown":
@@ -240,9 +253,9 @@ class Chat:
                 listOBJ.append(line.replace('\n', ''))
 
 
-        readFileToList(self.dataSet, "../DataBase/DataSet_"+self.lang+".json")
-        readFileToList(self.stopWords, "../DataBase/stopWords"+self.lang+".json")
-        readFileToList(self.answerText, "../DataBase/answers"+self.lang+".json")
+        readFileToList(self._dataSet, "../DataBase/DataSet_" + self._lang + ".json")
+        readFileToList(self._stopWords, "../DataBase/stopWords" + self._lang + ".json")
+        readFileToList(self._answerText, "../DataBase/answers" + self._lang + ".json")
 
 
         return
@@ -251,18 +264,19 @@ class Chat:
 
     def inputAnalysis(self, input_: str) -> None:
         # if the input is garbage
-        if re.findall('\t, \n, \r, \s, w', input_) and len(input_) <= 3:
-            self.sessionInput_ = "Unknows"
+        if re_findall('\t, \n, \r, \s, w', input_) and len(input_) <= 3:
+            self._inputType = "Unknown"
             return
         
+        self._input = input_
         input = []
-        input.append(self.input_.capitalize())
+        input.append(self._input.capitalize())
 
 
-        predicted = self.text_clf.predict(input)
+        predicted = self._text_clf.predict(input)
         
-        self.inputType_ = ''.join(predicted).replace('\n', '')
-        self.sessionInput_[self.input_] = self.inputType_
+        self._inputType = ''.join(predicted).replace('\n', '')
+        self._sessionInput[self._input] = self._inputType
 
 
         return
@@ -270,23 +284,23 @@ class Chat:
 
 
     def launch(self, input_ = "") -> str:
-        self.inputAnalysis()
+        self.inputAnalysis(input_)
         return self.getAnswer()
 
 
 
     def stemming(self, expression: str) -> str:
-        return Stemmer(self.lang).stemWord(expression)
+        return Stemmer(self._lang.lower()).stemWord(expression)
 
 
 
     def getInput(self) -> str:
-        return self.input_
+        return self._input
 
 
 
     def getInputType(self) -> str:
-        return self.inputType_
+        return self._inputType
 
 
 
@@ -294,5 +308,5 @@ class Chat:
         return self.sessionInput_
 
 
-    def getCode(self) -> int:
-        return self.StateCode
+    def getStateCode(self) -> int:
+        return self._stateCode

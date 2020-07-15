@@ -9,7 +9,7 @@ class Console(object):
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Amelie, cls).__new__(cls)
+            cls.instance = super(Console, cls).__new__(cls)
             return cls.instance
             
         return cls.instance

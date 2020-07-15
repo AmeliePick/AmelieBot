@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import simpleaudio      as sa
-from playsound          import _playsoundWin
 
 
 

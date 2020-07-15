@@ -52,7 +52,7 @@ class Logger(IniParser):
 
 
 
-    def LogWrite(self) -> None:
+    def logWrite(self) -> None:
             ''' Collect data from traceback when error is happen and writes to log file.
             '''
 

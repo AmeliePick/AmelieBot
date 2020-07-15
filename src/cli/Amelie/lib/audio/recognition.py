@@ -2,7 +2,6 @@
 
 
 
-import pyaudio, wave
 import speech_recognition as sr
 
 

@@ -17,7 +17,8 @@ class FileManager:
     def __init__(self):
         super().__init__()
 
-        os_makedirs("TEMP")
+        if not os_path.isdir("TEMP"):
+            os_makedirs("TEMP")
 
 
         return
@@ -43,8 +44,8 @@ class FileManager:
 
 
     @staticmethod
-    def readFile(file: str, encoding="utf8") -> str:
-        with open (file, mode, encoding) as file:
+    def readFile(file: str, _encoding="utf8") -> str:
+        with open (file, encoding = _encoding) as file:
             return file.readlines()
 
         return
@@ -71,9 +72,9 @@ class FileManager:
 
     @staticmethod
     def clearFile(file: str) -> None:
-        if os_path.exist(file):
-            with open(path, 'w') as file:
-                file.close()
+        if os_path.exists(file):
+            with open(file, 'w') as _file:
+                _file.close()
 
 
 
