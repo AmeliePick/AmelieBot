@@ -35,16 +35,20 @@ class FileManager:
 
 
     @staticmethod
-    def writeToFile(value: str, file: str, mode = 'a') -> None:
-        with open (file, mode) as file:
-            file.write(value)
+    def writeToFile(value: str, file: str, mode = 'a', _encoding="utf-8") -> None:
+        if 'b' in mode:
+            with open (file, mode) as file:
+                file.write(value)
+        else:
+            with open (file, mode, encoding = _encoding) as file:
+                file.write(value)
 
         return
 
 
 
     @staticmethod
-    def readFile(file: str, _encoding="utf8") -> str:
+    def readFile(file: str, _encoding="utf-8") -> str:
         with open (file, encoding = _encoding) as file:
             return file.readlines()
 
@@ -75,6 +79,8 @@ class FileManager:
         if os_path.exists(file):
             with open(file, 'w') as _file:
                 _file.close()
+
+        return
 
 
 
