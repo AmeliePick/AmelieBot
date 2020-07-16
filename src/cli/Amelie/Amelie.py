@@ -2,16 +2,20 @@
 
 
 
+import time
+
+
 from lib.chat.dialog           import Dialog
 from lib.chat.AICore           import Chat
+from googletrans               import Translator as gTranslator
+
 from lib.tools.system          import FileManager
 from lib.tools.logger          import Logger
 from lib.tools.runtime         import restart
 from lib.tools.iniParser       import IniParser
 
-
-
 from lib.audio.processing      import playAudio, textToSpeech
+from lib.audio.recognition     import SpeechRecognition
 
 
 
@@ -23,6 +27,8 @@ class Amelie():
     iniParser: IniParser
     fileManager: FileManager
     logger: Logger
+    translator: gTranslator
+    voiceRecorder: SpeechRecognition
     
 
 
@@ -36,6 +42,8 @@ class Amelie():
 
         language = self.iniParser.getValue("Settings", "lang")
 
+        self.translator = gTranslator()
+        self.voiceRecorder = SpeechRecognition(language)
         self.chat = Chat(language)
         self.dialog = Dialog(language)
 
@@ -57,21 +65,28 @@ class Amelie():
 
 
 
-    def speechChat(self, userInput: str) -> str:
+    def recorderCalibration(self) -> None:
+        self.voiceRecorder.calibration()
+
+
+
+    def speechChat(self) -> str:
+        playAudio("../../Res/Sounds/readytohear.wav")
+
+        userInput = self.voiceRecorder.recognize()
         chatAnswer = self.chat.launch(userInput)
-        textToSpeech(chatAnswer, self.chat.lang)
+
+        lang = self.chat.getLanguage()
+        if lang != "EN":
+            translatedAnswer = self.translator.translate(text = chatAnswer, dest = "en", src = lang.lower()).text
+            textToSpeech(translatedAnswer, lang)
+
+        else:
+            textToSpeech(chatAnswer, lang)
+
+        playAudio("TEMP/sound.wav")
 
         return chatAnswer
-
-
-
-    def getMessageFor(self, expression: str) -> str:
-        return self.dialog.getMessageBy(expression)
-
-
-
-    def getUsername(self) -> str:
-        return ''.join(self.fileManager.readFile("../DataBase/username.json"))
 
 
 
@@ -100,6 +115,36 @@ class Amelie():
     def writeLog(self) -> None:
         self.logger.logWrite()
 
+        return
 
-    def restart() -> None:
+
+
+    def restart(self) -> None:
         restart()
+
+        return
+
+
+
+    def getMessageFor(self, expression: str) -> str:
+        return self.dialog.getMessageBy(expression)
+
+
+
+    def getUserInput(self) -> str:
+        return self.chat.getInput()
+
+
+
+    def getUsername(self) -> str:
+        return ''.join(self.fileManager.readFile("../../DataBase/username.json"))
+
+
+
+    def getAppLanguage(self) -> str:
+        return self.chat.getLanguage()
+
+
+
+    def __del__(self):
+        self.fileManager.__del__()
