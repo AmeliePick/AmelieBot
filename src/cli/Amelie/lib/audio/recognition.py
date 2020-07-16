@@ -35,13 +35,11 @@ class SpeechRecognition():
 
 
     def recognize(self) -> str:
-        audio = sr.AudioData()
-
         # Listening to the microphone
-        with self.micro as source:
-            audio = self.recognizer.listen(source)
+        with self.micro as _source:
+            audio = self.recognizer.listen(source = _source, timeout = 3, phrase_time_limit = 5)
 
-        # Speech to text
-        return self.recognizer.recognize_google(audio, language = self.lang)
+            # Speech to text
+            return self.recognizer.recognize_google(audio, language = self.lang.lower())
 
         return

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import simpleaudio      as sa
-
+from ..tools.system     import FileManager
 
 
 def playAudio(soundFile: str, reps=1) -> None:
@@ -13,8 +13,8 @@ def playAudio(soundFile: str, reps=1) -> None:
 
 
 
-def textToSpeech(self, text: str, lang: str):
-    if lang == "ru":
+def textToSpeech(textToVoice: str, lang: str):
+    if lang.lower() == "ru":
         from gtts       import gTTS
         from pydub      import AudioSegment
 
@@ -37,7 +37,7 @@ def textToSpeech(self, text: str, lang: str):
         text_to_speech = TextToSpeechV1(iam_apikey="H7shGfh_spPgJD837_XmVLgdfsHA8874",
                                         url="https://stream.watsonplatform.net/text-to-speech/api")
 
-        audio = text_to_speech.synthesize(text, voice="en-US_AllisonVoice", accept="audio/wav")
+        audio = text_to_speech.synthesize(textToVoice, voice="en-US_AllisonVoice", accept="audio/wav")
         FileManager.writeToFile(audio.get_result().content, "TEMP/sound.wav", "wb")
 
 

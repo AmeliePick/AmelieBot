@@ -24,7 +24,7 @@ class Dialog():
     def __init__(self, appLanguage: str):
         super().__init__()
 
-        self.serviceExpressions = FileManager.readFile("../DataBase/Service_expressions" + appLanguage + ".json")
+        self.serviceExpressions = FileManager.readFile("../../DataBase/Service_expressions" + appLanguage + ".json")
 
         return
     
