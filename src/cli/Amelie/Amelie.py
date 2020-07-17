@@ -73,12 +73,23 @@ class Amelie():
     def speechChat(self) -> str:
         playAudio("../../Res/Sounds/readytohear.wav")
 
-        userInput = self.voiceRecorder.recognize()
+        userInput = str()
+
+        try:
+            userInput = self.voiceRecorder.recognize()
+        except ValueError:
+            userInput = ''
+
+        except ConnectionError:
+            self.logger.logWrite()
+            return self.dialog.getMessageBy("service_error ")
+            
+
         chatAnswer = self.chat.launch(userInput)
 
         lang = self.chat.getLanguage()
-        if lang != "EN":
-            translatedAnswer = self.translator.translate(text = chatAnswer, dest = "en", src = lang.lower()).text
+        if lang != "en":
+            translatedAnswer = self.translator.translate(text = chatAnswer, dest = "en", src = lang).text
             textToSpeech(translatedAnswer, lang)
 
         else:

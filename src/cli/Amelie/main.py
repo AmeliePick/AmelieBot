@@ -8,7 +8,9 @@
 
 
 from os                 import path as os_path
+from threading          import Thread
 from memory_profiler    import memory_usage
+
 
 from Amelie    import Amelie
 from cli       import Console
@@ -31,10 +33,20 @@ def main() -> int:
         try:
             if turnOnTheVoice == "Y" or turnOnTheVoice ==  "y":
                 while(True):
-                    userInput = console.readLine('\n' + username + ": ")
-                    chatAnswer = AmelieInstance.speechChat(userInput)
+                    try:
+                        AmelieInstance.recorderCalibration()
+                    except OSError:
+                        from os import system
+                        console.writeLine(AmelieInstance.getMessageFor("microAccesDenied"))
+                        system("pause")
+                        continue
 
-                    console.writeLine("\t\tAmelie: " + chatAnswer)
+
+                    console.write('\n' + username + ": ")
+                    chatAnswer = AmelieInstance.speechChat()
+
+                    console.writeLine(AmelieInstance.getUserInput())
+                    console.writeLine("\n\t\tAmelie: " + chatAnswer)
 
                     AmelieInstance.isExit()
                 
@@ -78,7 +90,7 @@ def main() -> int:
             AmelieInstance.restart()
 
 
-
+    AmelieInstance.__del__()
     return 0
 
 
