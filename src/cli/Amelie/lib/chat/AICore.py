@@ -86,10 +86,10 @@ class Chat(object):
 
 
             #save the model to disk
-            dump(nb_valid_samples, open("../../models/model"+ self._lang + ".sav", 'wb'))
+            dump(nb_valid_samples, open("../../models/model"+ self._lang.upper() + ".sav", 'wb'))
     
             #load the model from disk
-            loaded_model = load(open("../../models/model"+ self._lang + ".sav", 'rb'))
+            loaded_model = load(open("../../models/model"+ self._lang.upper() + ".sav", 'rb'))
   
 
             return { 
@@ -165,13 +165,13 @@ class Chat(object):
         
 
 
-        def getProgrammPath(self, name: str) -> str:
+        def getProgrammPath(name: str) -> str:
                 ''' Get the path to the executable file
 
                 '''
 
                 
-                file = FileManager.readFile("../DataBase/added_programms.json")             
+                file = FileManager.readFile("../../DataBase/added_programms.json")             
                 for line in file:
                     row = line.split(" = ")
                     
@@ -222,7 +222,7 @@ class Chat(object):
             self.output = choice(answerPharse)
 
             # add phrases in DB
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../../DataBase/DataSet" + self._lang + ".json")
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../../DataBase/DataSet" + self._lang.upper() + ".json")
                 
 
         except IndexError:
@@ -253,9 +253,9 @@ class Chat(object):
                 listOBJ.append(line.replace('\n', ''))
 
 
-        readFileToList(self._dataSet, "../../DataBase/DataSet" + self._lang + ".json")
-        readFileToList(self._stopWords, "../../DataBase/stopWords" + self._lang + ".json")
-        readFileToList(self._answerText, "../../DataBase/answers" + self._lang + ".json")
+        readFileToList(self._dataSet, "../../DataBase/DataSet" + self._lang.upper() + ".json")
+        readFileToList(self._stopWords, "../../DataBase/stopWords" + self._lang.upper() + ".json")
+        readFileToList(self._answerText, "../../DataBase/answers" + self._lang.upper() + ".json")
 
 
         return

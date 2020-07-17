@@ -35,11 +35,18 @@ class SpeechRecognition():
 
 
     def recognize(self) -> str:
-        # Listening to the microphone
-        with self.micro as _source:
-            audio = self.recognizer.listen(source = _source, timeout = 3, phrase_time_limit = 5)
+        try:
+            # Listening to the microphone
+            with self.micro as _source:
+                audio = self.recognizer.listen(source = _source, timeout = 3, phrase_time_limit = 5)
 
-            # Speech to text
-            return self.recognizer.recognize_google(audio, language = self.lang.lower())
+                # Speech to text
+                return self.recognizer.recognize_google(audio, language = self.lang)
+
+        except (sr.WaitTimeoutError, sr.UnknownValueError):
+            raise ValueError()
+
+        except sr.RequestError:
+            raise ConnectionError()
 
         return
