@@ -43,31 +43,36 @@ def main() -> int:
 
 
                     console.write('\n' + username + ": ")
-                    chatAnswer = AmelieInstance.speechChat()
+                    chatAnswer = AmelieInstance.voiceChat()
 
                     console.writeLine(AmelieInstance.getUserInput())
                     console.writeLine("\n\t\tAmelie: " + chatAnswer)
 
-                    AmelieInstance.isExit()
-                
+                    AmelieInstance.update()
+
 
             elif turnOnTheVoice == "N" or turnOnTheVoice ==  "n":
                 while(True):
                     userInput = console.readLine('\n' + username + ": ")
-                    chatAnswer = AmelieInstance.silentChat(userInput)
+                    chatAnswer = AmelieInstance.chat(userInput)
 
                     console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
 
-                    AmelieInstance.isExit()
+                    AmelieInstance.update()
+                     
 
-                                  
             else:
                 console.writeLine(AmelieInstance.getMessageFor("WrongInput"))
-                turnTheVoice = console.readLine("--> ")
+                turnOnTheVoice = console.readLine("--> ")
                 continue
 
 
+            
+
+
+
         except MemoryError:
+            AmelieInstance.writeLog()
             console.writeLine(AmelieInstance.getMessageFor("error"))
             continue
 
@@ -77,6 +82,7 @@ def main() -> int:
             break
 
         except ConnectionError:
+            AmelieInstance.writeLog()
             console.writeLine(AmelieInstance.getMessageFor("service_error"))
       
         except OSError:

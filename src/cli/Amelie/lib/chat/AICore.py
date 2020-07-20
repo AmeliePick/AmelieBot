@@ -13,8 +13,6 @@ from sklearn.pipeline                   import Pipeline
 
 from random             import choice
 from Stemmer            import Stemmer
-from webbrowser         import open as webbrowser_open
-from subprocess         import Popen
 from ..tools.system     import FileManager
 
 
@@ -47,8 +45,6 @@ class Chat(object):
     
     _lang: str
     _text_clf: Pipeline
-    _stateCode: int  # 0 means to exit from app.
-                    # 1 means to continue work.
 
 
 
@@ -134,107 +130,22 @@ class Chat(object):
 
 
     def getAnswer(self) -> str:
-        def EditInput(input: str) -> str:
-            ''' Removes from the user input the stop words.
-
-            Example:
-                    Input: open Google, find summer wallpapers
-                    Result: Google, summer wallpapers
-            '''
-
-
-            from re import sub
-
-            stopPhrase = ''
-            for row in self._stopWords:
-                if ((input.capitalize()).find(row.capitalize()) != -1):
-                    stopPhrase = row.replace('\n', '')
-                    break
-
-
-            if stopPhrase == '':
-                return input
-            else:
-                result = list(input)
-                for i in range(input.capitalize().find(row.capitalize()), len(stopPhrase)):
-                               result[i] = ''
-
-        
-        
-                return sub('[?!]', '', ''.join(result)).lstrip()
-        
-
-
-        def getProgrammPath(name: str) -> str:
-                ''' Get the path to the executable file
-
-                '''
-
-                
-                file = FileManager.readFile("../../DataBase/added_programms.json")             
-                for line in file:
-                    row = line.split(" = ")
-                    
-                    if row[0].lower() in name.lower():
-                        return row[1].replace('\n', '')
-    
-                return ''
-
-
-
         url = str()
 
-  
-        if self._inputType == "Exit":
-            self._stateCode = 0
-
-        elif self._inputType == "Search":
-            url = "https://www.google.ru/search?q="
-            webbrowser_open( url + str(EditInput(self._input)), new=1)
-    
-        elif self._inputType == "Youtube":
-            url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(self.stemming(EditInput(self._input))), new=1)
-        
-        # here we can get an empty answer, when the user says a phrase like "open" and nothing more
-        elif self._inputType == "Open" and EditInput(self._input) != '':
-                try:
-                    Popen( getProgrammPath( EditInput(self._input) ) )
-            
-                except FileNotFoundError:
-                        pass
-
-
-                except OSError as os:
-                    if(os.winerror == 87):
-                        self._inputType = "Unknown"
-
-
         # get answer
-        try:
-            answerPharse = []
-            for line in self._answerText:
-                row = line.split(" @ ")
 
-                if row[0] == self._inputType:
-                    answerPharse.append(row[1])
+        answerPharse = []
+        for line in self._answerText:
+            row = line.split(" @ ")
+            if row[0] == self._inputType:
+                answerPharse.append(row[1])
 
-            self.output = choice(answerPharse)
+        self.output = choice(answerPharse)
 
-            # add phrases in DB
+        # add phrases in DB
+        if self._inputType != "Unknown":
             FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../../DataBase/DataSet" + self._lang.upper() + ".json")
                 
-
-        except IndexError:
-            Unknown = []
-
-            for i in self._answerText:
-                row = i.split(" @ ")
-
-                if row[0] == "Unknown":
-                    Unknown.append(row[1])
-
-            self.output = choice(Unknown)
         
 
         return self.output
@@ -264,7 +175,8 @@ class Chat(object):
 
     def inputAnalysis(self, input_: str) -> None:
         # if the input is garbage
-        if re_findall('\t, \n, \r, \s, w', input_) and len(input_) <= 3:
+        input_ = sub('[^\w, \s]', '', input_)
+        if len(sub('[\t, \n, \r, \s]', '', input_)) <= 1 or sub('[\t, \n, \r, \s]', '', input_).isdigit() or len(input_) <= 1:
             self._inputType = "Unknown"
             return
         
@@ -286,6 +198,34 @@ class Chat(object):
     def launch(self, input_ = "") -> str:
         self.inputAnalysis(input_)
         return self.getAnswer()
+
+
+
+    def EditInput(self) -> str:
+        ''' Removes from the user input the stop words.
+
+        Example:
+                Input: open Google, find summer wallpapers
+                Result: Google, summer wallpapers
+        '''
+
+        stopPhrase = ''
+        for row in self._stopWords:
+            if ((self._input.capitalize()).find(row.capitalize()) != -1):
+                stopPhrase = row.replace('\n', '')
+                break
+
+
+            if stopPhrase == '':
+                return self._input
+            else:
+                result = list(self._input)
+                for i in range(input.capitalize().find(row.capitalize()), len(stopPhrase)):
+                               result[i] = ''
+
+        
+        
+                return sub('[?!]', '', ''.join(result)).lstrip()
 
 
 
