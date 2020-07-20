@@ -58,7 +58,7 @@ class FileManager:
 
     @staticmethod
     def createFile(file: str) -> None:
-        if not os.path.exists(file):
+        if not os_path.exists(file):
             with open(file, 'w'): pass
 
         return
