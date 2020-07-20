@@ -24,7 +24,7 @@ class Dialog():
     def __init__(self, appLanguage: str):
         super().__init__()
 
-        self.serviceExpressions = FileManager.readFile("../../DataBase/Service_expressions" + appLanguage.upper() + ".json")
+        self.changeLanguage(appLanguage)
 
         return
     
@@ -39,7 +39,7 @@ class Dialog():
 
 
 
-    def getMessageBy(self, expression: str) -> str:
+    def getMessageFor(self, expression: str) -> str:
         ''' Getting the text of expression by given expression
         '''
 
@@ -57,3 +57,8 @@ class Dialog():
         By recursion it finds the value of the expression by "error" tag.
         '''
         return self.getMessageBy("error")
+
+
+
+    def changeLanguage(self, lang: str) -> None:
+        self.serviceExpressions = FileManager.readFile("../../DataBase/Service_expressions" + lang.upper() + ".json")

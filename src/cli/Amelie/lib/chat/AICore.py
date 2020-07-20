@@ -140,7 +140,24 @@ class Chat(object):
             if row[0] == self._inputType:
                 answerPharse.append(row[1])
 
-        self.output = choice(answerPharse)
+
+
+        # TODO: This case would be, because the data set has wrong records. Remove this code atfer the fix of data set.
+        try:
+            self.output = choice(answerPharse)
+        except IndexError:
+            Unknown = []
+            self._inputTyoe = "Unknown"
+
+            for i in self._answerText:
+                row = i.split(" @ ")
+
+                if row[0] == "Unknown":
+                    Unknown.append(row[1])
+
+            self.output = choice(Unknown)
+
+
 
         # add phrases in DB
         if self._inputType != "Unknown":

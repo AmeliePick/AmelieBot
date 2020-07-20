@@ -11,11 +11,11 @@ from lib.chat.AICore           import Chat
 from lib.tools.system          import FileManager
 from lib.tools.logger          import Logger
 from lib.tools.runtime         import restart
-from lib.tools.iniParser       import IniParser
 
 from lib.audio.processing      import playAudio, TextToSpeech
 from lib.audio.recognition     import SpeechRecognition
 
+from Settings import Settings
 
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
@@ -27,7 +27,7 @@ class Amelie():
 
     _chat: Chat
     _dialog: Dialog
-    _iniParser: IniParser
+    _settings: Settings
     _fileManager: FileManager
     _logger: Logger
     _voiceRecorder: SpeechRecognition
@@ -43,17 +43,16 @@ class Amelie():
         self._fileManager = FileManager()
         self._logger = Logger()
 
-
-        self._iniParser = IniParser("settings.ini")
-
-        #if len(self.getUsername()) == 0:
+        self._settings = Settings()
+        
+       
         
 
 
-        language = self._iniParser.getValue("Settings", "lang")
+        language = self._settings.getLanguage()
 
         self._voiceRecorder = SpeechRecognition(language)
-        _textToSpeech = TextToSpeech()
+        self._textToSpeech = TextToSpeech()
         self._chat = Chat(language)
         self._dialog = Dialog(language)
 
@@ -70,6 +69,14 @@ class Amelie():
             
         return cls.instance
 
+
+
+    def changeLanguage(self, language: str) -> None:
+        self._voiceRecorder = SpeechRecognition(language)
+        self._chat = Chat(language)
+        self._dialog.changeLanguage(language)
+
+        return
 
 
 
@@ -116,7 +123,7 @@ class Amelie():
         try:
             self.doAction(self._chat.getInputType())
         except (FileNotFoundError, OSError):
-            return self.getMessageFor("Prog_not_found")
+            return self._dialog.getMessageFor("Prog_not_found")
  
         return chatAnswer
 
@@ -139,7 +146,7 @@ class Amelie():
 
         chatAnswer = self.chat(userInput)
 
-        textToSpeech(chatAnswer)
+        self._textToSpeech(chatAnswer, self._chat.getLanguage())
         playAudio("TEMP/sound.wav")
 
         return chatAnswer
@@ -190,18 +197,8 @@ class Amelie():
 
 
 
-    def getMessageFor(self, expression: str) -> str:
-        return self._dialog.getMessageBy(expression)
-
-
-
     def getUserInput(self) -> str:
         return self._chat.getInput()
-
-
-
-    def getUsername(self) -> str:
-        return self._iniParser.getValue("User", "name")
 
 
 
