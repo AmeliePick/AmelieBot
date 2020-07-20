@@ -11,23 +11,68 @@ from os                 import path as os_path
 from threading          import Thread
 from memory_profiler    import memory_usage
 
-
+from lib.chat.dialog import Dialog  
+from Settings  import Settings
 from Amelie    import Amelie
 from cli       import Console
 
 
 
 def main() -> int:
-    AmelieInstance = Amelie()
     console = Console()
-
-
-    username = str(AmelieInstance.getUsername())
-
-
     console.printLogo()
 
-    console.writeLine(AmelieInstance.getMessageFor("Voice_control"))
+
+
+    settingsFile = Settings()
+    dialog = Dialog('en') if settingsFile.getLanguage() == '-' else Dialog(settingsFile.getLanguage())
+        
+    #---------------------------------------------------------------------------------------------------------------#
+    #                                   FILLING THE SETTINGS FILE WITH USER INPUT                                   #
+
+    settingsMethods = settingsFile.getMethodsToResolveErrors()
+    for methodname, method in settingsMethods.items():
+        if methodname == "lang":
+            console.write(dialog.getMessageFor("Choose_lang"))
+
+            langs = settingsFile.getSupportingLangs()
+            for key, value in langs.items():
+                console.write('[' + str(key) + ']')
+                console.write(value.upper() + ' ')
+            console.write('\n')
+
+            while(True):
+                langInput = int(console.readLine("\n--> "))
+
+                if langInput in langs.keys():
+                    method(langs[langInput])
+                    break
+
+                else:
+                    console.writeLine(dialog.getMessageFor("WrongInput"))
+
+
+            dialog.changeLanguage(settingsFile.getLanguage())
+
+        elif methodname == "username":
+            while(True):
+                console.writeLine(dialog.getMessageFor("getName"))
+                usernameInput = (console.readLine("\n--> "))
+
+                from re import sub
+                if len(sub('[\t, \n, \r \s]', '', usernameInput)) >= 2:
+                    method(usernameInput)
+                    break
+
+    #---------------------------------------------------------------------------------------------------------------#
+
+
+    AmelieInstance = Amelie()
+    
+    username = str(settingsFile.getUsername())
+
+    
+    console.writeLine('\n' + dialog.getMessageFor("Voice_control"))
     turnOnTheVoice = console.readLine("--> ")
     while (True):
         try:
@@ -37,7 +82,7 @@ def main() -> int:
                         AmelieInstance.recorderCalibration()
                     except OSError:
                         from os import system
-                        console.writeLine(AmelieInstance.getMessageFor("microAccesDenied"))
+                        console.writeLine(dialog.getMessageFor("microAccesDenied"))
                         system("pause")
                         continue
 
@@ -62,7 +107,7 @@ def main() -> int:
                      
 
             else:
-                console.writeLine(AmelieInstance.getMessageFor("WrongInput"))
+                console.writeLine(dialog.getMessageFor("WrongInput"))
                 turnOnTheVoice = console.readLine("--> ")
                 continue
 
@@ -73,7 +118,7 @@ def main() -> int:
 
         except MemoryError:
             AmelieInstance.writeLog()
-            console.writeLine(AmelieInstance.getMessageFor("error"))
+            console.writeLine(dialog.getMessageFor("error"))
             continue
 
         except SystemExit:
@@ -83,15 +128,15 @@ def main() -> int:
 
         except ConnectionError:
             AmelieInstance.writeLog()
-            console.writeLine(AmelieInstance.getMessageFor("service_error"))
+            console.writeLine(dialog.getMessageFor("service_error"))
       
         except OSError:
             AmelieInstance.writeLog()
-            console.writeLine(AmelieInstance.getMessageFor("error"))
+            console.writeLine(dialog.getMessageFor("error"))
 
         except Exception:
             AmelieInstance.writeLog()
-            console.writeLine(AmelieInstance.getMessageFor("crash"))
+            console.writeLine(dialog.getMessageFor("crash"))
 
             AmelieInstance.restart()
 
