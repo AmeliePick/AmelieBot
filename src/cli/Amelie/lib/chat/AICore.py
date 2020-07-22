@@ -218,7 +218,7 @@ class Chat(object):
 
 
 
-    def EditInput(self) -> str:
+    def EditInput(self, meaningLength = 2) -> str:
         ''' Removes from the user input the stop words.
 
         Example:
@@ -226,28 +226,43 @@ class Chat(object):
                 Result: Google, summer wallpapers
         '''
 
-        stopPhrase = ''
-        for row in self._stopWords:
-            if ((self._input.capitalize()).find(row.capitalize()) != -1):
-                stopPhrase = row.replace('\n', '')
-                break
 
 
-            if stopPhrase == '':
-                return self._input
-            else:
-                result = list(self._input)
-                for i in range(input.capitalize().find(row.capitalize()), len(stopPhrase)):
-                               result[i] = ''
+        ''' 
+        This method can incorrectly edit the input, because the meaning of the sentcene doesn't detecting.
+        The lenght of meaning worlds detecting only manualy by meaningLength value.
 
-        
-        
-                return sub('[?!]', '', ''.join(result)).lstrip()
+        Incorrectly behaivour:
+        meaningLength: 2
+        input: find youtube website.
+        output: website
+        '''
+
+
+
+        result = list(self._input)
+  
+        for stopWord in self._stopWords:
+            occurrence = (''.join(result).lower()).find(stopWord.lower())
+            if occurrence != -1 and len(''.join(result).split()) >= meaningLength:
+
+                # remove stop words from the input
+                for index in range(occurrence, occurrence + len(stopWord)):
+                    result[index] = ''
+
+                result = list(''.join(result))
+
+                
+
+        return sub('[?, !]', '', ''.join(result)).lstrip().rstrip()
 
 
 
     def stemming(self, expression: str) -> str:
-        return Stemmer(self._lang.lower()).stemWord(expression)
+        if self._lang == "ru":
+            return Stemmer(self._lang.lower()).stemWord(expression)
+        else:
+            return expression
 
 
 
