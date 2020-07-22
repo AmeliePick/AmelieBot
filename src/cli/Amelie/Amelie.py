@@ -15,7 +15,7 @@ from lib.tools.runtime         import restart
 from lib.audio.processing      import playAudio, TextToSpeech
 from lib.audio.recognition     import SpeechRecognition
 
-from Settings import Settings
+from lib.Settings import Settings
 
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
@@ -110,7 +110,7 @@ class Amelie():
             webbrowser_open( url + str(self._chat.stemming(self._chat.EditInput())), new = 1)
         
         # here we can get an empty answer, when the user says a phrase like "open" and nothing more
-        elif self._chat.getInputType() == "Open" and self._chat.EditInput() != '':
+        elif self._chat.getInputType() == "Open":
                 Popen( getProgrammPath( self._chat.EditInput() ) )
 
         return

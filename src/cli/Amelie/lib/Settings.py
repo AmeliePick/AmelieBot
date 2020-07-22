@@ -2,8 +2,8 @@
 
 
 
-from lib.tools.system          import FileManager
-from lib.tools.iniParser       import IniParser
+from .tools.system          import FileManager
+from .tools.iniParser       import IniParser
 
 
 

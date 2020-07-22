@@ -12,7 +12,7 @@ from threading          import Thread
 from memory_profiler    import memory_usage
 
 from lib.chat.dialog import Dialog  
-from Settings  import Settings
+from lib.Settings  import Settings
 from Amelie    import Amelie
 from cli       import Console
 
