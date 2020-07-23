@@ -2,20 +2,16 @@
 
 
 
-import time
+from .chat.dialog           import Dialog
+from .chat.AICore           import Chat
+
+from .tools.system          import FileManager
 
 
-from lib.chat.dialog           import Dialog
-from lib.chat.AICore           import Chat
+from .audio.processing      import playAudio, TextToSpeech
+from .audio.recognition     import SpeechRecognition
 
-from lib.tools.system          import FileManager
-from lib.tools.logger          import Logger
-from lib.tools.runtime         import restart
-
-from lib.audio.processing      import playAudio, TextToSpeech
-from lib.audio.recognition     import SpeechRecognition
-
-from lib.Settings import Settings
+from .Settings import Settings
 
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
@@ -23,46 +19,34 @@ from subprocess         import Popen
 
 
 class Amelie():
-    """CLI version of AmelieBot"""
+    ''' Bot's logic '''
+
+
 
     _chat: Chat
     _dialog: Dialog
-    _settings: Settings
     _fileManager: FileManager
-    _logger: Logger
+    
     _voiceRecorder: SpeechRecognition
     _textToSpeech: TextToSpeech
-
-    _stateCode: int
     
 
 
-    def __init__(self):
+    def __init__(self, applanguage: str):
         super().__init__()
 
         self._fileManager = FileManager()
-        self._logger = Logger()
 
-        self._settings = Settings()
-        
-       
-        
-
-
-        language = self._settings.getLanguage()
-
-        self._voiceRecorder = SpeechRecognition(language)
+        self._voiceRecorder = SpeechRecognition(applanguage)
         self._textToSpeech = TextToSpeech()
-        self._chat = Chat(language)
-        self._dialog = Dialog(language)
-
-        self._stateCode = 1
+        self._chat = Chat(applanguage)
+        self._dialog = Dialog(applanguage)
 
         return
 
 
 
-    def __new__(cls):
+    def __new__(cls, applanguage: str):
         if not hasattr(cls, 'instance'):
             cls.instance = super(Amelie, cls).__new__(cls)
             return cls.instance
@@ -98,10 +82,7 @@ class Amelie():
 
 
 
-        if self._chat.getInputType() == "Exit":
-            self._stateCode = 0
-
-        elif self._chat.getInputType() == "Search":
+        if self._chat.getInputType() == "Search":
             url = "https://www.google.ru/search?q="
             webbrowser_open( url + str(self._chat.EditInput()), new = 1)
     
@@ -135,63 +116,29 @@ class Amelie():
         userInput = str()
 
         try:
+            self.recorderCalibration()
             userInput = self._voiceRecorder.recognize()
-        except ValueError:
-            userInput = ''
 
-        except ConnectionError:
+            chatAnswer = self.chat(userInput)
+
+            self._textToSpeech(chatAnswer, self._chat.getLanguage())
+            playAudio("TEMP/sound.wav")
+
+            return chatAnswer
+
+        except OSError:
             self._logger.logWrite()
-            return self._dialog.getMessageBy("service_error ")
-            
-
-        chatAnswer = self.chat(userInput)
-
-        self._textToSpeech(chatAnswer, self._chat.getLanguage())
-        playAudio("TEMP/sound.wav")
-
-        return chatAnswer
+            return self_dialog.getMessageBy("microAccesDenied")
+                
+        return
     
-    
-    
-    def recorderCalibration(self) -> None:
-        self._voiceRecorder.calibration()
-
-        return
 
 
-
-    def playSound(self, soundPath: str) -> None:
-        playAudio(soundPath)
-
-        return
-
-
-
-    def writeToJournal(self, recordTitle: str, value: str) -> None:
-        self._logger.addRecord(recordTitle, value)
-
-        return
-
-
-
-    def writeLog(self) -> None:
-        self._logger.logWrite()
-
-        return
-
-
-
-    def update(self) -> Exception:
-        if self._stateCode == 0:
+    def update(self):
+        if self._chat.getInputType() == "Exit":
             raise SystemExit(0)
 
 
-        return
-
-
-
-    def restart(self) -> None:
-        restart()
 
         return
 

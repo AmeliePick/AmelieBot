@@ -56,7 +56,7 @@ class Dialog():
         If the error exist in the name of the expression
         By recursion it finds the value of the expression by "error" tag.
         '''
-        return self.getMessageBy("error")
+        return self.getMessageFor("error")
 
 
 

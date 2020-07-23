@@ -44,7 +44,7 @@ class SpeechRecognition():
                 return self.recognizer.recognize_google(audio, language = self.lang)
 
         except (sr.WaitTimeoutError, sr.UnknownValueError):
-            raise ValueError()
+            raise ''
 
         except sr.RequestError:
             raise ConnectionError()

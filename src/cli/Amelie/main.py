@@ -8,140 +8,200 @@
 
 
 from os                 import path as os_path
+from os                 import system
 from threading          import Thread
 from memory_profiler    import memory_usage
 
+from httpcore._exceptions import ConnectError
+
+from lib.tools.logger          import Logger
+from lib.tools.runtime         import restart
 from lib.chat.dialog import Dialog  
 from lib.Settings  import Settings
-from Amelie    import Amelie
+from lib.Amelie    import Amelie
 from cli       import Console
 
 
 
-def main() -> int:
-    console = Console()
-    console.printLogo()
+
+class AmelieProgramm:
+    """CLI version of AmelieBot"""
+
+    _amelie: Amelie
+    _dialog: Dialog
+    _logger: Logger
+    _console: Console
+    _settingsFile: Settings
 
 
 
-    settingsFile = Settings()
-    dialog = Dialog('en') if settingsFile.getLanguage() == '-' else Dialog(settingsFile.getLanguage())
-        
-    #---------------------------------------------------------------------------------------------------------------#
-    #                                   FILLING THE SETTINGS FILE WITH USER INPUT                                   #
+    def __init__(self):
+        self._console = Console()
+        self._console.printLogo()
 
-    settingsMethods = settingsFile.getMethodsToResolveErrors()
-    for methodname, method in settingsMethods.items():
-        if methodname == "lang":
-            console.write(dialog.getMessageFor("Choose_lang"))
+        self._logger = Logger()
+        self._settingsFile = Settings()
 
-            langs = settingsFile.getSupportingLangs()
-            for key, value in langs.items():
-                console.write('[' + str(key) + ']')
-                console.write(value.upper() + ' ')
-            console.write('\n')
+        self._dialog = Dialog('en') if self._settingsFile.getLanguage() == '-' else Dialog(self._settingsFile.getLanguage())
 
-            while(True):
-                langInput = int(console.readLine("\n--> "))
+        #---------------------------------------------------------------------------------------------------------------#
+        #                                   FILLING THE SETTINGS FILE WITH USER INPUT                                   #
 
-                if langInput in langs.keys():
-                    method(langs[langInput])
-                    break
+        settingsMethods = self._settingsFile.getMethodsToResolveErrors()
+        for methodname, method in settingsMethods.items():
+            if methodname == "lang":
+                self._console.write(dialog.getMessageFor("Choose_lang"))
 
-                else:
-                    console.writeLine(dialog.getMessageFor("WrongInput"))
+                langs = self._settingsFile.getSupportingLangs()
+                for key, value in langs.items():
+                    self._console.write('[' + str(key) + ']')
+                    self._console.write(value.upper() + ' ')
+                self._console.write('\n')
 
-
-            dialog.changeLanguage(settingsFile.getLanguage())
-
-        elif methodname == "username":
-            while(True):
-                console.writeLine(dialog.getMessageFor("getName"))
-                usernameInput = (console.readLine("\n--> "))
-
-                from re import sub
-                if len(sub('[\t, \n, \r \s]', '', usernameInput)) >= 2:
-                    method(usernameInput)
-                    break
-
-    #---------------------------------------------------------------------------------------------------------------#
-
-
-    AmelieInstance = Amelie()
-    
-    username = str(settingsFile.getUsername())
-
-    
-    console.writeLine('\n' + dialog.getMessageFor("Voice_control"))
-    turnOnTheVoice = console.readLine("--> ")
-    while (True):
-        try:
-            if turnOnTheVoice == "Y" or turnOnTheVoice ==  "y":
                 while(True):
-                    try:
-                        AmelieInstance.recorderCalibration()
-                    except OSError:
-                        from os import system
-                        console.writeLine(dialog.getMessageFor("microAccesDenied"))
-                        system("pause")
-                        continue
+                    langInput = int(self._console.readLine("\n--> "))
+
+                    if langInput in langs.keys():
+                        method(langs[langInput])
+                        break
+
+                    else:
+                        self._console.writeLine(self._dialog.getMessageFor("WrongInput"))
 
 
-                    console.write('\n' + username + ": ")
-                    chatAnswer = AmelieInstance.voiceChat()
+                self._dialog.changeLanguage(self._settingsFile.getLanguage())
 
-                    console.writeLine(AmelieInstance.getUserInput())
-                    console.writeLine("\n\t\tAmelie: " + chatAnswer)
-
-                    AmelieInstance.update()
-
-
-            elif turnOnTheVoice == "N" or turnOnTheVoice ==  "n":
+            elif methodname == "username":
                 while(True):
-                    userInput = console.readLine('\n' + username + ": ")
-                    chatAnswer = AmelieInstance.chat(userInput)
+                    self._console.writeLine(self._dialog.getMessageFor("getName"))
+                    usernameInput = (console.readLine("\n--> "))
 
-                    console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
+                    from re import sub
+                    if len(sub('[\t, \n, \r \s]', '', usernameInput)) >= 2:
+                        method(usernameInput)
+                        break
 
-                    AmelieInstance.update()
+        #---------------------------------------------------------------------------------------------------------------#
+
+        self._amelie = Amelie(self._settingsFile.getLanguage())
+
+
+        return
+
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(AmelieProgramm, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instance
+
+
+
+    def writeToJournal(self, recordTitle: str, value: str) -> None:
+        self._logger.addRecord(recordTitle, value)
+
+        return
+
+
+
+    def update(self):
+        self._amelie.update()
+
+        return
+
+
+    def main(self):
+        username = str(self._settingsFile.getUsername())
+
+        self._console.writeLine('\n' + self._dialog.getMessageFor("Voice_control"))
+        turnOnTheVoice = self._console.readLine("--> ")
+        while (True):
+            try:
+                if turnOnTheVoice == "Y" or turnOnTheVoice ==  "y":
+                    self._console.write('\n' + username + ": ")
+                    self._chatAnswer = self._amelie.voiceChat()
+
+                    self._console.writeLine(self._amelie.getUserInput())
+                    self._console.writeLine("\n\t\tAmelie: " + chatAnswer)
+
+                    system("pause")
+
+
+                elif turnOnTheVoice == "N" or turnOnTheVoice ==  "n":
+                    userInput = self._console.readLine('\n' + username + ": ")
+                    chatAnswer = self._amelie.chat(userInput)
+
+                    self._console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
+
                      
 
-            else:
-                console.writeLine(dialog.getMessageFor("WrongInput"))
-                turnOnTheVoice = console.readLine("--> ")
-                continue
+                else:
+                    self._console.writeLine(dialog.getMessageFor("WrongInput"))
+                    turnOnTheVoice = self._console.readLine("--> ")
+                    continue
 
 
-            
+                self.update()
 
 
 
-        except MemoryError:
-            AmelieInstance.writeLog()
-            console.writeLine(dialog.getMessageFor("error"))
-            continue
+            except MemoryError:
+                self._logger.logWrite()
+                self._console.writeLine(dialog.getMessageFor("error"))
 
-        except SystemExit:
-            
 
-            break
+            except SystemExit:
+                break
 
-        except ConnectionError:
-            AmelieInstance.writeLog()
-            console.writeLine(dialog.getMessageFor("service_error"))
+            except (ConnectionError, ConnectError):
+                self._logger.logWrite()
+                self._console.writeLine('\n' + self._dialog.getMessageFor("service_error"))
+                self._console.writeLine('\n' + self._dialog.getMessageFor("Voice_control"))
+                turnOnTheVoice = self._console.readLine("--> ")
       
-        except OSError:
-            AmelieInstance.writeLog()
-            console.writeLine(dialog.getMessageFor("error"))
+            except OSError:
+                self._logger.logWrite()
+                self._console.writeLine(dialog.getMessageFor("error"))
 
-        except Exception:
-            AmelieInstance.writeLog()
-            console.writeLine(dialog.getMessageFor("crash"))
+            except Exception:
+                self._logger.logWrite()
+                self._console.writeLine(self._dialog.getMessageFor("crash"))
+                self.restart()
 
-            AmelieInstance.restart()
+        return
 
 
-    AmelieInstance.__del__()
+
+    def restart(self) -> None:
+        restart()
+
+        return
+
+
+
+    def __del__(self):
+        self._amelie.__del__()
+
+
+
+
+
+
+def main() -> int:
+
+        
+
+
+
+    app = AmelieProgramm()
+    app.main()
+
+    
+    
+
+    
+    app.__del__()
     return 0
 
 
