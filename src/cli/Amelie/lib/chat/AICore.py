@@ -21,7 +21,7 @@ class Chat(object):
     '''
     Chat is a neural network that classifies requests from the user. 
     Then, after processing the type of the question, it passes it to the answer function, 
-    where the answer is processed and the operations are performed according to the input.
+    where the answer is processed by searhing of phrases like the input type.
 
     User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
 
@@ -33,9 +33,6 @@ class Chat(object):
     _dataSet:    list
     _stopWords:  list
     _answerText: list
-
-    # App setup's info
-    
 
     # Chat
     _input: str
@@ -82,10 +79,10 @@ class Chat(object):
 
 
             #save the model to disk
-            dump(nb_valid_samples, open("../../models/model"+ self._lang.upper() + ".sav", 'wb'))
+            dump(nb_valid_samples, open("../../models/model.sav", 'wb'))
     
             #load the model from disk
-            loaded_model = load(open("../../models/model"+ self._lang.upper() + ".sav", 'rb'))
+            loaded_model = load(open("../../models/model.sav", 'rb'))
   
 
             return { 
@@ -100,13 +97,11 @@ class Chat(object):
         self._dataSet = list()
         self._stopWords = list()
         self._answerText = list()
-        self.getDataFromDB()
+        self._getDataFromDB()
 
 
         self._input = str()
         self._sessionInput = dict()
-
-        self._stateCode = int(1)
 
         # Do train n-network
         data = parseDataSet()
@@ -129,47 +124,50 @@ class Chat(object):
 
 
 
-    def getAnswer(self) -> str:
-        url = str()
-
-        # get answer
-
-        answerPharse = []
-        for line in self._answerText:
-            row = line.split(" @ ")
-            if row[0] == self._inputType:
-                answerPharse.append(row[1])
+    def getInput(self) -> str:
+        return self._input
 
 
 
-        # TODO: This case would be, because the data set has wrong records. Remove this code atfer the fix of data set.
-        try:
-            self.output = choice(answerPharse)
-        except IndexError:
-            Unknown = []
-            self._inputTyoe = "Unknown"
-
-            for i in self._answerText:
-                row = i.split(" @ ")
-
-                if row[0] == "Unknown":
-                    Unknown.append(row[1])
-
-            self.output = choice(Unknown)
+    def getInputType(self) -> str:
+        return self._inputType
 
 
 
-        # add phrases in DB
-        if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../../DataBase/DataSet" + self._lang.upper() + ".json")
-                
-        
-
-        return self.output
+    def getSessionInput(self) -> dict:
+        return self.sessionInput_
+    
 
 
+    def getLanguage(self) -> str:
+        return self._lang
 
-    def getDataFromDB(self) -> None:
+
+
+    def launch(self, input_ = "") -> str:
+        ''' Start the chat and get the answer based on user's input.
+        '''
+
+        self._inputAnalysis(input_)
+        return self._getAnswer()
+
+
+
+    def changeLanguage(self, language: str) -> None:
+        self._lang = language
+        self._getDataFromDB()
+
+
+
+    def _stemming(self, expression: str) -> str:
+        if self._lang == "ru":
+            return Stemmer(self._lang.lower()).stemWord(expression)
+        else:
+            return expression
+
+
+
+    def _getDataFromDB(self) -> None:
         ''' Check language choice and parse needed files.
 
         '''
@@ -181,7 +179,9 @@ class Chat(object):
                 listOBJ.append(line.replace('\n', ''))
 
 
-        readFileToList(self._dataSet, "../../DataBase/DataSet" + self._lang.upper() + ".json")
+        if len(self._dataSet) == 0:
+            readFileToList(self._dataSet, "../../DataBase/DataSet.db")
+
         readFileToList(self._stopWords, "../../DataBase/stopWords" + self._lang.upper() + ".json")
         readFileToList(self._answerText, "../../DataBase/answers" + self._lang.upper() + ".json")
 
@@ -190,7 +190,7 @@ class Chat(object):
 
 
 
-    def inputAnalysis(self, input_: str) -> None:
+    def _inputAnalysis(self, input_: str) -> None:
         # if the input is garbage
         input_ = sub('[^\w, \s]', '', input_)
         if len(sub('[\t, \n, \r, \s]', '', input_)) <= 1 or sub('[\t, \n, \r, \s]', '', input_).isdigit() or len(input_) <= 1:
@@ -212,13 +212,7 @@ class Chat(object):
 
 
 
-    def launch(self, input_ = "") -> str:
-        self.inputAnalysis(input_)
-        return self.getAnswer()
-
-
-
-    def EditInput(self, meaningLength = 2) -> str:
+    def editInput(self, meaningLength = 2) -> str:
         ''' Removes from the user input the stop words.
 
         Example:
@@ -258,31 +252,40 @@ class Chat(object):
 
 
 
-    def stemming(self, expression: str) -> str:
-        if self._lang == "ru":
-            return Stemmer(self._lang.lower()).stemWord(expression)
-        else:
-            return expression
+    def _getAnswer(self) -> str:
+        url = str()
+
+        # get answer
+
+        answerPharse = []
+        for line in self._answerText:
+            row = line.split(" @ ")
+            if row[0] == self._inputType:
+                answerPharse.append(row[1])
 
 
 
-    def getInput(self) -> str:
-        return self._input
+        # TODO: This case would be, because the data set has wrong records. Remove this code atfer the fix of data set.
+        try:
+            self.output = choice(answerPharse)
+        except IndexError:
+            Unknown = []
+            self._inputTyoe = "Unknown"
+
+            for i in self._answerText:
+                row = i.split(" @ ")
+
+                if row[0] == "Unknown":
+                    Unknown.append(row[1])
+
+            self.output = choice(Unknown)
 
 
 
-    def getInputType(self) -> str:
-        return self._inputType
+        # add phrases in DB
+        if self._inputType != "Unknown":
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../../DataBase/DataSet" + self._lang.upper() + ".json")
+                
+        
 
-
-
-    def getSessionInput(self) -> dict:
-        return self.sessionInput_
-
-
-    def getStateCode(self) -> int:
-        return self._stateCode
-
-
-    def getLanguage(self) -> str:
-        return self._lang
+        return self.output

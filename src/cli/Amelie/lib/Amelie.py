@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
 
+from .Settings              import Settings
 
 from .chat.dialog           import Dialog
 from .chat.AICore           import Chat
 
 from .tools.system          import FileManager
 
-
 from .audio.processing      import playAudio, TextToSpeech
 from .audio.recognition     import SpeechRecognition
-
-from .Settings import Settings
 
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
@@ -19,14 +17,16 @@ from subprocess         import Popen
 
 
 class Amelie():
-    ''' Bot's logic '''
+    ''' Bot's logic to get conversation with the user.
+
+    This class is literally bot itself.
+    
+    '''
 
 
 
     _chat: Chat
     _dialog: Dialog
-    _fileManager: FileManager
-    
     _voiceRecorder: SpeechRecognition
     _textToSpeech: TextToSpeech
     
@@ -34,8 +34,6 @@ class Amelie():
 
     def __init__(self, applanguage: str):
         super().__init__()
-
-        self._fileManager = FileManager()
 
         self._voiceRecorder = SpeechRecognition(applanguage)
         self._textToSpeech = TextToSpeech()
@@ -57,7 +55,7 @@ class Amelie():
 
     def changeLanguage(self, language: str) -> None:
         self._voiceRecorder = SpeechRecognition(language)
-        self._chat = Chat(language)
+        self._chat.changeLanguage(language)
         self._dialog.changeLanguage(language)
 
         return
@@ -65,13 +63,17 @@ class Amelie():
 
 
     def doAction(self, inputType: str) -> None:
+        ''' Do action based on user's request.
+
+        This method must calling in a try block, because the bot can generate exceptions.
+        '''
+
         def getProgrammPath(name: str) -> str:
                 ''' Get the path to the executable file
 
                 '''
-
                 
-                file = self._fileManager.readFile("../../DataBase/added_programms.json")             
+                file = FileManager.readFile("../../DataBase/added_programms.json")             
                 for line in file:
                     row = line.split(" = ")
                     
@@ -90,7 +92,7 @@ class Amelie():
             url = "http://www.youtube.com/results?search_query="
             webbrowser_open( url + str(self._chat.stemming(self._chat.EditInput())), new = 1)
         
-        # here we can get an empty answer, when the user says a phrase like "open" and nothing more
+        # In this block can be an exception
         elif self._chat.getInputType() == "Open":
                 Popen( getProgrammPath( self._chat.EditInput() ) )
 
@@ -99,6 +101,9 @@ class Amelie():
 
 
     def chat(self, userInput: str) -> str:
+        ''' The usual chat To get bot's answer user must type a request in a keyborad.
+        '''
+
         chatAnswer = self._chat.launch(userInput)
 
         try:
@@ -111,6 +116,9 @@ class Amelie():
 
 
     def voiceChat(self) -> str:
+        ''' The voice chat. To get bot's answer user must use a microphone. 
+        '''
+
         playAudio("../../Res/Sounds/readytohear.wav")
 
         userInput = str()
@@ -135,6 +143,9 @@ class Amelie():
 
 
     def update(self):
+        ''' Update the bot's logic.
+        '''
+
         if self._chat.getInputType() == "Exit":
             raise SystemExit(0)
 
@@ -149,10 +160,5 @@ class Amelie():
 
 
 
-    def getAppLanguage(self) -> str:
-        return self._chat.getLanguage()
-
-
-
     def __del__(self):
-        self._fileManager.__del__()
+        pass

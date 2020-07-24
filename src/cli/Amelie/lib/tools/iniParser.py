@@ -20,7 +20,6 @@ class IniParser(object):
         self.config = configparser.ConfigParser()
         
         
-        # if the file is empty, here it will be an exception 
         if not os_path.exists(fileToParsePath):
             FileManager.createFile(fileToParsePath)
 
@@ -32,7 +31,7 @@ class IniParser(object):
 
 
     def setSection(self, section: str) -> None:
-        ''' Set the new section in file
+        ''' Set the new section in the file.
         '''
 
 
@@ -47,7 +46,7 @@ class IniParser(object):
 
 
     def getValue(self, section: str, option: str, path = "") -> str:
-        ''' Getting values from settings
+        ''' Getting values from settings.
         '''
 
         if path != "":
@@ -66,7 +65,7 @@ class IniParser(object):
 
 
     def setValue(self, section: str, option: str, value: str) -> None:
-        ''' Sets the values of settings in the configuration file
+        ''' Sets the value of settings in the configuration file.
         '''
 
         if self.config.has_section(section):
@@ -80,7 +79,7 @@ class IniParser(object):
 
 
     def swapFile(self, file_path: str) -> None:
-        ''' Change the file path
+        ''' Change the file path.
         '''
 
         self.path = file_path
@@ -90,7 +89,7 @@ class IniParser(object):
 
 
     def cleanConfig(self) -> None:
-        ''' Remove all items from config
+        ''' Remove all items from the config.
         '''
 
 
@@ -102,8 +101,7 @@ class IniParser(object):
 
 
     def update(self) -> None:
-        '''
-        Update parser's variables
+        ''' Update parser's variables.
         '''
 
 

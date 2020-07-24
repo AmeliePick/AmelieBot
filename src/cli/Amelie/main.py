@@ -14,24 +14,31 @@ from memory_profiler    import memory_usage
 
 from httpcore._exceptions import ConnectError
 
-from lib.tools.logger          import Logger
 from lib.tools.runtime         import restart
-from lib.chat.dialog import Dialog  
-from lib.Settings  import Settings
-from lib.Amelie    import Amelie
-from cli       import Console
-
+from lib.tools.logger          import Logger
+from lib.chat.dialog           import Dialog  
+from lib.tools.system          import FileManager
+from lib.Settings              import Settings
+from lib.Amelie                import Amelie
+from cli                       import Console
 
 
 
 class AmelieProgramm:
-    """CLI version of AmelieBot"""
+    ''' CLI version of AmelieBot
+
+    This class is the programm itself.
+    
+    '''
+
+
 
     _amelie: Amelie
     _dialog: Dialog
     _logger: Logger
     _console: Console
     _settingsFile: Settings
+    _fileManager: FileManager
 
 
 
@@ -39,6 +46,7 @@ class AmelieProgramm:
         self._console = Console()
         self._console.printLogo()
 
+        self._fileManager = FileManager()
         self._logger = Logger()
         self._settingsFile = Settings()
 
@@ -50,6 +58,8 @@ class AmelieProgramm:
         settingsMethods = self._settingsFile.getMethodsToResolveErrors()
         for methodname, method in settingsMethods.items():
             if methodname == "lang":
+
+                # print a list of supporting languages
                 self._console.write(dialog.getMessageFor("Choose_lang"))
 
                 langs = self._settingsFile.getSupportingLangs()
@@ -58,6 +68,7 @@ class AmelieProgramm:
                     self._console.write(value.upper() + ' ')
                 self._console.write('\n')
 
+                # get user's input
                 while(True):
                     langInput = int(self._console.readLine("\n--> "))
 
@@ -76,17 +87,23 @@ class AmelieProgramm:
                     self._console.writeLine(self._dialog.getMessageFor("getName"))
                     usernameInput = (console.readLine("\n--> "))
 
+                    # checking the spelling of the username
                     from re import sub
                     if len(sub('[\t, \n, \r \s]', '', usernameInput)) >= 2:
                         method(usernameInput)
                         break
 
+            else:
+                continue
+
         #---------------------------------------------------------------------------------------------------------------#
+
 
         self._amelie = Amelie(self._settingsFile.getLanguage())
 
 
         return
+
 
 
     def __new__(cls):
@@ -98,17 +115,32 @@ class AmelieProgramm:
 
 
 
-    def writeToJournal(self, recordTitle: str, value: str) -> None:
-        self._logger.addRecord(recordTitle, value)
+    def restart(self) -> None:
+        restart()
 
         return
 
 
 
     def update(self):
+        ''' Update all programm logic.
+
+        '''
+
         self._amelie.update()
 
         return
+
+
+
+    def writeToJournal(self, recordTitle: str, value: str) -> None:
+        ''' Write an info-record to the journal of the program.
+        '''
+
+        self._logger.addRecord(recordTitle, value)
+
+        return
+
 
 
     def main(self):
@@ -150,7 +182,6 @@ class AmelieProgramm:
                 self._logger.logWrite()
                 self._console.writeLine(dialog.getMessageFor("error"))
 
-
             except SystemExit:
                 break
 
@@ -173,15 +204,9 @@ class AmelieProgramm:
 
 
 
-    def restart(self) -> None:
-        restart()
-
-        return
-
-
-
     def __del__(self):
         self._amelie.__del__()
+        self._fileManager.__del__()
 
 
 
@@ -189,18 +214,9 @@ class AmelieProgramm:
 
 
 def main() -> int:
-
-        
-
-
-
     app = AmelieProgramm()
     app.main()
-
-    
-    
-
-    
+ 
     app.__del__()
     return 0
 

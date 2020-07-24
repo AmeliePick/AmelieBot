@@ -31,6 +31,15 @@ class TextToSpeech:
 
 
 
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(TextToSpeech, cls).__new__(cls)
+            return cls.instance
+            
+        return cls.instances
+
+
+
     def __call__(self, textSource: str, srcLang: str):
         textSource = self._translator.translate(text = textSource, dest = "en", src = srcLang).text
 
