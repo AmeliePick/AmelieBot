@@ -61,4 +61,4 @@ class Dialog():
 
 
     def changeLanguage(self, lang: str) -> None:
-        self.serviceExpressions = FileManager.readFile("../../DataBase/Service_expressions" + lang.upper() + ".json")
+        self.serviceExpressions = FileManager.readFile("../../DataBase/ServiceExpressions" + lang.upper() + ".db")

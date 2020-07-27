@@ -33,6 +33,10 @@ class FileManager:
         return cls.instance
 
 
+    @staticmethod
+    def fileExist(file: str) -> bool:
+        return os_path.exists(file)
+
 
     @staticmethod
     def writeToFile(value: str, file: str, mode = 'a', _encoding="utf-8") -> None:
