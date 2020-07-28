@@ -6,10 +6,14 @@ from os     import path as os_path
 from os     import remove
 from os     import makedirs as os_makedirs
 
+from ..Singleton import Singleton
 
 
-class FileManager:
+
+class FileManager(metaclass = Singleton):
     ''' Providing the interface to work with file system
+
+    The class is a Singleton.
     '''
 
 
@@ -23,14 +27,6 @@ class FileManager:
 
         return
         
-
-
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(FileManager, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instance
 
 
     @staticmethod

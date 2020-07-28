@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from os      import path as os_path
-from .system import FileManager
 import configparser
+from os      import path as os_path
+
+from ..Singleton        import Singleton
+from .system            import FileManager
 
 
 

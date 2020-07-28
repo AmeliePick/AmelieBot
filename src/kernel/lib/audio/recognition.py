@@ -3,12 +3,18 @@
 
 
 import speech_recognition as sr
+from ..Singleton import Singleton
 
 
 
-class SpeechRecognition():
+
+
+class SpeechRecognition(metaclass = Singleton):
     ''' Recognize the speech and convert it in the text.
+
+    The class is a Singleton.
     '''
+
 
 
     lang: str
@@ -44,9 +50,11 @@ class SpeechRecognition():
                 return self.recognizer.recognize_google(audio, language = self.lang)
 
         except (sr.WaitTimeoutError, sr.UnknownValueError):
-            raise ''
+            raise ValueError()
 
         except sr.RequestError:
-            raise ConnectionError()
+            exception = ConnectionError()
+            exception.errno = 13
+            raise exception
 
         return

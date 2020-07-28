@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 
-
+from .Singleton            import Singleton
 from .tools.system          import FileManager
 from .tools.iniParser       import IniParser
 
 
 
-class Settings(object):
-    """Control the config file"""
+class Settings(metaclass = Singleton):
+    ''' Control the config file
+    
+    The class is a Singleton.
+    '''
 
 
     _fileManager: FileManager
@@ -25,7 +28,7 @@ class Settings(object):
         self._methods = dict()
         self._supportingLangs = dict()
 
-        langs = (self._iniParser.getValue("AppData", "langs", "../../Version/AppSetup.ini")).split(", ")
+        langs = (self._iniParser.getValue("AppData", "langs", "../setup/AppSetup.ini")).split(", ")
         for index in range(0, len(langs)):
             self._supportingLangs[index + 1] = langs[index]
 
@@ -37,7 +40,7 @@ class Settings(object):
 
             self._iniParser.setValue("Settings", 
                                      "ver", 
-                                     self._iniParser.getValue("Setup", "Version", "../../Version/AppSetup.ini")
+                                     self._iniParser.getValue("Setup", "Version", "../setup/AppSetup.ini")
                                     )
 
 
@@ -56,16 +59,6 @@ class Settings(object):
 
 
         return
-
-
-
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Settings, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instance
-
 
 
 

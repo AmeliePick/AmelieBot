@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import simpleaudio      as sa
+
 from ..tools.system     import FileManager
+from ..Singleton        import Singleton
 
-
-from requests   import get
-from ibm_watson import TextToSpeechV1
+import simpleaudio as sa
+from requests    import get
+from ibm_watson  import TextToSpeechV1
 from googletrans import Translator as gTranslator
 
 
@@ -19,7 +20,7 @@ def playAudio(soundFile: str, reps=1) -> None:
 
 
 
-class TextToSpeech:
+class TextToSpeech(metaclass = Singleton):
     _translator: gTranslator
 
 
@@ -28,15 +29,6 @@ class TextToSpeech:
         self._translator = gTranslator()
 
         return
-
-
-
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(TextToSpeech, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instances
 
 
 

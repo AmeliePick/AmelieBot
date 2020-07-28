@@ -6,15 +6,16 @@ from traceback      import format_exc
 from datetime       import datetime
 from os             import path as os_path
 
+from ..Singleton    import Singleton
 from .system        import FileManager
 from .iniParser     import IniParser
 
 
 
-class Logger(IniParser):
+class Logger(IniParser, metaclass = Singleton):
     ''' Collects data from the current session and generates a session log file
 
-    The class is a singleton.
+    The class is a Singleton.
     '''
 
 
@@ -30,15 +31,6 @@ class Logger(IniParser):
 
 
         return
-
-
-
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Logger, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instance
 
 
 

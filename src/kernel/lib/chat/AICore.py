@@ -15,16 +15,20 @@ from sklearn.pipeline                   import Pipeline
 from random             import choice
 from Stemmer            import Stemmer
 from ..tools.system     import FileManager
+from ..Singleton        import Singleton
 
 
 
-class Chat(object):
+class Chat(metaclass = Singleton):
     '''
     Chat is a neural network that classifies requests from the user. 
     Then, after processing the type of the question, it passes it to the answer function, 
     where the answer is processed by searhing of phrases like the input type.
 
     User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
+
+
+    The class is a Singleton.
 
     '''
 
@@ -70,7 +74,7 @@ class Chat(object):
 
         def training(Edit, Val_split = 0.1) -> None:
             # load the model from disk
-            self._text_clf = joblib.load("../../models/model.pkl")
+            self._text_clf = joblib.load("../DataBase/models/model.pkl")
 
 
             # fit and train the model
@@ -94,7 +98,7 @@ class Chat(object):
 
 
             # save the model to disk
-            joblib.dump(self._text_clf, "../../models/model.pkl", compress = 3, protocol = 4)
+            joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
 
             
             return
@@ -119,16 +123,6 @@ class Chat(object):
                         ])
 
         training(data)
-
-
-
-
-    def __new__(cls, appLanguage: str):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Chat, cls).__new__(Chat)
-            return cls.instance
-            
-        return cls.instance
 
 
 
@@ -187,11 +181,11 @@ class Chat(object):
                 listOBJ.append(line.replace('\n', ''))
 
 
-        if len(self._dataSet) == 0 and FileManager.fileExist("../../DataBase/DataSet.db") == True:
-            readFileToList(self._dataSet, "../../DataBase/DataSet.db")
+        if len(self._dataSet) == 0 and FileManager.fileExist("../DataBase/DataSet.db") == True:
+            readFileToList(self._dataSet, "../DataBase/DataSet.db")
 
-        readFileToList(self._stopWords, "../../DataBase/stopWords" + self._lang.upper() + ".db")
-        readFileToList(self._answerText, "../../DataBase/answers" + self._lang.upper() + ".db")
+        readFileToList(self._stopWords, "../DataBase/stopWords" + self._lang.upper() + ".db")
+        readFileToList(self._answerText, "../DataBase/answers" + self._lang.upper() + ".db")
 
 
         return
@@ -292,7 +286,7 @@ class Chat(object):
 
         # add phrases in DB
         if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../../DataBase/DataSet" + self._lang.upper() + ".json")
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet" + self._lang.upper() + ".json")
                 
         
 

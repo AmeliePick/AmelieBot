@@ -3,10 +3,11 @@
 
 
 from ..tools.system     import FileManager
+from ..Singleton        import Singleton
 
 
 
-class Dialog():
+class Dialog(metaclass = Singleton):
     ''' Printing messages in current language
 
     The class is a singleton.
@@ -27,15 +28,6 @@ class Dialog():
         self.changeLanguage(appLanguage)
 
         return
-    
-
-
-    def __new__(cls, appLanguage: str):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Dialog, cls).__new__(cls)
-            return cls.instance
-            
-        return cls.instance
 
 
 
@@ -61,4 +53,4 @@ class Dialog():
 
 
     def changeLanguage(self, lang: str) -> None:
-        self.serviceExpressions = FileManager.readFile("../../DataBase/ServiceExpressions" + lang.upper() + ".db")
+        self.serviceExpressions = FileManager.readFile("../DataBase/ServiceExpressions" + lang.upper() + ".db")
