@@ -26,7 +26,7 @@ from re import sub
 
 
 class AmelieProgramm:
-    ''' CLI version of AmelieBot
+    ''' CLI version of AmelieBot.
 
     This class is the programm itself.
     
@@ -60,10 +60,8 @@ class AmelieProgramm:
 
         settingsMethods = self._settingsFile.getMethodsToResolveErrors()
         for methodname, method in settingsMethods.items():
-            if methodname == "lang":
-
-                # print a list of supporting languages
-                self._console.write(dialog.getMessageFor("chooseLang"))
+            if methodname == "lang": # print a list of supporting languages and get user input for language setting
+                self._console.write(self._dialog.getMessageFor("chooseLang"))
 
                 langs = self._settingsFile.getSupportingLangs()
                 for key, value in langs.items():
@@ -71,7 +69,6 @@ class AmelieProgramm:
                     self._console.write(value.upper() + ' ')
                 self._console.write('\n')
 
-                # get user's input
                 while(True):
                     langInput = int(self._console.readLine("\n--> "))
 
@@ -82,13 +79,12 @@ class AmelieProgramm:
                     else:
                         self._console.writeLine(self._dialog.getMessageFor("wrongInput"))
 
-
                 self._dialog.changeLanguage(self._settingsFile.getLanguage())
 
-            elif methodname == "username":
+            elif methodname == "username": # just get username fron input
                 while(True):
                     self._console.writeLine(self._dialog.getMessageFor("getName"))
-                    usernameInput = (console.readLine("\n--> "))
+                    usernameInput = (self._console.readLine("\n--> "))
 
                     # checking the spelling of the username      
                     if len(sub('[\t, \n, \r \s]', '', usernameInput)) >= 2:
@@ -172,10 +168,7 @@ class AmelieProgramm:
 
 
     def main(self):
-        username = str(self._settingsFile.getUsername())
-        addedProgramsFile = self._fileManager.readFile("../DataBase/added_programms.db")
-        existingProgramNames = [row.split()[0].lower() for row in addedProgramsFile]
-        
+        username = str(self._settingsFile.getUsername())        
 
         while(True):
             try:
@@ -202,7 +195,6 @@ class AmelieProgramm:
                         if self._amelie.voice:
                             self._amelie.tts(phrase)
 
-
                         self._console.write("\n\t\t\tAmelie: " + self._dialog.getMessageFor(phrase))
 
                         return
@@ -216,18 +208,17 @@ class AmelieProgramm:
                         while(True):
                             userInput = sub('[\t, \n, \r, \s]', '', self._console.readLine('\n' + username + ": "))
 
-                            if userInput.lower() in existingProgramNames:
+                            if self._amelie.getPathToProgram(userInput):
                                 messageFor("progNameExist")
                             else:
                                 result.append(userInput)
                                 break                
-
-                        result.append(" = ")
                     
-                        messageFor("addProgPath")
-                        result.append(sub('[\t, \n, \r]', '', self._console.readLine('\n' + username + ": ")))
 
-                        self._fileManager.writeToFile(''.join(result) + '\n', "../DataBase/added_programms.db")
+                        messageFor("addProgPath")
+                        result.append(sub('[\t]', '', self._console.readLine('\n' + username + ": ")))
+
+                        self._amelie.addProgram(result[0], result[1])
                         messageFor("done")
 
                 except OSError as e:

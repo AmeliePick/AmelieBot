@@ -32,9 +32,10 @@ class Amelie(metaclass = Singleton):
     _dialog: Dialog
     _voiceRecorder: SpeechRecognition
     _textToSpeech: TextToSpeech
+    _voice: bool
 
     _exceptionList: list
-    _voice: bool
+    _programsList:  list
     
 
 
@@ -45,9 +46,11 @@ class Amelie(metaclass = Singleton):
         self._textToSpeech = TextToSpeech()
         self._chat = Chat(applanguage)
         self._dialog = Dialog(applanguage)
+        self._voice = enableVoice
 
         self._exceptionList = list()
-        self._voice = enableVoice
+
+        self._updateProgramList()
 
         return
 
@@ -57,36 +60,23 @@ class Amelie(metaclass = Singleton):
         ''' Do action based on user's request.
 
         This method must calling in a try block, because the bot can generate exceptions.
+
         '''
-
-        def getProgrammPath(name: str) -> str:
-                ''' Get the path to the executable file
-
-                '''
-                
-                file = FileManager.readFile("../DataBase/added_programms.json")             
-                for line in file:
-                    row = line.split(" = ")
-                    
-                    if row[0].lower() in name.lower():
-                        return row[1].replace('\n', '')
-    
-                return ''
 
         if self._chat.getInputType() == "Exit":
             self._exceptionList.append(SystemExit(0))
 
         elif self._chat.getInputType() == "Search":
             url = "https://www.google.ru/search?q="
-            webbrowser_open( url + str(self._chat.EditInput()), new = 1)
+            webbrowser_open( url + str(self._chat.stemming(self._chat.editInput())), new = 1)
     
         elif self._chat.getInputType() == "Youtube":
             url = "http://www.youtube.com/results?search_query="
-            webbrowser_open( url + str(self._chat.stemming(self._chat.EditInput())), new = 1)
+            webbrowser_open( url + str(self._chat.stemming(self._chat.editInput())), new = 1)
         
         # In this block can be an exception
         elif self._chat.getInputType() == "Open":
-                Popen( getProgrammPath( self._chat.editInput() ) )
+                Popen( self.getPathToProgram(self._chat.editInput()) )
 
         return
 
@@ -100,23 +90,12 @@ class Amelie(metaclass = Singleton):
         return
 
 
-    @property
-    def voice(self) -> None:
-        return self._voice
-
-
-    @voice.setter
-    def voice(self, value: bool) -> bool:    
-        self._voice = value
-        return
-
-
 
     def conversation(self, userInput) -> str:
-        def _silentChat(userInput: str) -> str:
-            ''' The usual chat to get bot's answer, user must type a request in a keyborad.
-            '''
+        ''' Start the conversation with the bot by current input mode.
+        '''
 
+        def _startChat(userInput: str) -> str:
             chatAnswer = self._chat.launch(userInput)
 
             try:
@@ -131,17 +110,20 @@ class Amelie(metaclass = Singleton):
 
 
         if self._voice:
-            chatAnswer = _silentChat(userInput)
+            chatAnswer = _startChat(userInput)
             self.tts(chatAnswer)
 
             return chatAnswer
 
         else:
-            return _silentChat(userInput)
+            return _startChat(userInput)
 
 
 
     def tts(self, pharse: str) -> str:
+        ''' Convert Text To Speech and play it.
+        '''
+
         self._textToSpeech(pharse, self._chat.getLanguage())
         playAudio("TEMP/sound.wav")
 
@@ -149,7 +131,7 @@ class Amelie(metaclass = Singleton):
 
 
 
-    def update(self):
+    def update(self) -> None:
         ''' Update the bot's logic.
         '''
 
@@ -159,6 +141,44 @@ class Amelie(metaclass = Singleton):
 
 
 
+        return
+
+
+
+    def _updateProgramList(self) -> None:
+        programsFile = FileManager.readFile("../DataBase/added_programms.db")
+        self._programsList = { row.split(" = ")[0].lower(): row.split(" = ")[1].replace('\n', '') for row in programsFile }
+
+        return
+
+
+
+    def getPathToProgram(self, programName: str) -> str:
+        path = self._programsList.get(programName.lower())
+        if path == None:
+            return ''
+        else:
+            return path
+
+
+
+    def addProgram(self, program: str, path: str) -> None:
+        FileManager.writeToFile(program + " = " + path + '\n', "../DataBase/added_programms.db")
+        self._updateProgramList()
+
+        return
+
+
+
+    @property
+    def voice(self) -> None:
+        return self._voice
+
+
+
+    @voice.setter
+    def voice(self, value: bool) -> bool:    
+        self._voice = value
         return
 
 
