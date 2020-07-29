@@ -5,7 +5,6 @@ from ..tools.system     import FileManager
 from ..Singleton        import Singleton
 
 import simpleaudio as sa
-from requests    import get
 from ibm_watson  import TextToSpeechV1
 from googletrans import Translator as gTranslator
 

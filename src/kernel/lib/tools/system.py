@@ -11,9 +11,10 @@ from ..Singleton import Singleton
 
 
 class FileManager(metaclass = Singleton):
-    ''' Providing the interface to work with file system
+    ''' Providing the interface to work with file system.
 
     The class is a Singleton.
+
     '''
 
 
@@ -24,7 +25,6 @@ class FileManager(metaclass = Singleton):
         if not os_path.isdir("TEMP"):
             os_makedirs("TEMP")
 
-
         return
         
 
@@ -32,6 +32,7 @@ class FileManager(metaclass = Singleton):
     @staticmethod
     def fileExist(file: str) -> bool:
         return os_path.exists(file)
+
 
 
     @staticmethod

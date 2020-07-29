@@ -43,18 +43,17 @@ class Settings(metaclass = Singleton):
                                      self._iniParser.getValue("Setup", "Version", "../setup/AppSetup.ini")
                                     )
 
-
+            self._iniParser.setValue("Settings", "lang", "-")
+            self._iniParser.setValue("User", "name", '')
             
 
 
         if len(self.getLanguage()) != 2:
-            self._iniParser.setValue("Settings", "lang", "-")
             self._methods["lang"] = self.setLanguage
 
 
         from re import sub
-        if len(sub('[\t, \n, \r \s]', '', self.getUsername())) < 2:
-            self._iniParser.setValue("User", "name", '')
+        if len(sub('[\t, \n, \r \s]', '', self.getUsername())) < 2:    
             self._methods["username"] = self.setUsername
 
 

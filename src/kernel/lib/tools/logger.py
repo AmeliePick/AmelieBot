@@ -13,9 +13,10 @@ from .iniParser     import IniParser
 
 
 class Logger(IniParser, metaclass = Singleton):
-    ''' Collects data from the current session and generates a session log file
+    ''' Providing methods to write logs and session journal.
 
     The class is a Singleton.
+
     '''
 
 
@@ -29,13 +30,12 @@ class Logger(IniParser, metaclass = Singleton):
         # Set the date of the bot's latest start
         self.setValue("Records", "Latest start", str(datetime.now()))
 
-
         return
 
 
 
     def addRecord(self, recordTitle: str, value: str) -> None:
-        ''' Add the record to the log file.
+        ''' Add the record to the session journal file.
         '''
 
         self.setValue("Records", recordTitle, value)

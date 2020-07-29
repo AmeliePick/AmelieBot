@@ -10,6 +10,7 @@ from os     import execl
 def restart() -> None:
     ''' Restart the application
     '''
+
     execl(exe, exe, *argv)
 
     return

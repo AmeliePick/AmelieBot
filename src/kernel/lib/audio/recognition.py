@@ -13,6 +13,7 @@ class SpeechRecognition(metaclass = Singleton):
     ''' Recognize the speech and convert it in the text.
 
     The class is a Singleton.
+
     '''
 
 
@@ -28,6 +29,8 @@ class SpeechRecognition(metaclass = Singleton):
         self.recognizer = sr.Recognizer()
         self.micro = sr.Microphone()
 
+        return
+
 
 
     def calibration(self) -> None:
@@ -36,6 +39,7 @@ class SpeechRecognition(metaclass = Singleton):
 
          with self.micro as source:
             self.recognizer.adjust_for_ambient_noise(source)
+
          return
     
 

@@ -18,6 +18,7 @@ class IniParser(object):
     path: str
 
 
+
     def __init__(self, fileToParsePath: str):
         self.config = configparser.ConfigParser()
         
@@ -35,7 +36,6 @@ class IniParser(object):
     def setSection(self, section: str) -> None:
         ''' Set the new section in the file.
         '''
-
 
         if not self.config.has_section(section):
             self.config.add_section(section)
@@ -90,10 +90,9 @@ class IniParser(object):
 
 
 
-    def cleanConfig(self) -> None:
+    def clearConfig(self) -> None:
         ''' Remove all items from the config.
         '''
-
 
         for section in self.config.sections():
             self.config.remove_section(section)
@@ -106,8 +105,7 @@ class IniParser(object):
         ''' Update parser's variables.
         '''
 
-
-        self.cleanConfig()
+        self.clearConfig()
         self.config.read(self.path)
 
         return

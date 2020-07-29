@@ -3,7 +3,6 @@
 
 
 from re             import sub
-from re             import findall as re_findall
 
 from numpy          import random, arange
 
@@ -44,16 +43,14 @@ class Chat(metaclass = Singleton):
     _output: str
     _inputType: str
     _sessionInput: dict
+    _text_clf: Pipeline
     
     _lang: str
-    _text_clf: Pipeline
 
 
 
     def __init__(self, appLanguage: str):
         super().__init__()
-
-
         
         def parseDataSet() -> dict:
             Edit = {'text': [], 'tag':[]}
@@ -90,15 +87,15 @@ class Chat(metaclass = Singleton):
 
 
                 trained = { 'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
-                                'test': { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]   }
+                            'test':  { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
                           }
 
                 self._text_clf.fit(trained['train']['x'], trained['train']['y'])
                 self._text_clf.predict( trained['test']['x'] )
 
 
-            # save the model to disk
-            joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
+                # save the model to disk
+                joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
 
             
             return
@@ -117,12 +114,13 @@ class Chat(metaclass = Singleton):
         self._sessionInput = dict()
 
         data = parseDataSet()
-        self._text_clf = Pipeline([
-                        ('tfidf', TfidfVectorizer()),
-                        ('clf', SGDClassifier(loss='hinge')),
-                        ])
+        self._text_clf = Pipeline([ ('tfidf', TfidfVectorizer()),
+                                    ('clf', SGDClassifier(loss='hinge')),
+                                 ])
 
         training(data)
+
+        return
 
 
 
@@ -159,9 +157,11 @@ class Chat(metaclass = Singleton):
         self._lang = language
         self._getDataFromDB()
 
+        return
 
 
-    def _stemming(self, expression: str) -> str:
+
+    def stemming(self, expression: str) -> str:
         if self._lang == "ru":
             return Stemmer(self._lang.lower()).stemWord(expression)
         else:
@@ -171,16 +171,14 @@ class Chat(metaclass = Singleton):
 
     def _getDataFromDB(self) -> None:
         ''' Check language choice and parse needed files.
-
         '''
-
 
         def readFileToList(listOBJ: list, file: str) -> None:
             file = FileManager.readFile(file)
             for line in file:
                 listOBJ.append(line.replace('\n', ''))
 
-
+        # Parse data set only once.
         if len(self._dataSet) == 0 and FileManager.fileExist("../DataBase/DataSet.db") == True:
             readFileToList(self._dataSet, "../DataBase/DataSet.db")
 
@@ -200,15 +198,13 @@ class Chat(metaclass = Singleton):
             return
         
         self._input = input_
+
+        # predict the input type
         input = []
         input.append(self._input.capitalize())
+        self._inputType = ''.join(self._text_clf.predict(input)).replace('\n', '')
 
-
-        predicted = self._text_clf.predict(input)
-        
-        self._inputType = ''.join(predicted).replace('\n', '')
         self._sessionInput[self._input] = self._inputType
-
 
         return
 
@@ -222,8 +218,6 @@ class Chat(metaclass = Singleton):
                 Result: Google, summer wallpapers
         '''
 
-
-
         ''' 
         This method can incorrectly edit the input, because the meaning of the sentcene doesn't detecting.
         The lenght of meaning worlds detecting only manualy by meaningLength value.
@@ -233,8 +227,6 @@ class Chat(metaclass = Singleton):
         input: find youtube website.
         output: website
         '''
-
-
 
         result = list(self._input)
   
@@ -248,17 +240,12 @@ class Chat(metaclass = Singleton):
 
                 result = list(''.join(result))
 
-                
-
         return sub('[?, !]', '', ''.join(result)).lstrip().rstrip()
 
 
 
     def _getAnswer(self) -> str:
-        url = str()
-
-        # get answer
-
+        # add to the list all phrases with current input type
         answerPharse = []
         for line in self._answerText:
             row = line.split(" @ ")
@@ -266,28 +253,10 @@ class Chat(metaclass = Singleton):
                 answerPharse.append(row[1])
 
 
+        self.output = choice(answerPharse)
 
-        # TODO: This case would be, because the data set has wrong records. Remove this code atfer the fix of data set.
-        try:
-            self.output = choice(answerPharse)
-        except IndexError:
-            Unknown = []
-            self._inputTyoe = "Unknown"
-
-            for i in self._answerText:
-                row = i.split(" @ ")
-
-                if row[0] == "Unknown":
-                    Unknown.append(row[1])
-
-            self.output = choice(Unknown)
-
-
-
-        # add phrases in DB
+        # add phrases in data set
         if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet" + self._lang.upper() + ".json")
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet" + self._lang.upper() + ".db")
                 
-        
-
         return self.output

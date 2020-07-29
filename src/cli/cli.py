@@ -30,7 +30,7 @@ class Console(object):
 
 
 
-    def readLine(self, subtitle: str) -> str:
+    def readLine(self, subtitle = '') -> str:
         return input(subtitle)
 
 

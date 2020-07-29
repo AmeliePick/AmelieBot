@@ -43,14 +43,11 @@ class Dialog(metaclass = Singleton):
                 text.append(row[1])
                 return ''.join(text)
 
-
-        '''
-        If the error exist in the name of the expression
-        By recursion it finds the value of the expression by "error" tag.
-        '''
         return self.getMessageFor("error")
 
 
 
     def changeLanguage(self, lang: str) -> None:
         self.serviceExpressions = FileManager.readFile("../DataBase/ServiceExpressions" + lang.upper() + ".db")
+
+        return
