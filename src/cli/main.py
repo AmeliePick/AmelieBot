@@ -18,6 +18,7 @@ from lib.tools.runtime         import restart
 from lib.tools.logger          import Logger
 from lib.chat.dialog           import Dialog  
 from lib.tools.system          import FileManager
+from lib.tools.system          import Network
 from lib.Settings              import Settings
 from lib.Amelie                import Amelie
 from cli                       import Console
@@ -99,23 +100,6 @@ class AmelieProgramm:
 
         self._amelie = Amelie(self._settingsFile.getLanguage())
 
-        self._console.writeLine('\n' + self._dialog.getMessageFor("enableVoice"))
-        enableVoice = self._console.readLine("--> ")
-        while (True):
-            if enableVoice == "Y" or enableVoice ==  "y":
-                self.changeInputMode(True)
-                    
-            elif enableVoice == "N" or enableVoice ==  "n":
-                self.changeInputMode(False)
-                     
-            else:
-                self._console.writeLine(self._dialog.getMessageFor("wrongInput"))
-                enableVoice = self._console.readLine("--> ")
-                continue
-
-            break
-
-
         return
 
 
@@ -158,76 +142,94 @@ class AmelieProgramm:
 
 
     def changeInputMode(self, enableVoice: bool):
-        if enableVoice: self._inputMode = voiceInput
-        else: self._inputMode = self._console.readLine
-
         self._amelie.voice = enableVoice
+
+        if self._amelie.voice: self._inputMode = voiceInput
+        else: self._inputMode = self._console.readLine
 
         return
 
 
 
     def main(self):
-        username = str(self._settingsFile.getUsername())        
+        def inputModeChoice() -> None:
+            self._console.writeLine('\n' + self._dialog.getMessageFor("enableVoice"))
+            enableVoice = self._console.readLine("--> ")
+            while (True):
+                if enableVoice == "Y" or enableVoice ==  "y":
+                    try:
+                        self.changeInputMode(True)
+                    except ConnectionError:
+                         self._console.writeLine('\n' + self._dialog.getMessageFor("serviceError").replace('\n', ' ') + self._dialog.getMessageFor("enableVoice"))
+                         enableVoice = self._console.readLine("--> ")
+                         continue
+                    
+                elif enableVoice == "N" or enableVoice ==  "n":
+                    self.changeInputMode(False)
+                     
+                else:
+                    self._console.writeLine(self._dialog.getMessageFor("wrongInput"))
+                    enableVoice = self._console.readLine("--> ")
+                    continue
 
+                break
+
+
+
+        inputModeChoice()
+
+
+
+        username = str(self._settingsFile.getUsername())
+        mainVoiceMode = self._amelie.voice
         while(True):
             try:
+                self.update()
+
                 self._console.write('\n' + username + ": ")
 
-                try:
-                    userInput = self._inputMode()
-                    
+                userInput = self._inputMode()
+                chatAnswer = self._amelie.conversation(userInput)
 
-                    chatAnswer = self._amelie.conversation(userInput)
+                if self._amelie.voice: self._console.write(userInput + '\n')
 
-                    if self._amelie.voice: self._console.write(userInput + '\n')
+                self._console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
+                
 
-                    self._console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
-                    self.update()
-
-                except ValueError:
-                    self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("waitVoice"))
-                    msvcrt.getch()
-                    continue
+            except ValueError:
+                self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("waitVoice"))
+                msvcrt.getch()
+                continue
  
-                except FileNotFoundError:
-                    def messageFor(phrase: str) -> None:
-                        if self._amelie.voice:
-                            self._amelie.tts(phrase)
+            except FileNotFoundError:
+                def messageFor(phrase: str) -> None:
+                    if self._amelie.voice:
+                        self._amelie.tts(phrase)
 
-                        self._console.write("\n\t\t\tAmelie: " + self._dialog.getMessageFor(phrase))
+                    self._console.write("\n\t\t\tAmelie: " + self._dialog.getMessageFor(phrase))
 
-                        return
+                    return
 
 
-                    userInput = self._console.readLine('\n' + username + ": ")
-                    if userInput == 'Y' or userInput == 'y':
-                        result = list()
+                userInput = self._console.readLine('\n' + username + ": ")
+                if userInput == 'Y' or userInput == 'y':
+                    result = list()
 
-                        messageFor("addProgName")
-                        while(True):
-                            userInput = sub('[\t, \n, \r, \s]', '', self._console.readLine('\n' + username + ": "))
+                    messageFor("addProgName")
+                    while(True):
+                        userInput = sub('[\t, \n, \r, \s]', '', self._console.readLine('\n' + username + ": "))
 
-                            if self._amelie.getPathToProgram(userInput):
-                                messageFor("progNameExist")
-                            else:
-                                result.append(userInput)
-                                break                
-                    
+                        if self._amelie.getPathToProgram(userInput):
+                            messageFor("progNameExist")
+                        else:
+                            result.append(userInput)
+                            break                          
 
-                        messageFor("addProgPath")
-                        result.append(sub('[\t]', '', self._console.readLine('\n' + username + ": ")))
+                messageFor("addProgPath")
+                result.append(sub('[\t]', '', self._console.readLine('\n' + username + ": ")))
 
-                        self._amelie.addProgram(result[0], result[1])
-                        messageFor("done")
-
-                except OSError as e:
-                    if e.errno == -9999:
-                        self._logger.logWrite()
-                        self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("microAccesDenied").replace('\n', ". ") + self._dialog.getMessageFor("wait"))
-                        msvcrt.getch()
-                    else: raise e
-
+                self._amelie.addProgram(result[0], result[1])
+                messageFor("done")
 
             except MemoryError:
                 self._logger.logWrite()
@@ -239,12 +241,22 @@ class AmelieProgramm:
             except (ConnectionError, ConnectError):
                 self._logger.logWrite()
                 self._console.writeLine('\n' + self._dialog.getMessageFor("serviceError"))
-                self._console.writeLine('\n' + self._dialog.getMessageFor("enableVoice"))
-                self.changeInputMode(False)
+                inputModeChoice()
       
-            except OSError:
+            except OSError as e:
                 self._logger.logWrite()
-                self._console.writeLine(self._dialog.getMessageFor("error"))
+                if e.errno == 6:
+                    self._console.writeLine('\n' + self._dialog.getMessageFor("errMicroDefine").replace('\n', ' ') + self._dialog.getMessageFor("enableVoice"))
+                    inputModeChoice()
+
+                elif e.errno == -9999:
+                    self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("microAccesDenied").replace('\n', ". ") +
+                                           "or " + self._dialog.getMessageFor("errMicroDefine").replace('\n', ". ") + 
+                                           self._dialog.getMessageFor("enableVoice"))
+                    inputModeChoice()
+
+                else:
+                    self._console.writeLine(self._dialog.getMessageFor("error"))
 
             except Exception:
                 self._logger.logWrite()
