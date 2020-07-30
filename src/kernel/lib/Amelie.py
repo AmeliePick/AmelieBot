@@ -8,6 +8,8 @@ from .chat.dialog           import Dialog
 from .chat.AICore           import Chat
 
 from .tools.system          import FileManager
+from .tools.system          import Network
+
 
 from .audio.processing      import playAudio, TextToSpeech
 from .audio.recognition     import SpeechRecognition
@@ -39,16 +41,17 @@ class Amelie(metaclass = Singleton):
     
 
 
-    def __init__(self, applanguage: str, enableVoice = False):
+    def __init__(self, applanguage: str):
         super().__init__()
+        self._exceptionList = list()    
 
-        self._voiceRecorder = SpeechRecognition(applanguage)
-        self._textToSpeech = TextToSpeech()
+        self._voiceRecorder = None
+        self._textToSpeech = None
+        self.voice = False
+
         self._chat = Chat(applanguage)
         self._dialog = Dialog(applanguage)
-        self._voice = enableVoice
-
-        self._exceptionList = list()
+        self._voice = False
 
         self._updateProgramList()
 
@@ -146,7 +149,7 @@ class Amelie(metaclass = Singleton):
 
 
     def _updateProgramList(self) -> None:
-        programsFile = FileManager.readFile("../DataBase/added_programms.db")
+        programsFile = FileManager.readFile("../DataBase/addedProgramms.db")
         self._programsList = { row.split(" = ")[0].lower(): row.split(" = ")[1].replace('\n', '') for row in programsFile }
 
         return
@@ -163,7 +166,7 @@ class Amelie(metaclass = Singleton):
 
 
     def addProgram(self, program: str, path: str) -> None:
-        FileManager.writeToFile(program + " = " + path + '\n', "../DataBase/added_programms.db")
+        FileManager.writeToFile(program + " = " + path + '\n', "../DataBase/addedProgramms.db")
         self._updateProgramList()
 
         return
@@ -171,13 +174,29 @@ class Amelie(metaclass = Singleton):
 
 
     @property
-    def voice(self) -> None:
+    def voice(self) -> bool:
         return self._voice
 
 
 
     @voice.setter
-    def voice(self, value: bool) -> bool:    
+    def voice(self, value: bool) -> None:    
+        if value == True and Network.checkNetworkConnection():
+            try:
+                self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())
+                self._textToSpeech = TextToSpeech()
+            except OSError as e:
+                self._voiceRecorder = None
+                e.errno = 6
+                self._exceptionList.append(e)
+
+                return
+            
+
+        elif value == True and not Network.checkNetworkConnection():
+            self._exceptionList.append(ConnectionError())
+            return
+
         self._voice = value
         return
 
