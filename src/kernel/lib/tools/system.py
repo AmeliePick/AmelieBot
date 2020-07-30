@@ -6,6 +6,8 @@ from os     import path as os_path
 from os     import remove
 from os     import makedirs as os_makedirs
 
+import socket
+
 from ..Singleton import Singleton
 
 
@@ -24,6 +26,10 @@ class FileManager(metaclass = Singleton):
 
         if not os_path.isdir("TEMP"):
             os_makedirs("TEMP")
+
+        if not self.fileExist("../DataBase/addedProgramms.db"):
+            with open ("../DataBase/addedProgramms.db", 'w') as file:
+                file.close()
 
         return
         
@@ -90,3 +96,15 @@ class FileManager(metaclass = Singleton):
             shutil_rmtree("TEMP", ignore_errors = True)
 
         return
+
+
+
+class Network(metaclass = Singleton):
+
+    @staticmethod
+    def checkNetworkConnection() -> bool:
+        try:
+            socket.gethostbyaddr('www.google.com')
+        except socket.gaierror:
+            return False
+        return True
