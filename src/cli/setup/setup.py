@@ -4,7 +4,7 @@ from configparser import ConfigParser
 import sys
 
 parser = ConfigParser()
-parser.read("Version/AppSetup.ini")
+parser.read("AppSetup.ini")
 
 mainScript = parser.get("Setup", "MainScript")
 AppIco = parser.get("Setup", "AppIco")
@@ -16,7 +16,7 @@ exe = Executable(script = mainScript, icon = AppIco)
 buildOptions = dict(includes =["idna.idnadata", 'atexit', 'numpy.core._methods', 'numpy.lib.format', 'scipy',
                                 'scipy.integrate', 'scipy.signal',  'scipy.sparse.linalg', 'scipy.sparse.csgraph',
                                 'scipy.sparse.csgraph._validation', 'pyglet.resource', 'pyglet.clock', 'multiprocessing', 
-                                'joblib', 'ffmpeg', 'ffprobe', 'speech_recognition'], optimize=1)
+                                'joblib', 'speech_recognition'], optimize=1)
 
 
 setup(name = AppName, 
