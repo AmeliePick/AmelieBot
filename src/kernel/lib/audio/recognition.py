@@ -33,7 +33,7 @@ class SpeechRecognition(metaclass = Singleton):
 
 
 
-    def calibration(self) -> None:
+    def calibration(self) -> Exception:
          ''' Noise calibration.
          '''
 
