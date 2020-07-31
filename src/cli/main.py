@@ -43,12 +43,14 @@ class AmelieProgramm:
     _fileManager: FileManager
 
     _inputMode: object
+    _exceptionStack: list
 
 
 
     def __init__(self):
         self._console = Console()
         self._console.printLogo()
+        self._exceptionStack = list()
 
         self._fileManager = FileManager()
         self._logger = Logger()
@@ -125,6 +127,10 @@ class AmelieProgramm:
 
         '''
 
+        if len(self._exceptionStack) > 0:
+            excpetion = self._exceptionStack.pop(0)
+            raise excpetion
+
         self._amelie.update()
 
         return
@@ -174,27 +180,26 @@ class AmelieProgramm:
 
                 break
 
-
-
-        inputModeChoice()
+            return
 
 
 
         username = str(self._settingsFile.getUsername())
-        mainVoiceMode = self._amelie.voice
+        inputModeChoice()
         while(True):
             try:
                 self.update()
 
                 self._console.write('\n' + username + ": ")
-
                 userInput = self._inputMode()
-                chatAnswer = self._amelie.conversation(userInput)
-
                 if self._amelie.voice: self._console.write(userInput + '\n')
 
+                chatAnswer = self._amelie.conversation(userInput)
                 self._console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
                 
+
+            except SystemExit:
+                break
 
             except ValueError:
                 self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("waitVoice"))
@@ -204,7 +209,10 @@ class AmelieProgramm:
             except FileNotFoundError:
                 def messageFor(phrase: str) -> None:
                     if self._amelie.voice:
-                        self._amelie.tts(phrase)
+                        try:
+                            self._amelie.tts(phrase)
+                        except Exception:
+                            self._exceptionStack.append(ConnectionError())
 
                     self._console.write("\n\t\t\tAmelie: " + self._dialog.getMessageFor(phrase))
 
@@ -225,34 +233,30 @@ class AmelieProgramm:
                             result.append(userInput)
                             break                          
 
-                messageFor("addProgPath")
-                result.append(sub('[\t]', '', self._console.readLine('\n' + username + ": ")))
+                    messageFor("addProgPath")
+                    result.append(sub('[\t]', '', self._console.readLine('\n' + username + ": ")))
 
-                self._amelie.addProgram(result[0], result[1])
-                messageFor("done")
+                    self._amelie.addProgram(result[0], result[1])
+                    messageFor("done")
 
             except MemoryError:
                 self._logger.logWrite()
                 self._console.writeLine(dialog.getMessageFor("error"))
 
-            except SystemExit:
-                break
-
             except (ConnectionError, ConnectError):
                 self._logger.logWrite()
-                self._console.writeLine('\n' + self._dialog.getMessageFor("serviceError"))
+                self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("serviceError"))
                 inputModeChoice()
       
             except OSError as e:
                 self._logger.logWrite()
                 if e.errno == 6:
-                    self._console.writeLine('\n' + self._dialog.getMessageFor("errMicroDefine").replace('\n', ' ') + self._dialog.getMessageFor("enableVoice"))
+                    self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("errMicroDefine"))
                     inputModeChoice()
 
                 elif e.errno == -9999:
                     self._console.writeLine("\n\t\t\tAmelie: " + self._dialog.getMessageFor("microAccesDenied").replace('\n', ". ") +
-                                           "or " + self._dialog.getMessageFor("errMicroDefine").replace('\n', ". ") + 
-                                           self._dialog.getMessageFor("enableVoice"))
+                                            "or " + self._dialog.getMessageFor("errMicroDefine"))
                     inputModeChoice()
 
                 else:

@@ -36,14 +36,14 @@ class Amelie(metaclass = Singleton):
     _textToSpeech: TextToSpeech
     _voice: bool
 
-    _exceptionList: list
+    _exceptionStack: list
     _programsList:  list
     
 
 
     def __init__(self, applanguage: str):
         super().__init__()
-        self._exceptionList = list()    
+        self._exceptionStack = list()    
 
         self._voiceRecorder = None
         self._textToSpeech = None
@@ -67,7 +67,7 @@ class Amelie(metaclass = Singleton):
         '''
 
         if self._chat.getInputType() == "Exit":
-            self._exceptionList.append(SystemExit(0))
+            self._exceptionStack.append(SystemExit(0))
 
         elif self._chat.getInputType() == "Search":
             url = "https://www.google.ru/search?q="
@@ -104,7 +104,7 @@ class Amelie(metaclass = Singleton):
             try:
                 self._doAction(self._chat.getInputType())
             except (FileNotFoundError, OSError):
-                self._exceptionList.append(FileNotFoundError())
+                self._exceptionStack.append(FileNotFoundError())
                 return str(self._dialog.getMessageFor("progNotFound") +
                        " " +
                        self._dialog.getMessageFor("addProg")).replace('\n', '')
@@ -112,18 +112,20 @@ class Amelie(metaclass = Singleton):
             return chatAnswer
 
 
+        chatAnswer = _startChat(userInput)
+        
         if self._voice:
-            chatAnswer = _startChat(userInput)
-            self.tts(chatAnswer)
+            try:
+                self.tts(chatAnswer)
+            except:
+                self._exceptionStack.append(ConnectionError())
+                self._voice = False
 
-            return chatAnswer
-
-        else:
-            return _startChat(userInput)
+        return chatAnswer
 
 
 
-    def tts(self, pharse: str) -> str:
+    def tts(self, pharse: str) -> Exception:
         ''' Convert Text To Speech and play it.
         '''
 
@@ -134,15 +136,13 @@ class Amelie(metaclass = Singleton):
 
 
 
-    def update(self) -> None:
+    def update(self) -> Exception:
         ''' Update the bot's logic.
         '''
 
-        if len(self._exceptionList) > 0:
-            excpetion = self._exceptionList.pop()
+        if len(self._exceptionStack) > 0:
+            excpetion = self._exceptionStack.pop(0)
             raise excpetion
-
-
 
         return
 
@@ -188,13 +188,13 @@ class Amelie(metaclass = Singleton):
             except OSError as e:
                 self._voiceRecorder = None
                 e.errno = 6
-                self._exceptionList.append(e)
+                self._exceptionStack.append(e)
 
                 return
             
 
         elif value == True and not Network.checkNetworkConnection():
-            self._exceptionList.append(ConnectionError())
+            self._exceptionStack.append(ConnectionError())
             return
 
         self._voice = value
