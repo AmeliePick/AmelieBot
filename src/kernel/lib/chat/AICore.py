@@ -257,6 +257,6 @@ class Chat(metaclass = Singleton):
 
         # add phrases in data set
         if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet" + self._lang.upper() + ".db")
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet.db")
                 
         return self.output
