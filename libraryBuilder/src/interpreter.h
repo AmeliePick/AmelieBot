@@ -19,9 +19,13 @@ public:
     // * moduleName: the module name without file format.
     PyObject* initModule(char* moduleName);
 
-    PyObject* loadClass(char* className);
+    PyObject* loadClass(char* moduleName, char* className);
 
-    PyObject* loadFunction(char* functionName);
+    PyObject* loadClass(PyObject* moduleHandle, char* className);
+
+    PyObject* loadFunction(char* moduleName, char* functionName);
+
+    PyObject* loadFunction(PyObject* moduleHandle, char* functionName);
 
 
 
