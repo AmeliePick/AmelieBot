@@ -2,7 +2,7 @@
 
 
 
-Interpreter* Interpreter::init(char* workDir)
+Interpreter::Interpreter(const char* workDir)
 {
     Py_Initialize();
     PyObject* sys = PyImport_ImportModule("sys");
@@ -12,7 +12,16 @@ Interpreter* Interpreter::init(char* workDir)
 
 
 
-PyObject* Interpreter::initModule(char* moduleName)
+Interpreter* Interpreter::init(const const char* workDir)
+{
+    static Interpreter* instance = new Interpreter(workDir);
+    return instance;
+
+}
+
+
+
+PyObject* Interpreter::initModule(const char* moduleName)
 {
     PyObject* module = PyUnicode_FromString(moduleName);
     PyObject* moduleHandle = PyImport_Import(module);
@@ -24,14 +33,14 @@ PyObject* Interpreter::initModule(char* moduleName)
 
 
 
-PyObject* Interpreter::loadClass(char* moduleName, char* className)
+PyObject* Interpreter::loadClass(const char* moduleName, const char* className)
 {
     return this->loadClass(initModule(moduleName), className);
 }
 
 
 
-PyObject* Interpreter::loadClass(PyObject* moduleHandle, char* className)
+PyObject* Interpreter::loadClass(PyObject* moduleHandle, const char* className)
 {
     if (moduleHandle == nullptr) return nullptr;
     
@@ -45,14 +54,14 @@ PyObject* Interpreter::loadClass(PyObject* moduleHandle, char* className)
 
 
 
-PyObject* Interpreter::loadFunction(char* moduleName, char* functionName)
+PyObject* Interpreter::loadFunction(const char* moduleName, const char* functionName)
 {
     return this->loadFunction(initModule(moduleName), functionName);
 }
 
 
 
-PyObject* Interpreter::loadFunction(PyObject* moduleHandle, char* functionName)
+PyObject* Interpreter::loadFunction(PyObject* moduleHandle, const char* functionName)
 {
     if (moduleHandle == nullptr) return nullptr;
 
