@@ -1,11 +1,15 @@
 #pragma once
+#include <vector>
+#include "python/interpreter.h"
+#define function class
 
 
-template<typename retrunType>
+
 class Function
 {
 private:
-    class PyObject* pyFunc;
+    PyObject* pyFunc;
+    const char* returnType;
 
 public:
     class Arguments
@@ -13,17 +17,22 @@ public:
     private:
         PyObject* args;
 
+        PyObject* Args_Pack(size_t n, std::vector<PyObject*>* args);
 
     public:
         Arguments() = delete;
 
         Arguments(int argsCount, const char* typeDecoder, ...);
 
+
+        PyObject* get();
+
     };
 
 
     Function() = delete;
-    Function(char* functionName);
+    Function(PyObject* moduleHandle, const char* functionName, const char* returnType);
+    Function(const char* moduleName, const char* functionName, const char* returnType);
 
-    retrunType operator ()(Arguments* args);
+    void operator ()(void* result, Arguments* args);
 };
