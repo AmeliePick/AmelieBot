@@ -5,7 +5,7 @@
 // Python library method overriding
 PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
 {
-    Py_ssize_t i;
+    size_t i;
     PyObject *obj;
     PyObject *result;
     PyObject **items;

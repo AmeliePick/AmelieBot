@@ -24,7 +24,7 @@ inline void Function::Arguments::arguments(Type* object)
     else if (typeid(object) == typeid(double*))
         this->argsVector.push_back(PyFloat_FromDouble(*object));
     else if (typeid(object) == typeid(const char*))
-        this->argsVector.push_back(PyUnicode_FromString(object));
+        this->argsVector.push_back(PyBytes_FromString(object));
 }
 
 
@@ -41,7 +41,7 @@ void Function::Arguments::arguments(Type object)
     else if (typeid(object) == typeid(double))
         this->argsVector.push_back(PyFloat_FromDouble(object));
     else if (typeid(object) == typeid(const char))
-        this->argsVector.push_back(PyUnicode_FromString((const char*)object));
+        this->argsVector.push_back(PyBytes_FromString((const char*)object));
 }
 
 

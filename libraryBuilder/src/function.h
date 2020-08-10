@@ -47,7 +47,7 @@ public:
     Function(const char* moduleName, const char* functionName);
 
     template<typename returnType = nullptr_t>
-    void operator ()(void* result, Arguments* args);
+    void call(void* result, Arguments* args);
 };
 
 #include "function.inl"
