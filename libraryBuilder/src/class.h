@@ -1,16 +1,27 @@
 #pragma once
-#include <map>
+#include "function.h"
+
 
 
 class Class
 {
 private:
-    class PyObject* self;
-    std::map<char*, PyObject*> methods;
+    PyObject* pyClass;
+    const char* moduleName;
 
 
 public:
     Class() = delete;
 
-    Class(char* pyClass);
+    Class(const char* moduleName, const char* className);
+
+    void constructor(Function::Arguments* args);
+
+    template<typename returnType>
+    void callMethod(const char* methodName, returnType* result, Function::Arguments* args);
+
+
+    ~Class();
 };
+
+#include "class.inl"
