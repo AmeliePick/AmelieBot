@@ -15,7 +15,7 @@ private:
 public:
     // -- Interpreter initialization --
     // * workDir: working directory is a path to python code.
-    static Interpreter* init(const char* workDir);
+    static Interpreter* init(const char* workDir = "");
 
 
     // -- Get the handle of python module --

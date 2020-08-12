@@ -2,7 +2,7 @@
 
 
 
-Interpreter::Interpreter(const char* workDir)
+Interpreter::Interpreter(const char* workDir = "")
 {
     Py_Initialize();
     PyObject* sys = PyImport_ImportModule("sys");
