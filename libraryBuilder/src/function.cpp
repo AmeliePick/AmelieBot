@@ -2,6 +2,7 @@
 #include <cstdarg>
 
 
+
 // Python library method overriding
 PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
 {
@@ -28,14 +29,22 @@ PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
 
 Function::Function(PyObject* moduleHandle, const char* functionName)
 {
-    this->pyFunc = Interpreter::init("")->loadFunction(moduleHandle, functionName);
+    this->pyFunc = Interpreter::init()->loadFunction(moduleHandle, functionName);
 }
 
 
 
 Function::Function(const char* moduleName, const char* functionName)
 {
-    this->pyFunc = Interpreter::init("")->loadFunction(moduleName, functionName);
+    this->pyFunc = Interpreter::init()->loadFunction(moduleName, functionName);
+}
+
+
+
+
+Function::Arguments::Arguments()
+{
+    this->args = nullptr;
 }
 
 
@@ -43,4 +52,18 @@ Function::Function(const char* moduleName, const char* functionName)
 PyObject* Function::Arguments::get()
 {
     return args;
+}
+
+
+
+Function::~Function()
+{
+    Py_DECREF(pyFunc);
+}
+
+
+
+Function::Arguments::~Arguments()
+{
+    this->argsVector.clear();
 }

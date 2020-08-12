@@ -2,12 +2,12 @@
 
 
 template<typename returnType>
-inline void Function::call(void* result, Arguments * args)
+inline void Function::call(void* result, Arguments args)
 {
-    if (result != nullptr && typeid(returnType) != typeid(nullptr_t))
-    {
-        PyObject* res = PyObject_CallObject(pyFunc, args->get());
+    PyObject* res = PyObject_CallObject(pyFunc, args.get());
 
+    if (result != nullptr && typeid(returnType) != typeid(nullptr_t) && res != nullptr)
+    {
         if (typeid(returnType) == typeid(bool))
             (*(bool*)result) = PyLong_AsLong(res);
         else if (typeid(returnType) == typeid(char))
@@ -19,4 +19,6 @@ inline void Function::call(void* result, Arguments * args)
         else if (typeid(returnType) == typeid(const char))
             (*(char*)result) = *PyBytes_AsString(res);
     }
+
+    Py_DECREF(res);
 }

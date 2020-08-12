@@ -31,7 +31,7 @@ public:
         void arguments(Type t, Types... types);
 
     public:
-        Arguments() = delete;
+        Arguments();
 
         template<typename Type, typename ...Types>
         Arguments(Type t, Types... types);
@@ -39,6 +39,8 @@ public:
 
         PyObject* get();
 
+
+        ~Arguments();
     };
 
 
@@ -47,7 +49,10 @@ public:
     Function(const char* moduleName, const char* functionName);
 
     template<typename returnType = nullptr_t>
-    void call(void* result, Arguments* args);
+    void call(void* result, Arguments args);
+
+
+    ~Function();
 };
 
 #include "function.inl"
