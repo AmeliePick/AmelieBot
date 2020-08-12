@@ -13,15 +13,11 @@ private:
 public:
     Class() = delete;
 
-    Class(const char* moduleName, const char* className);
+    Class(const char* moduleName, const char* className, Function::Arguments args);
 
-    void constructor(Function::Arguments* args);
 
-    template<typename returnType>
-    void callMethod(const char* methodName, returnType* result, Function::Arguments* args);
+    void callMethod(const char* methodName, void* result, Function::Arguments args);
 
 
     ~Class();
 };
-
-#include "class.inl"
