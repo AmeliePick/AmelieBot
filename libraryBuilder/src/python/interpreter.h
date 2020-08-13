@@ -1,6 +1,6 @@
 #pragma once
 #include <Python.h>
-
+#include <vector>
 
 
 class Interpreter
@@ -9,6 +9,9 @@ private:
     Interpreter();
     Interpreter(const Interpreter &);
 
+
+    std::vector<PyObject*> modules;
+    std::vector<PyObject*> objects;
 
     Interpreter(const char* workDir);
 
