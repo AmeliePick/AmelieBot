@@ -1,10 +1,9 @@
 #include "class.h"
+#include "python/interpreter.h"
 
 
-
-Class::Class(const char* moduleName, const char* className, Function::Arguments args)
+Class::Class(const char* moduleName, const char* className, Function::Arguments& args)
 {
-    this->moduleName = moduleName;
     PyObject* _class = Interpreter::init()->loadClass(moduleName, className);
 
     if(_class != nullptr) pyClass = PyObject_CallObject(_class, args.get());
@@ -14,7 +13,7 @@ Class::Class(const char* moduleName, const char* className, Function::Arguments 
 
 
 
-void Class::callMethod(const char* methodName, void* result, Function::Arguments args)
+void Class::callMethod(const char* methodName, void* result, Function::Arguments& args)
 {
     Function func(pyClass, methodName);
 
@@ -26,5 +25,6 @@ void Class::callMethod(const char* methodName, void* result, Function::Arguments
 Class::~Class()
 {
     PyObject_CallMethod(pyClass, "__del__", nullptr);
-    Py_DECREF(pyClass);
+
+    // The class will be deleted in interpreter.
 }
