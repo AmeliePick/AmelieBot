@@ -1,8 +1,7 @@
 #include <type_traits>
 
-
 template<typename returnType>
-inline void Function::call(void* result, Arguments args)
+inline void Function::call(void* result, Arguments& args)
 {
     PyObject* res = PyObject_CallObject(pyFunc, args.get());
 

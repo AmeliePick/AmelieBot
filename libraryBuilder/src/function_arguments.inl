@@ -4,10 +4,10 @@
 template<typename Type, typename ...Types>
 Function::Arguments::Arguments(Type t, Types ...types)
 {
-    this->argsVector = std::vector<PyObject*>();
+    this->argsVector = new std::vector<PyObject*>;
 
     arguments(t, types...);
-    this->args = Args_Pack(1 + sizeof...(types), &argsVector);
+    this->args = Args_Pack(1 + sizeof...(types), argsVector);
 }
 
 
@@ -16,15 +16,15 @@ template<typename Type>
 inline void Function::Arguments::arguments(Type* object)
 {
     if (typeid(object) == typeid(bool*))
-        this->argsVector.push_back(PyBool_FromLong((long)(*object)));
+        this->argsVector->push_back(PyBool_FromLong((long)(*object)));
     else if (typeid(object) == typeid(char*))
-        this->argsVector.push_back(PyUnicode_FromOrdinal((int)(*object)));
+        this->argsVector->push_back(PyUnicode_FromOrdinal((int)(*object)));
     else if (typeid(object) == typeid(int*))
-        this->argsVector.push_back(PyLong_FromLong((int)(*object)));
+        this->argsVector->push_back(PyLong_FromLong((int)(*object)));
     else if (typeid(object) == typeid(double*))
-        this->argsVector.push_back(PyFloat_FromDouble(*object));
+        this->argsVector->push_back(PyFloat_FromDouble(*object));
     else if (typeid(object) == typeid(const char*))
-        this->argsVector.push_back(PyBytes_FromString(object));
+        this->argsVector->push_back(PyBytes_FromString(object));
 }
 
 
@@ -33,15 +33,15 @@ template<typename Type>
 void Function::Arguments::arguments(Type object)
 {
     if (typeid(object) == typeid(bool))
-        this->argsVector.push_back(PyBool_FromLong((long)object));
+        this->argsVector->push_back(PyBool_FromLong((long)object));
     else if (typeid(object) == typeid(char))
-        this->argsVector.push_back(PyUnicode_FromOrdinal((int)object));
+        this->argsVector->push_back(PyUnicode_FromOrdinal((int)object));
     else if (typeid(object) == typeid(int))
-        this->argsVector.push_back(PyLong_FromLong((int)object));
+        this->argsVector->push_back(PyLong_FromLong((int)object));
     else if (typeid(object) == typeid(double))
-        this->argsVector.push_back(PyFloat_FromDouble(object));
+        this->argsVector->push_back(PyFloat_FromDouble(object));
     else if (typeid(object) == typeid(const char))
-        this->argsVector.push_back(PyBytes_FromString((const char*)object));
+        this->argsVector->push_back(PyBytes_FromString((const char*)object));
 }
 
 

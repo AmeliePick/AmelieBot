@@ -1,9 +1,9 @@
 #pragma once
-#include <typeinfo>
+#include <Python.h>
 #include <vector>
-#include "python/interpreter.h"
-#define function class
+#include <typeinfo>
 
+#define function class
 
 
 class Function
@@ -16,7 +16,7 @@ public:
     {
     private:
         PyObject* args;
-        std::vector<PyObject*> argsVector;
+        std::vector<PyObject*>* argsVector;
         
 
         PyObject* Args_Pack(size_t n, std::vector<PyObject*>* args);
@@ -32,6 +32,7 @@ public:
 
     public:
         Arguments();
+        Arguments(const Arguments &) = delete;
 
         template<typename Type, typename ...Types>
         Arguments(Type t, Types... types);
@@ -49,7 +50,7 @@ public:
     Function(const char* moduleName, const char* functionName);
 
     template<typename returnType = nullptr_t>
-    void call(void* result, Arguments args);
+    void call(void* result, Arguments& args);
 
 
     ~Function();

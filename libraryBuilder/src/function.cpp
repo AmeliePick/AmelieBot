@@ -1,6 +1,7 @@
 #include "function.h"
+#include "python/interpreter.h"
+#include <vector>
 #include <cstdarg>
-
 
 
 // Python library method overriding
@@ -45,6 +46,7 @@ Function::Function(const char* moduleName, const char* functionName)
 Function::Arguments::Arguments()
 {
     this->args = nullptr;
+    this->argsVector = nullptr;
 }
 
 
@@ -58,12 +60,23 @@ PyObject* Function::Arguments::get()
 
 Function::~Function()
 {
-    Py_DECREF(pyFunc);
+    // The function will be deleted in interpreter.
 }
 
 
 
 Function::Arguments::~Arguments()
 {
-    this->argsVector.clear();
+    if (argsVector)
+    {
+        for (int i = 0; i < argsVector->size(); ++i)
+        {
+            
+            Py_DECREF((*argsVector)[i]);
+        }
+
+        delete argsVector;
+    }
+
+    if(args) Py_DECREF(args);
 }
