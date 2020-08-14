@@ -2,13 +2,15 @@
 #include "python/interpreter.h"
 
 
-Class::Class(const char* moduleName, const char* className, Function::Arguments& args)
+Class::Class(const char* moduleName, const char* className, Function::Arguments&& args)
 {
     PyObject* _class = Interpreter::init()->loadClass(moduleName, className);
 
-    if(_class != nullptr) pyClass = PyObject_CallObject(_class, args.get());
-
-    Py_DECREF(_class);
+    if (_class != nullptr)
+    {
+        pyClass = PyObject_CallObject(_class, args.get());
+        Py_DECREF(_class);
+    }   
 }
 
 

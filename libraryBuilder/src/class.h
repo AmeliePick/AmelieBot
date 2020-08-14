@@ -8,14 +8,13 @@ class Class
 private:
     PyObject* pyClass;
 
-public:
+protected:
     Class() = delete;
 
-    Class(const char* moduleName, const char* className, Function::Arguments& args);
-
+    Class(const char* moduleName, const char* className, Function::Arguments&& args);
 
     void callMethod(const char* methodName, void* result, Function::Arguments& args);
 
 
-    ~Class();
+    ~Class(); 
 };
