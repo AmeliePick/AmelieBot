@@ -15,11 +15,11 @@ Class::Class(const char* moduleName, const char* className, Function::Arguments&
 
 
 
-void Class::callMethod(const char* methodName, void* result, Function::Arguments& args)
+ReturnType Class::callMethod(const char* methodName, Function::Arguments& args)
 {
     Function func(pyClass, methodName);
 
-    func.call<int>(result, args);
+    return func.call(args);
 }
 
 

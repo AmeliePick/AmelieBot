@@ -4,6 +4,63 @@
 #include <cstdarg>
 
 
+
+ReturnType::ReturnType(PyObject * pyReturnValue) : value(pyReturnValue)
+{
+
+}
+
+
+
+ReturnType::ReturnType(ReturnType && rvalue) : value(rvalue.value)
+{
+    rvalue.value = nullptr;
+}
+
+
+
+bool ReturnType::ToBool()
+{
+    return PyLong_AsLong(value);
+}
+
+
+
+char ReturnType::ToChar()
+{
+    return *PyUnicode_AsUTF8(value);
+}
+
+
+
+int ReturnType::ToLong()
+{
+    return PyLong_AsLong(value);
+}
+
+
+
+double ReturnType::ToDouble()
+{
+    return PyFloat_AsDouble(value);
+}
+
+
+
+const char* ReturnType::ToString()
+{
+    return PyBytes_AsString(value);
+}
+
+
+
+ReturnType::~ReturnType()
+{
+    if (value) Py_DECREF(value);
+}
+
+
+
 // Python library method overriding
 PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
 {
@@ -54,6 +111,15 @@ Function::Arguments::Arguments()
 PyObject* Function::Arguments::get()
 {
     return args;
+}
+
+
+
+
+
+ReturnType Function::call(Arguments& args)
+{
+    return ReturnType(PyObject_CallObject(pyFunc, args.get()));
 }
 
 

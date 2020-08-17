@@ -6,6 +6,38 @@
 #define function class
 
 
+typedef char _void;
+
+
+class ReturnType
+{
+private:
+    PyObject* value;
+
+    ReturnType() = delete;
+    ReturnType(const ReturnType &) = delete;
+
+public:
+    ReturnType(PyObject* pyReturnValue);
+    ReturnType(ReturnType &&);
+
+
+    bool ToBool();
+
+    char ToChar();
+
+    int ToLong();
+
+    double ToDouble();
+
+    const char* ToString();
+
+
+    ~ReturnType();
+};
+
+
+
 class Function
 {
 private:
@@ -49,12 +81,11 @@ public:
     Function(PyObject* moduleHandle, const char* functionName);
     Function(const char* moduleName, const char* functionName);
 
-    template<typename returnType = nullptr_t>
-    void call(void* result, Arguments& args);
+    
+    ReturnType call(Arguments& args);
 
 
     ~Function();
 };
 
-#include "function.inl"
 #include "function_arguments.inl"
