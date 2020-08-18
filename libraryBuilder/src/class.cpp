@@ -15,6 +15,17 @@ Class::Class(const char* moduleName, const char* className, Function::Arguments&
 
 
 
+ReturnType Class::callStaticMethod(const char* moduleName, const char* className, const char* methodName, Function::Arguments& args)
+{
+    PyObject* _className = Interpreter::init()->loadClass(moduleName, className);
+
+    Function func(_className, methodName);
+
+    return func.call(args);
+}
+
+
+
 ReturnType Class::callMethod(const char* methodName, Function::Arguments& args)
 {
     Function func(pyClass, methodName);
