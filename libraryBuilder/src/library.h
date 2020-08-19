@@ -208,5 +208,69 @@ namespace library
             };
         }
     }
+
+
+    namespace main
+    {
+        class Amelie : private Class
+        {
+        private:
+            Amelie() = delete;
+            Amelie(const char* appLanguage);
+            Amelie(const Amelie &) = delete;
+
+
+            void doAction(const char* inputType);
+
+            void updateProgramList();
+
+        public:
+            static Amelie* getInstance(const char* appLanguage);
+
+            void changeLanguage(const char* language);
+
+            void conversation(const char* inputType);
+
+            void tts(const char* pharse);
+
+            void update();
+
+            const char* getPathToProgram(const char* programName);
+
+            void addProgram(const char* program, const char* path);
+
+            bool voice();
+
+            void voice(bool value);
+
+            const char* getUserInput();
+
+
+            ~Amelie();
+        };
+
+
+        class Settings : private Class
+        {
+        private:
+            Settings();
+            Settings(const Settings &) = delete;
+
+        public:
+            static Settings* getInstance();
+
+            void setLanguage(const char* langValue);
+
+            void setUsername(const char* nameValue);
+
+            const char* getLanguage();
+
+            const char* getSupportingLangs();
+
+            const char* getUsername();
+
+            dict getMethodsToResolveErrors();
+        };
+    }
 }
 

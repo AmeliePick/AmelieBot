@@ -415,3 +415,177 @@ int library::tools::time::Stopwatch::stop()
     Function::Arguments arg;
     return callMethod("start", arg).ToLong();
 }
+
+
+
+// MAIN MODULE
+
+library::main::Amelie::Amelie(const char* appLanguage) : Class("Amelie", "Amelie", Function::Arguments(appLanguage))
+{
+
+}
+
+void library::main::Amelie::doAction(const char* inputType)
+{
+    Function::Arguments arg(inputType);
+    callMethod("_doAction", arg);
+}
+
+
+
+void library::main::Amelie::updateProgramList()
+{
+    Function::Arguments arg;
+    callMethod("_updateProgramList", arg);
+}
+
+
+
+library::main::Amelie * library::main::Amelie::getInstance(const char* appLanguage)
+{
+    static Amelie* instance = new Amelie(appLanguage);
+    return instance;
+}
+
+
+
+void library::main::Amelie::changeLanguage(const char* language)
+{
+    Function::Arguments arg(language);
+    callMethod("changeLanguage", arg);
+}
+
+
+
+void library::main::Amelie::conversation(const char* inputType)
+{
+    Function::Arguments arg(inputType);
+    callMethod("conversation", arg);
+}
+
+
+
+void library::main::Amelie::tts(const char* pharse)
+{
+    Function::Arguments arg(pharse);
+    callMethod("tts", arg);
+}
+
+
+
+void library::main::Amelie::update()
+{
+    Function::Arguments arg;
+    callMethod("update", arg);
+}
+
+
+
+const char* library::main::Amelie::getPathToProgram(const char* programName)
+{
+    Function::Arguments arg(programName);
+    return callMethod("getPathToProgram", arg).ToString();
+}
+
+
+
+void library::main::Amelie::addProgram(const char* program, const char* path)
+{
+    Function::Arguments args(program, path);
+    callMethod("addProgram", args);
+}
+
+
+
+bool library::main::Amelie::voice()
+{
+    Function::Arguments arg;
+    return callMethod("voice", arg).ToString();
+}
+
+
+
+void library::main::Amelie::voice(bool value)
+{
+    Function::Arguments arg(value);
+    callMethod("voice", arg);
+}
+
+
+
+const char* library::main::Amelie::getUserInput()
+{
+    Function::Arguments arg;
+    return callMethod("getUserInput", arg).ToString();
+}
+
+
+
+library::main::Amelie::~Amelie()
+{
+    Function::Arguments arg;
+    callMethod("__del__", arg);
+}
+
+
+
+
+library::main::Settings::Settings() : Class("Settings", "Settings", Function::Arguments())
+{
+
+}
+
+
+
+library::main::Settings* library::main::Settings::getInstance()
+{
+    static Settings* instance = new Settings();
+    return instance;
+}
+
+
+
+void library::main::Settings::setLanguage(const char* langValue)
+{
+    Function::Arguments arg(langValue);
+    callMethod("setLanguage", arg);
+}
+
+
+
+void library::main::Settings::setUsername(const char* nameValue)
+{
+    Function::Arguments arg(nameValue);
+    callMethod("setUsername", arg);
+}
+
+
+
+const char* library::main::Settings::getLanguage()
+{
+    Function::Arguments arg;
+    return callMethod("getLanguage", arg).ToString();
+}
+
+
+
+const char* library::main::Settings::getSupportingLangs()
+{
+    Function::Arguments arg;
+    return callMethod("getSupportingLangs", arg).ToString();
+}
+
+
+
+const char* library::main::Settings::getUsername()
+{
+    Function::Arguments arg;
+    return callMethod("getUsername", arg).ToString();
+}
+
+
+
+dict library::main::Settings::getMethodsToResolveErrors()
+{
+    return dict();
+}
