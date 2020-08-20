@@ -103,7 +103,7 @@ const char* library::chat::AICore::Chat::getInputType()
 
 
 
-const char* library::chat::AICore::Chat::getSessionInput()
+dict library::chat::AICore::Chat::getSessionInput()
 {
     return nullptr;
 }
@@ -569,10 +569,10 @@ const char* library::main::Settings::getLanguage()
 
 
 
-const char* library::main::Settings::getSupportingLangs()
+dict library::main::Settings::getSupportingLangs()
 {
     Function::Arguments arg;
-    return callMethod("getSupportingLangs", arg).ToString();
+    return callMethod("getSupportingLangs", arg);
 }
 
 

@@ -64,7 +64,7 @@ namespace library
 
                 const char* getInputType();
 
-                const char* getSessionInput();
+                dict getSessionInput();
 
                 const char* getLanguage();
 
@@ -265,7 +265,7 @@ namespace library
 
             const char* getLanguage();
 
-            const char* getSupportingLangs();
+            dict getSupportingLangs();
 
             const char* getUsername();
 
