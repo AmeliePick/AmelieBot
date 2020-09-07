@@ -1,6 +1,7 @@
 #pragma once
 #include <Python.h>
 #include <vector>
+#include <map>
 #include <typeinfo>
 
 #define function class
@@ -32,9 +33,21 @@ public:
 
     const char* ToString();
 
+    PyObject* ToPyObject();
+
+    template<typename keyType, typename valueType>
+    std::multimap<keyType, valueType> ToDict();
+
+    template<typename Type>
+    void ToType(PyObject* obj, void* decodedMemory);
+
+    
 
     ~ReturnType();
 };
+
+
+
 
 
 
@@ -88,4 +101,5 @@ public:
     ~Function();
 };
 
+#include "returnTypeCast.inl"
 #include "function_arguments.inl"
