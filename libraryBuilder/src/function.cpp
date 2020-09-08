@@ -49,7 +49,12 @@ double ReturnType::ToDouble()
 
 const char* ReturnType::ToString()
 {
-    return PyBytes_AsString(value);
+    return PyUnicode_AsUTF8(value);
+}
+
+PyObject* ReturnType::ToPyObject()
+{
+    return value;
 }
 
 
@@ -81,6 +86,13 @@ PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
         items[i] = obj;
     }
     return result;
+}
+
+
+
+Function::Function(PyObject* pyFunction) : pyFunc(pyFunction)
+{
+
 }
 
 
