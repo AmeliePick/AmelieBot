@@ -18,8 +18,7 @@ private:
     ReturnType() = delete;
     ReturnType(const ReturnType &) = delete;
 
-    template<typename Type>
-    Type pointer_cast(void** pointer);
+    
 
 public:
     ReturnType(PyObject* pyReturnValue);
@@ -36,14 +35,12 @@ public:
 
     const char* ToString();
 
-    PyObject* ToPyObject();
+    PyObject ToPyObject();
 
     template<typename keyType, typename valueType>
     std::multimap<keyType, valueType> ToDict();
 
-    template<typename Type>
-    void ToType(PyObject* obj, void** decodedMemory);
-
+    
     
 
     ~ReturnType();
@@ -105,5 +102,5 @@ public:
     ~Function();
 };
 
-#include "returnTypeCast.inl"
+#include "return_type.inl"
 #include "function_arguments.inl"
