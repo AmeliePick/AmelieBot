@@ -64,7 +64,7 @@ namespace library
 
                 const char* getInputType();
 
-                dict getSessionInput();
+                std::multimap<const char*, const char*> getSessionInput();
 
                 const char* getLanguage();
 
@@ -265,11 +265,11 @@ namespace library
 
             const char* getLanguage();
 
-            dict getSupportingLangs();
+            std::multimap<int, const char*> getSupportingLangs();
 
             const char* getUsername();
 
-            dict getMethodsToResolveErrors();
+            std::multimap<const char*, void*> getMethodsToResolveErrors();
         };
     }
 }

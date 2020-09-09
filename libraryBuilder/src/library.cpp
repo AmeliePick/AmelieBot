@@ -103,9 +103,10 @@ const char* library::chat::AICore::Chat::getInputType()
 
 
 
-dict library::chat::AICore::Chat::getSessionInput()
+std::multimap<const char*, const char*> library::chat::AICore::Chat::getSessionInput()
 {
-    return nullptr;
+    Function::Arguments arg;
+    return callMethod("getSessionInput", arg).ToDict<const char*, const char*>();
 }
 
 
@@ -569,10 +570,10 @@ const char* library::main::Settings::getLanguage()
 
 
 
-dict library::main::Settings::getSupportingLangs()
+std::multimap<int, const char*> library::main::Settings::getSupportingLangs()
 {
     Function::Arguments arg;
-    return callMethod("getSupportingLangs", arg);
+    return callMethod("getSupportingLangs", arg).ToDict<int, const char*>();
 }
 
 
@@ -585,7 +586,8 @@ const char* library::main::Settings::getUsername()
 
 
 
-dict library::main::Settings::getMethodsToResolveErrors()
+std::multimap<const char*, void*> library::main::Settings::getMethodsToResolveErrors()
 {
-    return dict();
+    Function::Arguments arg;
+    return callMethod("getMethodsToResolveErrors", arg).ToDict<const char*, void*>();
 }
