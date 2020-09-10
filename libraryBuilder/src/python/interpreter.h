@@ -9,6 +9,7 @@ private:
     Interpreter();
     Interpreter(const Interpreter &);
 
+    class Logger* logger;
 
     std::vector<PyObject*> modules;
     std::vector<PyObject*> objects;
@@ -33,6 +34,8 @@ public:
 
     PyObject* loadFunction(PyObject* moduleHandle, const char* functionName);
 
+
+    void Python_traceback_toFile();
 
 
     ~Interpreter();

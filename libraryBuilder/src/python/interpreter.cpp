@@ -1,9 +1,15 @@
 #include "interpreter.h"
-#include <vector>
+#include "../utils/logger.h"
+#include <frameobject.h>
+
+    
+
 
 
 Interpreter::Interpreter(const char* workDir = "")
 {
+    this->logger = Logger::create();
+
     Py_Initialize();
     PyObject* sys = PyImport_ImportModule("sys");
     PyObject* path = PyObject_GetAttrString(sys, "path");
@@ -29,7 +35,7 @@ PyObject* Interpreter::initModule(const char* moduleName)
     modules.push_back(moduleHandle);
     Py_DECREF(module);
     
-    // TODO: write data of possible errors to log.
+    Python_traceback_toFile();
 
     return moduleHandle;
 }
@@ -53,7 +59,7 @@ PyObject* Interpreter::loadClass(PyObject* moduleHandle, const char* className)
     objects.push_back(python_class);
     Py_DECREF(dict);
 
-    // TODO: write data of possible errors to log.
+    Python_traceback_toFile();
 
     return python_class;
 }
@@ -75,9 +81,26 @@ PyObject* Interpreter::loadFunction(PyObject* moduleHandle, const char* function
 
     objects.push_back(function);
 
-    // TODO: write data of possible errors to log.
+    Python_traceback_toFile();
 
     return function;
+}
+
+
+
+void Interpreter::Python_traceback_toFile()
+{
+    PyObject *ptype, *pvalue, *ptraceback;
+    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+
+    if (pvalue != false && pvalue && ptraceback)
+    {
+        PyTracebackObject tb = *(PyTracebackObject*)ptraceback;
+        this->logger->writeLog(PyUnicode_AsUTF8(PyObject_Str((PyObject*)tb.tb_frame->f_code)));
+        this->logger->writeLog(" ");
+        this->logger->writeLog(PyUnicode_AsUTF8(PyObject_Str(pvalue)));
+        this->logger->writeLog("\n");
+    }
 }
 
 
@@ -94,11 +117,13 @@ Interpreter::~Interpreter()
     // Manualy decrement objects references.
     for (int i = objects.size() - 1; i >= 0; --i)
     {
-        Py_DECREF(objects[i]);
+        if (objects[i] != nullptr)
+            Py_DECREF(objects[i]);
     }
     for (int i = modules.size() - 1; i >= 0; --i)
     {
-        Py_DECREF(modules[i]);
+        if (modules[i] != nullptr)
+            Py_DECREF(modules[i]);
     }
 
     
