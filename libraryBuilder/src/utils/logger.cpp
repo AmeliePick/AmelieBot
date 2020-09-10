@@ -17,7 +17,7 @@ Logger* Logger::create()
 
 
 
-void Logger::writeLog(char* data)
+void Logger::writeLog(const char* data)
 {
-    this->fileWrite << data << '\n\n';
+    this->fileWrite << data;
 }

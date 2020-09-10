@@ -15,5 +15,5 @@ public:
     static Logger* create();
 
 
-    void writeLog(char* data);
+    void writeLog(const char* data);
 };
