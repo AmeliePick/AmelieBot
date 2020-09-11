@@ -243,9 +243,9 @@ void library::tools::iniParser::IniParser::update()
 
 // INPUT MODULE
 
-const char * library::tools::input::voiceInput()
+const char* library::tools::input::voiceInput()
 {  
-    Function func("tools.input", "voiceInput");
+    static Function func("tools.input", "voiceInput");
 
     Function::Arguments arg;
     return func.call(arg).ToString();
@@ -289,7 +289,7 @@ void library::tools::logger::Logger::logWrite()
 
 void library::tools::runtime::restart()
 {
-    Function func("tools.runtime", "restart");
+    static Function func("tools.runtime", "restart");
 
     Function::Arguments arg;
     func.call(arg);

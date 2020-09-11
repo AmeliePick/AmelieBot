@@ -1,36 +1,60 @@
 #include "class.h"
 #include "python/interpreter.h"
+#include <string>
+
 
 
 Class::Class(const char* moduleName, const char* className, Function::Arguments&& args)
 {
+    loadedMethods = std::multimap<const char*, Function>();
     PyObject* _class = Interpreter::init()->loadClass(moduleName, className);
 
     if (_class != nullptr)
     {
         pyClass = PyObject_CallObject(_class, args.get());
-        Py_DECREF(_class);
+        Py_CLEAR(_class);
     }   
 }
-
+ 
 
 
 ReturnType Class::callStaticMethod(const char* moduleName, const char* className, const char* methodName, Function::Arguments& args)
 {
-    PyObject* _className = Interpreter::init()->loadClass(moduleName, className);
+    // Storages all static method from all classes
+    static std::multimap<const char*, Function> loadedStaticMethods = std::multimap<const char*, Function>();
 
-    Function func(_className, methodName);
 
-    return func.call(args);
+    std::string strMethodString(methodName);
+    auto elem = loadedStaticMethods.find(strMethodString.c_str());
+    if (elem == loadedStaticMethods.end())
+    {
+        PyObject* _className = Interpreter::init()->loadClass(moduleName, className);
+        auto func = loadedStaticMethods.insert(std::pair<const char*, Function>(strMethodString.c_str(), Function(_className, methodName)));
+
+        if (func != loadedStaticMethods.end())
+            return func->second.call(args);
+        else return ReturnType(nullptr);
+    }
+    else
+        return elem->second.call(args);
 }
 
 
 
 ReturnType Class::callMethod(const char* methodName, Function::Arguments& args)
 {
-    Function func(pyClass, methodName);
+    std::string strMethodString(methodName);
+    auto elem = loadedMethods.find(strMethodString.c_str());
+    if (elem == loadedMethods.end())
+    {
+        auto func = loadedMethods.insert(std::pair<const char*, Function>(strMethodString.c_str(), Function(pyClass, methodName)));
 
-    return func.call(args);
+        if (func != loadedMethods.end())
+            return func->second.call(args);
+        else return ReturnType(nullptr);
+    }
+    else
+        return elem->second.call(args);
 }
 
 
@@ -38,6 +62,7 @@ ReturnType Class::callMethod(const char* methodName, Function::Arguments& args)
 Class::~Class()
 {
     PyObject_CallMethod(pyClass, "__del__", nullptr);
+    loadedMethods.clear();
 
-    // The class will be deleted in interpreter.
+    Interpreter::init()->deleteObject(pyClass);
 }
