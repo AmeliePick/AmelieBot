@@ -2,8 +2,6 @@
 #include "../utils/logger.h"
 #include <frameobject.h>
 
-    
-
 
 
 Interpreter::Interpreter(const char* workDir = "")
@@ -33,7 +31,7 @@ PyObject* Interpreter::initModule(const char* moduleName)
     PyObject* moduleHandle = PyImport_Import(module);
     
     modules.push_back(moduleHandle);
-    Py_DECREF(module);
+    Py_CLEAR(module);
     
     Python_traceback_toFile();
 
@@ -57,7 +55,7 @@ PyObject* Interpreter::loadClass(PyObject* moduleHandle, const char* className)
     PyObject* python_class = PyDict_GetItemString(dict, className);
 
     objects.push_back(python_class);
-    Py_DECREF(dict);
+    Py_CLEAR(dict);
 
     Python_traceback_toFile();
 
@@ -105,6 +103,17 @@ void Interpreter::Python_traceback_toFile()
 
 
 
+void Interpreter::deleteObject(PyObject* object)
+{
+    auto obj = std::find(objects.begin(), objects.end(), object);
+
+    Py_CLEAR(objects[std::distance(objects.begin(), obj)]);
+
+    objects.erase(obj);
+}
+
+
+
 Interpreter::~Interpreter()
 {
     /* Py_Finalize() isn't working.
@@ -117,13 +126,11 @@ Interpreter::~Interpreter()
     // Manualy decrement objects references.
     for (int i = objects.size() - 1; i >= 0; --i)
     {
-        if (objects[i] != nullptr)
-            Py_DECREF(objects[i]);
+        Py_CLEAR(objects[i]);
     }
     for (int i = modules.size() - 1; i >= 0; --i)
     {
-        if (modules[i] != nullptr)
-            Py_DECREF(modules[i]);
+        Py_CLEAR(modules[i]);
     }
 
     

@@ -4,10 +4,6 @@
 #include <map>
 #include <typeinfo>
 
-#define function class
-
-
-typedef char _void;
 
 
 class ReturnType

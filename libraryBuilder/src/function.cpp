@@ -5,7 +5,7 @@
 
 
 
-ReturnType::ReturnType(PyObject * pyReturnValue) : value(pyReturnValue)
+ReturnType::ReturnType(PyObject* pyReturnValue) : value(pyReturnValue)
 {
 
 }
@@ -52,9 +52,11 @@ const char* ReturnType::ToString()
     return PyUnicode_AsUTF8(value);
 }
 
-PyObject* ReturnType::ToPyObject()
+
+
+PyObject ReturnType::ToPyObject()
 {
-    return value;
+    return *value;
 }
 
 
@@ -138,7 +140,7 @@ ReturnType Function::call(Arguments& args)
 
 Function::~Function()
 {
-    // The function will be deleted in interpreter.
+    Interpreter::init()->deleteObject(pyFunc);
 }
 
 
@@ -150,11 +152,11 @@ Function::Arguments::~Arguments()
         for (int i = 0; i < argsVector->size(); ++i)
         {
             
-            Py_DECREF((*argsVector)[i]);
+            Py_CLEAR((*argsVector)[i]);
         }
 
         delete argsVector;
     }
 
-    if(args) Py_DECREF(args);
+    if(args) Py_CLEAR(args);
 }

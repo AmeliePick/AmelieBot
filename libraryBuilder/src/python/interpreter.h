@@ -37,6 +37,8 @@ public:
 
     void Python_traceback_toFile();
 
+    void deleteObject(PyObject* object);
+
 
     ~Interpreter();
 };
