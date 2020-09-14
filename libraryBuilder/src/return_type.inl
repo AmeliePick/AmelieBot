@@ -7,12 +7,11 @@ inline std::multimap<keyType, valueType> ReturnType::ToDict()
     PyObject* keys = PyDict_Keys(value);
     PyObject* values = PyDict_Values(value);
 
-
     void* keyDecoded = nullptr;
     void* valueDecoded = nullptr;
 
-
     std::multimap<keyType, valueType> dict;
+
     for (int i = 0; i < PyDict_Size(value); ++i)
     {
         ToType<keyType>(PyList_GetItem(keys, i), &keyDecoded);
@@ -27,6 +26,10 @@ inline std::multimap<keyType, valueType> ReturnType::ToDict()
 
     if (std::is_same<valueType, const char*>::value == false && std::is_same<valueType, void*>::value == false)
         free(valueDecoded);
+
+    Py_CLEAR(keys);
+    Py_CLEAR(values);
+
 
     return dict;
 }

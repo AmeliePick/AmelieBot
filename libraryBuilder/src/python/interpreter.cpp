@@ -76,7 +76,6 @@ PyObject* Interpreter::loadFunction(PyObject* moduleHandle, const char* function
     if (moduleHandle == nullptr) return nullptr;
 
     PyObject* function = PyObject_GetAttrString(moduleHandle, functionName);
-
     objects.push_back(function);
 
     Python_traceback_toFile();
@@ -91,7 +90,7 @@ void Interpreter::Python_traceback_toFile()
     PyObject *ptype, *pvalue, *ptraceback;
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
 
-    if (pvalue != false && pvalue && ptraceback)
+    if (pvalue && pvalue && ptraceback)
     {
         PyTracebackObject tb = *(PyTracebackObject*)ptraceback;
         this->logger->writeLog(PyUnicode_AsUTF8(PyObject_Str((PyObject*)tb.tb_frame->f_code)));
@@ -105,11 +104,23 @@ void Interpreter::Python_traceback_toFile()
 
 void Interpreter::deleteObject(PyObject* object)
 {
-    auto obj = std::find(objects.begin(), objects.end(), object);
+    if (object != nullptr)
+    {
+        auto obj = std::find(objects.begin(), objects.end(), object);
 
-    Py_CLEAR(objects[std::distance(objects.begin(), obj)]);
+        if (obj != objects.end())
+        {
+            Py_CLEAR(objects[std::distance(objects.begin(), obj)]);
+            objects.erase(obj);
+        }
+        else
+        {
+            obj = std::find(modules.begin(), modules.end(), object);
 
-    objects.erase(obj);
+            Py_CLEAR(modules[std::distance(modules.begin(), obj)]);
+            modules.erase(obj);
+        }
+    }
 }
 
 
@@ -123,7 +134,7 @@ Interpreter::~Interpreter()
      */
 
 
-    // Manualy decrement objects references.
+    // Manualy delete objects instead Py_Finalize.
     for (int i = objects.size() - 1; i >= 0; --i)
     {
         Py_CLEAR(objects[i]);
