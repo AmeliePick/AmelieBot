@@ -85,7 +85,8 @@ public:
         ~Arguments();
     };
 
-
+    Function(const Function &) = delete;
+    Function(Function &&);
     Function() = delete;
     Function(PyObject* pyFunction);
     Function(PyObject* moduleHandle, const char* functionName);

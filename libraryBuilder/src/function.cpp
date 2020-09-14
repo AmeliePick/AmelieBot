@@ -4,6 +4,7 @@
 #include <cstdarg>
 
 
+#pragma region ReturnType
 
 ReturnType::ReturnType(PyObject* pyReturnValue) : value(pyReturnValue)
 {
@@ -12,7 +13,7 @@ ReturnType::ReturnType(PyObject* pyReturnValue) : value(pyReturnValue)
 
 
 
-ReturnType::ReturnType(ReturnType && rvalue) : value(rvalue.value)
+ReturnType::ReturnType(ReturnType&& rvalue) : value(rvalue.value)
 {
     rvalue.value = nullptr;
 }
@@ -63,10 +64,13 @@ PyObject ReturnType::ToPyObject()
 
 ReturnType::~ReturnType()
 {
-    if (value) Py_DECREF(value);
+    Py_CLEAR(value);
 }
+#pragma endregion
 
 
+
+#pragma region Function::Arguments
 
 // Python library method overriding
 PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
@@ -92,6 +96,48 @@ PyObject* Function::Arguments::Args_Pack(size_t n, std::vector<PyObject*>* args)
 
 
 
+Function::Arguments::Arguments()
+{
+    this->args = nullptr;
+    this->argsVector = nullptr;
+}
+
+
+
+PyObject* Function::Arguments::get()
+{
+    return args;
+}
+
+
+
+Function::Arguments::~Arguments()
+{
+    if (argsVector)
+    {
+        for (int i = 0; i < argsVector->size(); ++i)
+        {
+
+            Py_CLEAR((*argsVector)[i]);
+        }
+
+        delete argsVector;
+    }
+
+    Py_CLEAR(args);
+}
+#pragma endregion
+
+
+
+#pragma region Function
+
+Function::Function(Function && rvalue)
+{
+    this->pyFunc = rvalue.pyFunc;
+    rvalue.pyFunc = nullptr;
+}
+
 Function::Function(PyObject* pyFunction) : pyFunc(pyFunction)
 {
 
@@ -113,24 +159,6 @@ Function::Function(const char* moduleName, const char* functionName)
 
 
 
-
-Function::Arguments::Arguments()
-{
-    this->args = nullptr;
-    this->argsVector = nullptr;
-}
-
-
-
-PyObject* Function::Arguments::get()
-{
-    return args;
-}
-
-
-
-
-
 ReturnType Function::call(Arguments& args)
 {
     return ReturnType(PyObject_CallObject(pyFunc, args.get()));
@@ -142,21 +170,4 @@ Function::~Function()
 {
     Interpreter::init()->deleteObject(pyFunc);
 }
-
-
-
-Function::Arguments::~Arguments()
-{
-    if (argsVector)
-    {
-        for (int i = 0; i < argsVector->size(); ++i)
-        {
-            
-            Py_CLEAR((*argsVector)[i]);
-        }
-
-        delete argsVector;
-    }
-
-    if(args) Py_CLEAR(args);
-}
+#pragma endregion
