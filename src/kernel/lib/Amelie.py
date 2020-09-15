@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from .Singleton            import Singleton
+from Singleton            import Singleton
 
-from .Settings              import Settings
+from Settings              import Settings
 
-from .chat.dialog           import Dialog
-from .chat.AICore           import Chat
+from chat.dialog           import Dialog
+from chat.AICore           import Chat
 
-from .tools.system          import FileManager
-from .tools.system          import Network
+from tools.system          import FileManager
+from tools.system          import Network
 
 
-from .audio.processing      import playAudio, TextToSpeech
-from .audio.recognition     import SpeechRecognition
+from audio.processing      import playAudio, TextToSpeech
+from audio.recognition     import SpeechRecognition
 
 from webbrowser         import open as webbrowser_open
 from subprocess         import Popen
@@ -25,7 +25,7 @@ class Amelie(metaclass = Singleton):
     This class is literally bot itself.
 
     The class is a Singleton.
-    
+
     '''
 
 
@@ -38,12 +38,12 @@ class Amelie(metaclass = Singleton):
 
     _exceptionStack: list
     _programsList:  list
-    
+
 
 
     def __init__(self, applanguage: str):
         super().__init__()
-        self._exceptionStack = list()    
+        self._exceptionStack = list()
 
         self._voiceRecorder = None
         self._textToSpeech = None
@@ -72,11 +72,11 @@ class Amelie(metaclass = Singleton):
         elif self._chat.getInputType() == "Search":
             url = "https://www.google.ru/search?q="
             webbrowser_open( url + str(self._chat.stemming(self._chat.editInput())), new = 1)
-    
+
         elif self._chat.getInputType() == "Youtube":
             url = "http://www.youtube.com/results?search_query="
             webbrowser_open( url + str(self._chat.stemming(self._chat.editInput())), new = 1)
-        
+
         # In this block can be an exception
         elif self._chat.getInputType() == "Open":
                 Popen( self.getPathToProgram(self._chat.editInput()) )
@@ -108,12 +108,12 @@ class Amelie(metaclass = Singleton):
                 return str(self._dialog.getMessageFor("progNotFound") +
                        " " +
                        self._dialog.getMessageFor("addProg")).replace('\n', '')
- 
+
             return chatAnswer
 
 
         chatAnswer = _startChat(userInput)
-        
+
         if self._voice:
             try:
                 self.tts(chatAnswer)
@@ -180,7 +180,7 @@ class Amelie(metaclass = Singleton):
 
 
     @voice.setter
-    def voice(self, value: bool) -> None:    
+    def voice(self, value: bool) -> None:
         if value == True and Network.checkNetworkConnection():
             try:
                 self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())
@@ -191,7 +191,7 @@ class Amelie(metaclass = Singleton):
                 self._exceptionStack.append(e)
 
                 return
-            
+
 
         elif value == True and not Network.checkNetworkConnection():
             self._exceptionStack.append(ConnectionError())

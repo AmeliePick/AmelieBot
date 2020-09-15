@@ -8,7 +8,7 @@ from os     import makedirs as os_makedirs
 
 import socket
 
-from ..Singleton import Singleton
+from Singleton import Singleton
 
 
 
@@ -32,7 +32,7 @@ class FileManager(metaclass = Singleton):
                 file.close()
 
         return
-        
+
 
 
     @staticmethod

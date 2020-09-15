@@ -3,8 +3,8 @@
 import configparser
 from os      import path as os_path
 
-from ..Singleton        import Singleton
-from .system            import FileManager
+from Singleton        import Singleton
+from .system           import FileManager
 
 
 
@@ -21,12 +21,12 @@ class IniParser(object):
 
     def __init__(self, fileToParsePath: str):
         self.config = configparser.ConfigParser()
-        
-        
+
+
         if not os_path.exists(fileToParsePath):
             FileManager.createFile(fileToParsePath)
 
-        self.path = fileToParsePath     
+        self.path = fileToParsePath
         self.config.read(self.path)
 
         return
@@ -55,7 +55,7 @@ class IniParser(object):
             self.config.read(path)
 
             value = self.config.get(section, option)
-        
+
             # When we reads any file, the config's variables keep storage the data from the config file.
             # And it leads to incorrect reading parameters in the next time. So we must to clear the data after each reading.
             self.update()
@@ -75,7 +75,7 @@ class IniParser(object):
 
         with open(self.path, "w") as config_file:
             self.config.write(config_file)
-        
+
         return
 
 

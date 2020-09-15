@@ -3,7 +3,7 @@
 
 
 import speech_recognition as sr
-from ..Singleton import Singleton
+from Singleton import Singleton
 
 
 

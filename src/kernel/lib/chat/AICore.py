@@ -13,8 +13,8 @@ from sklearn.pipeline                   import Pipeline
 
 from random             import choice
 from Stemmer            import Stemmer
-from ..tools.system     import FileManager
-from ..Singleton        import Singleton
+from tools.system       import FileManager
+from Singleton          import Singleton
 
 
 

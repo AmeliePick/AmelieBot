@@ -2,8 +2,8 @@
 
 
 
-from ..tools.system     import FileManager
-from ..Singleton        import Singleton
+from tools.system     import FileManager
+from Singleton        import Singleton
 
 
 

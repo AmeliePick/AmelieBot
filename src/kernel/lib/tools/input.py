@@ -2,9 +2,9 @@
 
 
 
-from lib.audio.recognition     import SpeechRecognition
-from lib.audio.processing      import playAudio
-from lib.tools.system          import Network
+from audio.recognition     import SpeechRecognition
+from audio.processing      import playAudio
+from tools.system          import Network
 
 
 

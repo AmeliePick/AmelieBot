@@ -6,7 +6,7 @@ from traceback      import format_exc
 from datetime       import datetime
 from os             import path as os_path
 
-from ..Singleton    import Singleton
+from Singleton      import Singleton
 from .system        import FileManager
 from .iniParser     import IniParser
 

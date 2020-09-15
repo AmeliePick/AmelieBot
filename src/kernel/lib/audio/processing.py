@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from ..tools.system     import FileManager
-from ..Singleton        import Singleton
+from tools.system     import FileManager
+from Singleton        import Singleton
 
 import simpleaudio as sa
 from ibm_watson  import TextToSpeechV1
@@ -39,5 +39,5 @@ class TextToSpeech(metaclass = Singleton):
 
         audio = text_to_speech.synthesize(textSource, voice="en-US_AllisonVoice", accept="audio/wav")
         FileManager.writeToFile(audio.get_result().content, "TEMP/sound.wav", "wb")
-        
+
         return
