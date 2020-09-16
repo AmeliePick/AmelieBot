@@ -6,12 +6,16 @@
 
 Interpreter::Interpreter(const char* workDir = "")
 {
+
     this->logger = Logger::create();
 
     Py_Initialize();
-    PyObject* sys = PyImport_ImportModule("sys");
-    PyObject* path = PyObject_GetAttrString(sys, "path");
-    PyList_Append(path, PyUnicode_FromString(workDir));
+
+    // TODO: Fix the setting of interpreter working dir.
+
+    PyObject* osModule = PyImport_ImportModule("os");
+    PyObject* function = PyObject_GetAttrString(osModule, "getcwd");
+    const char* str = PyUnicode_AsUTF8(PyObject_CallObject(function, nullptr));
 }
 
 

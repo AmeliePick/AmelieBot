@@ -24,6 +24,7 @@ inline void Function::Arguments::arguments(Type* object)
     else if (typeid(object) == typeid(double*))
         this->argsVector->push_back(PyFloat_FromDouble(*object));
     else if (typeid(object) == typeid(const char*))
+        // TODO: fix conversion from C-string to Py-string
         this->argsVector->push_back(PyBytes_FromString(object));
 }
 
