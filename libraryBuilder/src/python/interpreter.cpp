@@ -4,25 +4,19 @@
 
 
 
-Interpreter::Interpreter(const char* workDir = "")
+Interpreter::Interpreter()
 {
 
     this->logger = Logger::create();
 
     Py_Initialize();
-
-    // TODO: Fix the setting of interpreter working dir.
-
-    PyObject* osModule = PyImport_ImportModule("os");
-    PyObject* function = PyObject_GetAttrString(osModule, "getcwd");
-    const char* str = PyUnicode_AsUTF8(PyObject_CallObject(function, nullptr));
 }
 
 
 
-Interpreter* Interpreter::init(const const char* workDir)
+Interpreter* Interpreter::init()
 {
-    static Interpreter* instance = new Interpreter(workDir);
+    static Interpreter* instance = new Interpreter();
     return instance;
 
 }
