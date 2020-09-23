@@ -457,10 +457,10 @@ void library::main::Amelie::changeLanguage(const char* language)
 
 
 
-void library::main::Amelie::conversation(const char* inputType)
+const char* library::main::Amelie::conversation(const char* inputType)
 {
     Function::Arguments arg(inputType);
-    callMethod("conversation", arg);
+    return callMethod("conversation", arg).ToString();
 }
 
 
@@ -500,7 +500,7 @@ void library::main::Amelie::addProgram(const char* program, const char* path)
 bool library::main::Amelie::voice()
 {
     Function::Arguments arg;
-    return callMethod("voice", arg).ToString();
+    return callMethod("voice", arg).ToBool();
 }
 
 
