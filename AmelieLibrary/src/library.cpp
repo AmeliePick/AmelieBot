@@ -497,18 +497,18 @@ void library::main::Amelie::addProgram(const char* program, const char* path)
 
 
 
-bool library::main::Amelie::voice()
+bool library::main::Amelie::getVoice()
 {
     Function::Arguments arg;
-    return callMethod("voice", arg).ToBool();
+    return callMethod("getVoice", arg).ToBool();
 }
 
 
 
-void library::main::Amelie::voice(bool value)
+void library::main::Amelie::setVoice(bool value)
 {
     Function::Arguments arg(value);
-    callMethod("voice", arg);
+    callMethod("setVoice", arg);
 }
 
 

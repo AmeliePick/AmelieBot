@@ -239,9 +239,9 @@ namespace library
 
             void addProgram(const char* program, const char* path);
 
-            bool voice();
+            bool getVoice();
 
-            void voice(bool value);
+            void setVoice(bool value);
 
             const char* getUserInput();
 

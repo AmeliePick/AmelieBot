@@ -128,7 +128,7 @@ class Amelie(metaclass = Singleton):
     def tts(self, pharse: str) -> Exception:
         ''' Convert Text To Speech and play it.
         '''
-
+        
         self._textToSpeech(pharse, self._chat.getLanguage())
         playAudio("TEMP/sound.wav")
 
@@ -173,14 +173,12 @@ class Amelie(metaclass = Singleton):
 
 
 
-    @property
-    def voice(self) -> bool:
+    def getVoice(self) -> bool:
         return self._voice
 
 
 
-    @voice.setter
-    def voice(self, value: bool) -> None:
+    def setVoice(self, value: bool) -> None:
         if value == True and Network.checkNetworkConnection():
             try:
                 self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())
