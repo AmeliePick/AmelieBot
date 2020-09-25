@@ -10,7 +10,7 @@ from googletrans import Translator as gTranslator
 
 
 
-def playAudio(soundFile: str, reps=1) -> None:
+def playAudio(soundFile: str) -> None:
     wave_obj = sa.WaveObject.from_wave_file(soundFile)
     play_obj = wave_obj.play()
     play_obj.wait_done()
@@ -37,7 +37,8 @@ class TextToSpeech(metaclass = Singleton):
         text_to_speech = TextToSpeechV1(iam_apikey="D6i3r45_nB2pNi_ewnSuZpu4ze_KexO9fBHtL1vs5E56",
                                             url="https://stream.watsonplatform.net/text-to-speech/api")
 
-        audio = text_to_speech.synthesize(textSource, voice="en-US_AllisonVoice", accept="audio/wav")
+        #TODO: make convertation to wave format from ogg;opus
+        audio = text_to_speech.synthesize(textSource, voice="en-US_AllisonV3Voice", accept="audio/wav")
         FileManager.writeToFile(audio.get_result().content, "TEMP/sound.wav", "wb")
 
         return

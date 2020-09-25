@@ -3,11 +3,11 @@
 
 // PROCESSING MODULE
 
-void library::audio::processing::playAudio(const char* soundFile, int reps)
+void library::audio::processing::playAudio(const char* soundFile)
 {
     static Function pyFunc("audio.processing", "playAudio");
     
-    Function::Arguments args(soundFile, reps);
+    Function::Arguments args(soundFile);
     pyFunc.call(args);
 }
 

@@ -10,7 +10,7 @@ namespace library
     {
         namespace processing
         {
-            void playAudio(const char* soundFile, int reps = 1);
+            void playAudio(const char* soundFile);
 
             class TextToSpeech : private Class
             {
