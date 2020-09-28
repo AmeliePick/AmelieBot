@@ -5,6 +5,7 @@ from tools.system     import FileManager
 from Singleton        import Singleton
 
 import simpleaudio as sa
+from pydub import AudioSegment
 from ibm_watson  import TextToSpeechV1
 from googletrans import Translator as gTranslator
 
@@ -37,8 +38,12 @@ class TextToSpeech(metaclass = Singleton):
         text_to_speech = TextToSpeechV1(iam_apikey="D6i3r45_nB2pNi_ewnSuZpu4ze_KexO9fBHtL1vs5E56",
                                             url="https://stream.watsonplatform.net/text-to-speech/api")
 
-        #TODO: make convertation to wave format from ogg;opus
-        audio = text_to_speech.synthesize(textSource, voice="en-US_AllisonV3Voice", accept="audio/wav")
+        
+        audio = text_to_speech.synthesize(textSource, voice="en-US_AllisonV3Voice", accept="audio/ogg", codecs="opus")
+
+        # This conversion is necessary, because TTS returns strange wav file that can use up a lot of RAM when played.
         FileManager.writeToFile(audio.get_result().content, "TEMP/sound.wav", "wb")
+        AudioSegment.from_ogg("TEMP/sound.wav").export("TEMP/sound.wav", format="wav")
+        
 
         return
