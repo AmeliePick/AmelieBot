@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 
-from .Singleton            import Singleton
-from .tools.system          import FileManager
-from .tools.iniParser       import IniParser
+from Singleton              import Singleton
+from tools.system           import FileManager
+from tools.iniParser        import IniParser
 
 
 
 class Settings(metaclass = Singleton):
     ''' Control the config file
-    
+
     The class is a Singleton.
     '''
 
@@ -38,14 +38,14 @@ class Settings(metaclass = Singleton):
             self._iniParser.setSection("Settings")
             self._iniParser.setSection("User")
 
-            self._iniParser.setValue("Settings", 
-                                     "ver", 
+            self._iniParser.setValue("Settings",
+                                     "ver",
                                      self._iniParser.getValue("Setup", "Version", "../setup/AppSetup.ini")
                                     )
 
             self._iniParser.setValue("Settings", "lang", "-")
             self._iniParser.setValue("User", "name", '')
-            
+
 
 
         if len(self.getLanguage()) != 2:
@@ -53,7 +53,7 @@ class Settings(metaclass = Singleton):
 
 
         from re import sub
-        if len(sub('[\t, \n, \r \s]', '', self.getUsername())) < 2:    
+        if len(sub('[\t, \n, \r \s]', '', self.getUsername())) < 2:
             self._methods["username"] = self.setUsername
 
 

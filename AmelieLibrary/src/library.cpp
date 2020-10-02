@@ -1,5 +1,5 @@
 #include "library.h"
-
+#include <iostream>
 
 // PROCESSING MODULE
 
@@ -441,7 +441,7 @@ void library::main::Amelie::updateProgramList()
 
 
 
-library::main::Amelie * library::main::Amelie::getInstance(const char* appLanguage)
+library::main::Amelie* library::main::Amelie::getInstance(const char* appLanguage)
 {
     static Amelie* instance = new Amelie(appLanguage);
     return instance;
@@ -457,9 +457,9 @@ void library::main::Amelie::changeLanguage(const char* language)
 
 
 
-const char* library::main::Amelie::conversation(const char* inputType)
+char* library::main::Amelie::conversation(const char* userInput)
 {
-    Function::Arguments arg(inputType);
+    Function::Arguments arg(userInput);
     return callMethod("conversation", arg).ToString();
 }
 

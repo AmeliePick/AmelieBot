@@ -16,7 +16,7 @@ __declspec(dllexport) void AmelieChangeLanguage(Amelie* object, const char* lang
 
 
 
-__declspec(dllexport) const char* AmelieConversation(Amelie* object, const char* userInput)
+__declspec(dllexport) char* AmelieConversation(Amelie* object, const char* userInput)
 {
     return object->conversation(userInput);
 }

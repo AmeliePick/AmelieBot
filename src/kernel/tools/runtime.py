@@ -2,8 +2,7 @@
 
 
 
-from sys    import executable as exe
-from sys    import argv
+from sys    import executable as exe, argv
 from os     import execl
 
 

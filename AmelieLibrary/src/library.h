@@ -229,7 +229,7 @@ namespace library
 
             void changeLanguage(const char* language);
 
-            const char* conversation(const char* inputType);
+            char* conversation(const char* userInput);
 
             void tts(const char* pharse);
 
