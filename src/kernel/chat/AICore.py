@@ -19,15 +19,7 @@ from Singleton          import Singleton
 
 
 class Chat(metaclass = Singleton):
-    '''
-    Chat is a neural network that classifies requests from the user. 
-    Then, after processing the type of the question, it passes it to the answer function, 
-    where the answer is processed by searhing of phrases like the input type.
-
-    User input is also processed for search engines. Unnecessary part of the phrase is cut off and search is performed only within the meaning of the sentence.
-
-
-    The class is a Singleton.
+    ''' The class is a Singleton.
 
     '''
 

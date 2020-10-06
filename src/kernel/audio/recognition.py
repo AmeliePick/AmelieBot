@@ -49,8 +49,6 @@ class SpeechRecognition(metaclass = Singleton):
             # Listening to the microphone
             with self.micro as _source:
                 audio = self.recognizer.listen(source = _source, timeout = 3, phrase_time_limit = 5)
-
-                # Speech to text
                 return self.recognizer.recognize_google(audio, language = self.lang)
 
         except (sr.WaitTimeoutError, sr.UnknownValueError):
