@@ -1,10 +1,14 @@
 import QtQuick 2.12
-import QtQuick.Shapes 2.1
-import QtQuick.Controls 2.1
+import QtQuick.Shapes 2.12
 
 
 Item
 {
+    id: messageItem;
+
+    property alias text: message.text;
+    property alias avatar: avatar.source;
+
     width: 640;
     height: 135;
 
@@ -24,7 +28,6 @@ Item
             y: 0;
             width: 86
             height: 86;
-            source: ""
         }
     }
 
@@ -76,7 +79,6 @@ Item
                 font.pixelSize: 15;
                 font.family: "Montserrat";
                 color: "#c5c5c5"
-                text: "";
             }
         }
     }
