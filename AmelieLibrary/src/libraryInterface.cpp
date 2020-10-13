@@ -69,3 +69,10 @@ __declspec(dllexport) const char* AmelieGetUserInput(Amelie* object)
 {
     return object->getUserInput();
 }
+
+
+
+__declspec(dllexport) void AmelieDelete(Amelie* object)
+{
+    delete object;
+}

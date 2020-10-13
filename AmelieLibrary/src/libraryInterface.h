@@ -24,3 +24,5 @@ extern "C" __declspec(dllexport) bool AmelieGetVoice(Amelie* object);
 extern "C" __declspec(dllexport) void AmelieSetVoice(Amelie* object, bool value);
 
 extern "C" __declspec(dllexport) const char* AmelieGetUserInput(Amelie* object);
+
+extern "C" __declspec(dllexport) void AmelieDelete(Amelie* object);
