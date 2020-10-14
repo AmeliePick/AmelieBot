@@ -1,5 +1,5 @@
-#include "dotNetInterface.h"
 #include <iostream>
+#include "libraryInterface.h"
 
 
 __declspec(dllexport) void* AmelieCreateInstance(const char* appLanguage)
@@ -73,6 +73,64 @@ __declspec(dllexport) const char* AmelieGetUserInput(Amelie* object)
 
 
 __declspec(dllexport) void AmelieDelete(Amelie* object)
+{
+    delete object;
+}
+
+
+
+
+
+__declspec(dllexport) Settings* getInstance()
+{
+    return Settings::getInstance();
+}
+
+
+
+__declspec(dllexport) void setLanguage(Settings* object, const char* langValue)
+{
+    object->setLanguage(langValue);
+}
+
+
+
+__declspec(dllexport) void setUsername(Settings* object, const char* nameValue)
+{
+    object->setUsername(nameValue);
+}
+
+
+
+__declspec(dllexport) const char * getLanguage(Settings* object)
+{
+    return nullptr;
+}
+
+
+
+__declspec(dllexport) std::multimap<int, const char*> getSupportingLangs(Settings* object)
+{
+    return object->getSupportingLangs();
+}
+
+
+
+__declspec(dllexport) const char * getUsername(Settings* object)
+{
+    return object->getUsername();
+}
+
+
+
+__declspec(dllexport) std::multimap<const char*, void*> getMethodsToResolveErrors(Settings* object)
+{
+    return object->getMethodsToResolveErrors();
+}
+
+
+
+__declspec(dllexport) void SettingsDelete(Settings* object)
 {
     delete object;
 }
