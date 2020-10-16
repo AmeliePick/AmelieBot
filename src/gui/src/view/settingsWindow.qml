@@ -16,8 +16,8 @@ Window
 
     Item
     {
-        x: 70;
-        y: 200;
+        x: 150
+        y: 85;
         width: 500;
         height: 50;
 
@@ -42,15 +42,18 @@ Window
             y: 0
             width: 383
             height: 50;
-            color: "#1f2646";
+            verticalAlignment: Text.AlignVCenter;
+            font.family: "Montserrat";
+            font.pixelSize: 20;
+            color: "white";
         }
     }
 
 
     Item
     {
-        x: 70;
-        y: 250;
+        x: 150
+        y: 170
         width: 500;
         height: 50;
 
@@ -77,10 +80,10 @@ Window
         ComboBox
         {
             id: applang;
-            x: 184
-            y: 0
+            x: 189
+            y: 9
             width: 316
-            height: 50;
+            height: 33
 
             model: languages;
         }
@@ -89,11 +92,12 @@ Window
 
     Item
     {
-        id: item1
+        id: buttons
         x: 137
-        y: 368
+        y: 269
         width: 350;
         height: 100;
+        anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
 
         Button
@@ -103,14 +107,21 @@ Window
             y: 30;
             width: 80;
             height: 40;
-            text: "Apply";
+
+
 
             contentItem: Text
             {
+                width: 60;
+                height: 40;
+
+                verticalAlignment: Text.AlignVCenter;
+                horizontalAlignment: Text.AlignHCenter;
+
                 color: "gray";
-                font.family: "Montserrat";
                 font.pixelSize: 20;
-                text: buttonApply.text;
+                font.family: "Montserrat";
+                text: "Apply";
             }
 
             background: Rectangle
@@ -122,19 +133,23 @@ Window
 
         Button
         {
-            id: buttonCancel;
             x: 195;
             y: 30;
             width: 80;
             height: 40;
-            text: "Cancel";
 
             contentItem: Text
             {
+                width: 60;
+                height: 40;
+
+                verticalAlignment: Text.AlignVCenter;
+                horizontalAlignment: Text.AlignHCenter;
+
                 color: "gray";
-                font.family: "Montserrat";
                 font.pixelSize: 20;
-                text: buttonCancel.text;
+                font.family: "Montserrat";
+                text: "Cancel";
             }
 
             background: Rectangle
@@ -143,17 +158,4 @@ Window
             }
         }
     }
-
-
-
-
-
 }
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorZoom:1.659999966621399;height:480;width:640}
-}
-##^##*/
