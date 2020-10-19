@@ -1,5 +1,7 @@
 #include "amelie.h"
 
+
+
 #pragma region AmelieApplication
 AmelieApplication::AmelieApplication()
 {
@@ -29,7 +31,6 @@ void AmelieApplication::changeInputMode(bool enableVoice)
 int AmelieApplication::main(int argc, char** argv)
 {
     GUI gui(argc, argv);
-
     /* Filling the settings file
     while(settings->getLanguage() == "-" || settings->getUsername() == "")
     {
@@ -37,9 +38,9 @@ int AmelieApplication::main(int argc, char** argv)
     }
 
     initChatBot();*/
+
     return gui.showSettingsWindow(settings);
 }
-
 #pragma endregion
 
 
@@ -206,13 +207,13 @@ AmelieApplication::FileManager::~FileManager()
 
 
 #pragma region Settings
-AmelieApplication::Settings::Settings()
+Settings::Settings()
 {
     this->classInstance = SettingsCreateInstance();
 }
 
 
-AmelieApplication::Settings* AmelieApplication::Settings::getInstance()
+Settings* Settings::getInstance()
 {
     static Settings* instance = new Settings();
     return instance;
@@ -220,42 +221,42 @@ AmelieApplication::Settings* AmelieApplication::Settings::getInstance()
 
 
 
-void AmelieApplication::Settings::setLanguage(const char* langValue)
+void Settings::setLanguage(QString langValue)
 {
-    SettingsSetLanguage(classInstance, langValue);
+    SettingsSetLanguage(classInstance, langValue.toStdString().c_str());
 }
 
 
 
-void AmelieApplication::Settings::setUsername(const char* nameValue)
+void Settings::setUsername(QString nameValue)
 {
-    SettingsSetUsername(classInstance, nameValue);
+    SettingsSetUsername(classInstance, nameValue.toStdString().c_str());
 }
 
 
 
-const char* AmelieApplication::Settings::getLanguage()
+const char* Settings::getLanguage()
 {
     return SettingsGetLanguage(classInstance);
 }
 
 
 
-std::multimap<int, const char*> AmelieApplication::Settings::getSupportingLangs()
+std::multimap<int, const char*> Settings::getSupportingLangs()
 {
     return SettingsGetSupportingLangs(classInstance);
 }
 
 
 
-const char* AmelieApplication::Settings::getUsername()
+const char* Settings::getUsername()
 {
     return SettingsGetUsername(classInstance);
 }
 
 
 
-std::multimap<const char*, void*> AmelieApplication::Settings::getMethodsToResolveErrors()
+std::multimap<const char*, void*> Settings::getMethodsToResolveErrors()
 {
     return SettingsGetMethodsToResolveErrors(classInstance);
 }
@@ -350,5 +351,40 @@ const char* AmelieApplication::Dialog::getMessageFor(const char* expression)
 void AmelieApplication::Dialog::changeLanguage(const char* appLanguage)
 {
     DialogChangeLanguage(classInstance, appLanguage);
+}
+
+
+
+
+
+AmelieApplication::GUI::GUI(int argc, char** argv)
+{
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    this->app = new QGuiApplication(argc, argv);
+    this->engine = new QQmlApplicationEngine();
+
+    app->setWindowIcon(QIcon("../../../resources/AppIcon/icon.ico"));
+}
+
+
+
+int AmelieApplication::GUI::showMainWindow(Chat* chat, Dialog* dialog)
+{
+    engine->rootContext()->setContextProperty("Chat", (QObject*)chat);
+    engine->rootContext()->setContextProperty("Dialog", (QObject*)dialog);
+    engine->load(QUrl::fromLocalFile("../src/view/main.qml"));
+
+    return app->exec();
+}
+
+
+
+int AmelieApplication::GUI::showSettingsWindow(Settings* settings)
+{
+    engine->rootContext()->setContextProperty("Settings", settings);
+    engine->load(QUrl::fromLocalFile("../src/view/settingsWindow.qml"));
+
+    return app->exec();
 }
 #pragma endregion

@@ -1,7 +1,41 @@
 #ifndef AMELIE_H
 #define AMELIE_H
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QIcon>
+#include <QString>
 #include "dllimport.inl"
-#include "gui.h"
+
+
+
+class Settings : public QObject
+{
+private:
+    Q_OBJECT
+
+    Settings();
+    Settings(const Settings &) = delete;
+
+    void* classInstance;
+
+public:
+    static Settings* getInstance();
+
+    Q_INVOKABLE void setLanguage(QString langValue);
+
+    Q_INVOKABLE void setUsername(QString nameValue);
+
+    const char* getLanguage();
+
+    std::multimap<int, const char*> getSupportingLangs();
+
+    const char* getUsername();
+
+    std::multimap<const char*, void*> getMethodsToResolveErrors();
+};
+
+
 
 class AmelieApplication
 {
@@ -31,31 +65,6 @@ private:
         void clearFile(const char* file);
 
         ~FileManager();
-    };
-
-
-    class Settings
-    {
-    private:
-        Settings();
-        Settings(const Settings &) = delete;
-
-        void* classInstance;
-
-    public:
-        static Settings* getInstance();
-
-        void setLanguage(const char* langValue);
-
-        void setUsername(const char* nameValue);
-
-        const char* getLanguage();
-
-        std::multimap<int, const char*> getSupportingLangs();
-
-        const char* getUsername();
-
-        std::multimap<const char*, void*> getMethodsToResolveErrors();
     };
 
 
@@ -147,6 +156,21 @@ private:
 
 
         ~Chat();
+    };
+
+
+    class GUI
+    {
+    private:
+        QGuiApplication* app;
+        QQmlApplicationEngine* engine;
+
+    public:
+        GUI(int argc, char** argv);
+
+        int showMainWindow(Chat* chat, Dialog* dialog);
+
+        int showSettingsWindow(Settings* settings);
     };
 
 
