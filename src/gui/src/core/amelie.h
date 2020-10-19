@@ -1,6 +1,6 @@
 #ifndef AMELIE_H
 #define AMELIE_H
-#include <QMultiMap>
+#include "dllimport.inl"
 #include "gui.h"
 
 class AmelieApplication
@@ -39,6 +39,8 @@ private:
     private:
         Settings();
         Settings(const Settings &) = delete;
+
+        void* classInstance;
 
     public:
         static Settings* getInstance();
@@ -79,6 +81,8 @@ private:
         Logger();
         Logger(const Logger &) = delete;
 
+        void* classInstance;
+
     public:
         static Logger* getInstance();
 
@@ -95,6 +99,8 @@ private:
         Dialog(const char* applanguage);
         Dialog(const Dialog &) = delete;
 
+        void* classInstance;
+
     public:
         static Dialog* getInstance(const char* appLanguage);
 
@@ -107,8 +113,6 @@ private:
     class Chat
     {
     private:
-        void* classInstance;
-
         Chat() = delete;
         Chat(const char* appLanguage);
         Chat(const Chat &) = delete;
@@ -117,6 +121,8 @@ private:
         void doAction(const char* inputType);
 
         void updateProgramList();
+
+        void* classInstance;
 
     public:
         static Chat* getInstance(const char* appLanguage);

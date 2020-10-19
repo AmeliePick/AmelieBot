@@ -1,5 +1,5 @@
 #define _AMD64_
-#include "amelie.h"
+#include <QMultiMap>
 #include <Libloaderapi.h>
 
 
@@ -27,6 +27,73 @@ typedef const char*(*GetUserInput)(void* object);
 typedef void(*Delete)(void* object);
 
 
+
+
+
+typedef void*(*SettingsInstance)();
+
+typedef void(*setLang)(void* object, const char* langValue);
+
+typedef void(*setUsername)(void* object, const char* nameValue);
+
+typedef const char*(*getLang)(void* object);
+
+typedef std::multimap<int, const char*>(*getSupportingLangs)(void* object);
+
+typedef const char*(*getUsername)(void* object);
+
+typedef std::multimap<const char*, void*> (*getMethods)(void* object);
+
+
+
+
+
+typedef void*(*FileManagerInstance)();
+
+typedef bool(*fileExist)(void* object, const char* file);
+
+typedef void (*writeToFile)(void* object, const char* value, const char* file, const char* mode, const char* _encoding);
+
+typedef const char*(*readFile)(void* object, const char* file, const char* _encoding);
+
+typedef void (*createFile)(void* object, const char* file);
+
+typedef void (*deleteFile)(void* object, const char* file);
+
+typedef void (*clearFile)(void* object, const char* file);
+
+
+
+
+
+typedef void* (*NetworkInstance)();
+
+typedef bool (*checkNetworkConnection)(void* object);
+
+
+
+
+
+typedef void* (*LoggerInstance)();
+
+typedef void (*addRecord)(void* object, const char* recordTitle, const char* value);
+
+typedef void (*logWrite)(void* object);
+
+
+
+
+
+typedef void* (*DialogInstance)(const char* appLanguage);
+
+typedef const char* (*getMessageFor)(void* object, const char* expression);
+
+typedef void (*changeLanguage)(void* object, const char* appLanguage);
+
+
+
+
+
 static AmelieInstance AmelieCreateInstance = (AmelieInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieCreateInstance");
 static ChangeLanguage AmelieChangeLanguage = (ChangeLanguage)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieChangeLanguage");
 static Conversation AmelieConversation = (Conversation)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieConversation");
@@ -38,3 +105,56 @@ static GetVoice AmelieGetVoice = (GetVoice)GetProcAddress(LoadLibraryA("AmelieLi
 static SetVoice AmelieSetVoice = (SetVoice)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieSetVoice");
 static GetUserInput AmelieGetUserInput = (GetUserInput)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieGetUserInput");
 static Delete AmelieDelete = (Delete)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieDelete");
+
+
+
+
+
+static SettingsInstance SettingsCreateInstance = (SettingsInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "SettingsGetInstance");
+static setLang SettingsSetLanguage = (setLang)GetProcAddress(LoadLibraryA("AmelieLibrary"), ".setLanguage");
+static getLang SettingsGetLanguage = (getLang)GetProcAddress(LoadLibraryA("AmelieLibrary"), ".getLanguage");
+static setUsername SettingsSetUsername = (setUsername)GetProcAddress(LoadLibraryA("AmelieLibrary"), "setUsername");
+static getSupportingLangs SettingsGetSupportingLangs = (getSupportingLangs)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getSupportingLangs");
+static getUsername SettingsGetUsername = (getUsername)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getUsername");
+static getMethods SettingsGetMethodsToResolveErrors = (getMethods)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getMethodsToResolveErrors  ");
+static Delete SettingsDelete = (Delete)GetProcAddress(LoadLibraryA("AmelieLibrary"), "SettingsDelete");
+
+
+
+
+
+static FileManagerInstance FileManagerCreateInstance = (FileManagerInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "SettingsGetInstance");
+static fileExist FMfileExist = (fileExist)GetProcAddress(LoadLibraryA("AmelieLibrary"), "fileExist");
+static writeToFile FMWriteToFile = (writeToFile)GetProcAddress(LoadLibraryA("AmelieLibrary"), "writeToFile");
+static readFile FMreadFile = (readFile)GetProcAddress(LoadLibraryA("AmelieLibrary"), "readFile");
+static createFile FMcreateFile = (createFile)GetProcAddress(LoadLibraryA("AmelieLibrary"), "createFile");
+static deleteFile FMdeleteFile = (deleteFile)GetProcAddress(LoadLibraryA("AmelieLibrary"), "deleteFile");
+static clearFile FMclearFile = (clearFile)GetProcAddress(LoadLibraryA("AmelieLibrary"), "clearFile");
+static Delete FileManagerDelete = (Delete)GetProcAddress(LoadLibraryA("AmelieLibrary"), "FileManagerDelete");
+
+
+
+
+
+static NetworkInstance NetworkCreateInstance = (NetworkInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "NetworkGetInstance");
+static checkNetworkConnection NetworkCheckNetworkConnection = (checkNetworkConnection)GetProcAddress(LoadLibraryA("AmelieLibrary"), "checkNetworkConnection");
+
+
+
+
+
+static LoggerInstance LoggerCreateInstance = (LoggerInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "LoggerGetInstance");
+static addRecord LoggerAddRecord = (addRecord)GetProcAddress(LoadLibraryA("AmelieLibrary"), "addRecord");
+static logWrite LoggerLogWrite = (logWrite)GetProcAddress(LoadLibraryA("AmelieLibrary"), "logWrite");
+
+
+
+
+
+static DialogInstance DialogCreateInstance = (DialogInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "DialogGetInstance");
+static getMessageFor DialogGetMessageFor = (getMessageFor)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getMessageFor");
+static changeLanguage DialogChangeLanguage = (changeLanguage)GetProcAddress(LoadLibraryA("AmelieLibrary"), "changeLanguage");
+
+
+
+
