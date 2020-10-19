@@ -1,5 +1,7 @@
-#include <iostream>
 #include "libraryInterface.h"
+#include <map>
+
+
 
 
 __declspec(dllexport) void* AmelieCreateInstance(const char* appLanguage)
@@ -81,7 +83,7 @@ __declspec(dllexport) void AmelieDelete(Amelie* object)
 
 
 
-__declspec(dllexport) Settings* getInstance()
+__declspec(dllexport) Settings* SettingsGetInstance()
 {
     return Settings::getInstance();
 }
@@ -104,7 +106,7 @@ __declspec(dllexport) void setUsername(Settings* object, const char* nameValue)
 
 __declspec(dllexport) const char * getLanguage(Settings* object)
 {
-    return nullptr;
+    return object->getLanguage();
 }
 
 
@@ -133,4 +135,124 @@ __declspec(dllexport) std::multimap<const char*, void*> getMethodsToResolveError
 __declspec(dllexport) void SettingsDelete(Settings* object)
 {
     delete object;
+}
+
+
+
+
+
+__declspec(dllexport) FileManager* FileManagerGetInstance()
+{
+    return FileManager::getInstance();
+}
+
+
+
+__declspec(dllexport) bool fileExist(FileManager* object, const char* file)
+{
+    return object->fileExist(file);
+}
+
+
+
+__declspec(dllexport) void writeToFile(FileManager* object, const char* value, const char* file, const char* mode, const char* _encoding)
+{
+    object->writeToFile(value, file, mode, _encoding);
+}
+
+
+
+__declspec(dllexport) const char* readFile(FileManager* object, const char* file, const char* _encoding)
+{
+    return object->readFile(file, _encoding);
+}
+
+
+
+__declspec(dllexport) void createFile(FileManager* object, const char* file)
+{
+    object->createFile(file);
+}
+
+
+
+__declspec(dllexport) void deleteFile(FileManager* object, const char* file)
+{
+    object->deleteFile(file);
+}
+
+
+
+__declspec(dllexport) void clearFile(FileManager* object, const char* file)
+{
+    object->clearFile(file);
+}
+
+
+
+__declspec(dllexport) void FileManagerDelete(FileManager* object)
+{
+    delete object;
+}
+
+
+
+
+
+__declspec(dllexport) Network* NetworkGetInstance()
+{
+    return Network::getInstance();
+}
+
+
+
+__declspec(dllexport) bool checkNetworkConnection(Network* object)
+{
+    return object->checkNetworkConnection();
+}
+
+
+
+
+
+__declspec(dllexport) Logger* LoggerGetInstance()
+{
+    return Logger::getInstance();
+}
+
+
+
+__declspec(dllexport) void addRecord(Logger* object, const char* recordTitle, const char* value)
+{
+    object->addRecord(recordTitle, value);
+}
+
+
+
+__declspec(dllexport) void logWrite(Logger* object)
+{
+    object->logWrite();
+}
+
+
+
+
+
+__declspec(dllexport) Dialog* DialogGetInstance(Dialog* object, const char* appLanguage)
+{
+    return object->getInstance(appLanguage);
+}
+
+
+
+__declspec(dllexport) const char* getMessageFor(Dialog* object, const char* expression)
+{
+    return object->getMessageFor(expression);
+}
+
+
+
+__declspec(dllexport) void changeLanguage(Dialog* object, const char* appLanguage)
+{
+    object->changeLanguage(appLanguage);
 }
