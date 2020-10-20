@@ -18,7 +18,7 @@ class Settings(metaclass = Singleton):
     _iniParser: IniParser
     _methods: dict
 
-    _supportingLangs: dict
+    _supportingLangs: list
 
 
     def __init__(self):
@@ -80,7 +80,8 @@ class Settings(metaclass = Singleton):
 
 
 
-    def getSupportingLangs(self) -> dict:
+    def getSupportingLangs(self) -> list:
+        self._supportingLangs = self._iniParser.getValue("AppData", "langs", "../setup/AppSetup.ini").split(',')
         return self._supportingLangs
 
 
