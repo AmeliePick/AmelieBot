@@ -40,9 +40,9 @@ extern "C" __declspec(dllexport) void setLanguage(Settings* object, const char* 
 
 extern "C" __declspec(dllexport) void setUsername(Settings* object, const char* nameValue);
 
-extern "C" __declspec(dllexport) const char* getLanguage();
+extern "C" __declspec(dllexport) const char* getLanguage(Settings* object);
 
-extern "C++" __declspec(dllexport) std::multimap<int, const char*> getSupportingLangs(Settings* object);
+extern "C++" __declspec(dllexport) std::vector<const char*> getSupportingLangs(Settings* object);
 
 extern "C" __declspec(dllexport) const char* getUsername(Settings* object);
 

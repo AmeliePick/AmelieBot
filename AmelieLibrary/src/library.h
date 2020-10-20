@@ -1,7 +1,7 @@
 #pragma once
 #include "function.h"
 #include "class.h"
-
+#include <vector>
 
 
 namespace library
@@ -265,7 +265,7 @@ namespace library
 
             const char* getLanguage();
 
-            std::multimap<int, const char*> getSupportingLangs();
+            std::vector<const char*> getSupportingLangs();
 
             const char* getUsername();
 

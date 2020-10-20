@@ -104,14 +104,14 @@ __declspec(dllexport) void setUsername(Settings* object, const char* nameValue)
 
 
 
-__declspec(dllexport) const char * getLanguage(Settings* object)
+__declspec(dllexport) const char* getLanguage(Settings* object)
 {
     return object->getLanguage();
 }
 
 
 
-__declspec(dllexport) std::multimap<int, const char*> getSupportingLangs(Settings* object)
+__declspec(dllexport) std::vector<const char*> getSupportingLangs(Settings* object)
 {
     return object->getSupportingLangs();
 }

@@ -105,7 +105,7 @@ const char* library::chat::AICore::Chat::getInputType()
 std::multimap<const char*, const char*> library::chat::AICore::Chat::getSessionInput()
 {
     Function::Arguments arg;
-    return callMethod("getSessionInput", arg).ToDict<const char*, const char*>();
+    return callMethod("getSessionInput", arg).ToMultimap<const char*, const char*>();
 }
 
 
@@ -569,10 +569,10 @@ const char* library::main::Settings::getLanguage()
 
 
 
-std::multimap<int, const char*> library::main::Settings::getSupportingLangs()
+std::vector<const char*> library::main::Settings::getSupportingLangs()
 {
     Function::Arguments arg;
-    return callMethod("getSupportingLangs", arg).ToDict<int, const char*>();
+    return callMethod("getSupportingLangs", arg).ToVector<const char*>();
 }
 
 
@@ -588,5 +588,5 @@ const char* library::main::Settings::getUsername()
 std::multimap<const char*, void*> library::main::Settings::getMethodsToResolveErrors()
 {
     Function::Arguments arg;
-    return callMethod("getMethodsToResolveErrors", arg).ToDict<const char*, void*>();
+    return callMethod("getMethodsToResolveErrors", arg).ToMultimap<const char*, void*>();
 }

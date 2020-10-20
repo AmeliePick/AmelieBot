@@ -28,7 +28,7 @@ public:
 
     const char* getLanguage();
 
-    std::multimap<int, const char*> getSupportingLangs();
+    Q_INVOKABLE std::vector<const char*> getSupportingLangs();
 
     const char* getUsername();
 
