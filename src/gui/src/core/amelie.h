@@ -30,7 +30,7 @@ public:
 
     Q_INVOKABLE std::vector<const char*> getSupportingLangs();
 
-    const char* getUsername();
+    Q_INVOKABLE QString getUsername();
 
     std::multimap<const char*, void*> getMethodsToResolveErrors();
 };
@@ -174,6 +174,11 @@ private:
     };
 
 
+    AmelieApplication();
+    AmelieApplication(const AmelieApplication &) = delete;
+
+
+
     typedef void(*input)();
     input inputMode;
 
@@ -184,15 +189,45 @@ private:
     Dialog* dialog;
     Chat* chat;
 
+    GUI* gui;
+
 
 public:
-    AmelieApplication();
+    static AmelieApplication* getInstance();
 
     void initChatBot();
 
     void changeInputMode(bool enableVoice);
 
+    void showSettingsWindow();
+
+    QString chatConversation(QString input);
+
+    void setVoice(bool enableVoice);
+
     int main(int argc, char** argv);
+};
+
+
+
+class AmelieEvent : public QObject
+{
+private:
+    Q_OBJECT
+
+    AmelieApplication* amelie;
+
+public:
+    AmelieEvent();
+
+    Q_INVOKABLE QString chatConversation(QString input);
+
+    Q_INVOKABLE void showSettingsWindow();
+
+    Q_INVOKABLE void setVoice(bool enableVoice);
+
+public:
+
 };
 
 #endif // AMELIE_H

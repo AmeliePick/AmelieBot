@@ -3,6 +3,6 @@
 
 int main(int argc, char *argv[])
 {
-    AmelieApplication amelie;
-    return amelie.main(argc, argv);
+    AmelieApplication* amelie = AmelieApplication::getInstance();
+    return amelie->main(argc, argv);
 }
