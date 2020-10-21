@@ -84,7 +84,7 @@ extern "C" __declspec(dllexport) void logWrite(Logger* object);
 
 
 
-extern "C" __declspec(dllexport) Dialog* DialogGetInstance(Dialog* object, const char* appLanguage);
+extern "C" __declspec(dllexport) Dialog* DialogGetInstance(const char* appLanguage);
 
 extern "C" __declspec(dllexport) const char* getMessageFor(Dialog* object, const char* expression);
 

@@ -1,5 +1,6 @@
 #define _AMD64_
 #include <QMultiMap>
+#include <vector>
 #include <Libloaderapi.h>
 
 
@@ -38,7 +39,7 @@ typedef void(*setUsername)(void* object, const char* nameValue);
 
 typedef const char*(*getLang)(void* object);
 
-typedef std::multimap<int, const char*>(*getSupportingLangs)(void* object);
+typedef std::vector<const char*>(*getSupportingLangs)(void* object);
 
 typedef const char*(*getUsername)(void* object);
 
@@ -111,12 +112,12 @@ static Delete AmelieDelete = (Delete)GetProcAddress(LoadLibraryA("AmelieLibrary"
 
 
 static SettingsInstance SettingsCreateInstance = (SettingsInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "SettingsGetInstance");
-static setLang SettingsSetLanguage = (setLang)GetProcAddress(LoadLibraryA("AmelieLibrary"), ".setLanguage");
-static getLang SettingsGetLanguage = (getLang)GetProcAddress(LoadLibraryA("AmelieLibrary"), ".getLanguage");
+static setLang SettingsSetLanguage = (setLang)GetProcAddress(LoadLibraryA("AmelieLibrary"), "setLanguage");
+static getLang SettingsGetLanguage = (getLang)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getLanguage");
 static setUsername SettingsSetUsername = (setUsername)GetProcAddress(LoadLibraryA("AmelieLibrary"), "setUsername");
-static getSupportingLangs SettingsGetSupportingLangs = (getSupportingLangs)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getSupportingLangs");
+static getSupportingLangs SettingsGetSupportingLangs = (getSupportingLangs)GetProcAddress(LoadLibraryA("AmelieLibrary"), "?getSupportingLangs@@YA?AV?$vector@PEBDV?$allocator@PEBD@std@@@std@@PEAVSettings@main@library@@@Z");
 static getUsername SettingsGetUsername = (getUsername)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getUsername");
-static getMethods SettingsGetMethodsToResolveErrors = (getMethods)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getMethodsToResolveErrors  ");
+static getMethods SettingsGetMethodsToResolveErrors = (getMethods)GetProcAddress(LoadLibraryA("AmelieLibrary"), "?getMethodsToResolveErrors@@YA?AV?$multimap@PEBDPEAXU?$less@PEBD@std@@V?$allocator@U?$pair@QEBDPEAX@std@@@2@@std@@PEAVSettings@main@library@@@Z");
 static Delete SettingsDelete = (Delete)GetProcAddress(LoadLibraryA("AmelieLibrary"), "SettingsDelete");
 
 

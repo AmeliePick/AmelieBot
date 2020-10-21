@@ -238,9 +238,9 @@ __declspec(dllexport) void logWrite(Logger* object)
 
 
 
-__declspec(dllexport) Dialog* DialogGetInstance(Dialog* object, const char* appLanguage)
+__declspec(dllexport) Dialog* DialogGetInstance(const char* appLanguage)
 {
-    return object->getInstance(appLanguage);
+    return Dialog::getInstance(appLanguage);
 }
 
 
