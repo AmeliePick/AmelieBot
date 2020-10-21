@@ -46,6 +46,8 @@ Window
             font.family: "Montserrat";
             font.pixelSize: 20;
             color: "white";
+            text: Settings.getUsername();
+
         }
     }
 
@@ -71,12 +73,6 @@ Window
             verticalAlignment: Text.AlignVCenter;
         }
 
-
-        ListModel
-        {
-            id: languages;
-        }
-
         ComboBox
         {
             id: applang;
@@ -85,7 +81,7 @@ Window
             width: 316
             height: 33
 
-            model: languages;
+            model: Langs
         }
     }
 
@@ -128,6 +124,13 @@ Window
             {
                 color: "#1f2646";
             }
+
+            onClicked:
+            {
+                Settings.setUsername(userName.text);
+                Settings.setLanguage(applang.currentText);
+                settingsWindow.close();
+            }
         }
 
 
@@ -155,6 +158,11 @@ Window
             background: Rectangle
             {
                 color: "#1f2646";
+            }
+
+            onClicked:
+            {
+                settingsWindow.close();
             }
         }
     }

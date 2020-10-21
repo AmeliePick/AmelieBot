@@ -108,6 +108,11 @@ Window
                         font.family: "Montserrat";
                         text: "Settings";
                     }
+
+                    onClicked:
+                    {
+                        Event.showSettingsWindow();
+                    }
                 }
 
 
@@ -153,6 +158,9 @@ Window
 
             ListView
             {
+                topMargin: 20;
+                leftMargin: 20;
+                rightMargin: 20;
                 id: chat;
                 width: 1295
                 height: 694
@@ -178,6 +186,7 @@ Window
             }
             TextInput
             {
+                id: textInput;
                 y: 700;
                 height: 80;
                 width: 1295;
@@ -188,6 +197,19 @@ Window
                 bottomPadding: 15;
                 font.family: "Montserrat";
                 text: "Enter the message: ";
+
+
+                onAccepted:
+                {
+                    var answer = Event.chatConversation(textInput.text);
+
+                    messageModel.append({text: textInput.text, avatar: "../../../../resources/AppIcon/userAvatar.png"})
+                    messageModel.append({mirror: Qt.matrix4x4(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), text: answer,
+                                         avatar: "../../../../resources/AppIcon/botAvatar.png"})
+
+                    textInput.text = "";
+
+                }
             }
 
 
@@ -205,6 +227,11 @@ Window
                     height: 80;
                     source: "res/images/microphone.ico";
                 }
+
+                onClicked:
+                {
+                    Event.setVoice(true);
+                }
             }
 
 
@@ -212,3 +239,8 @@ Window
         }
     }
 }
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorZoom:0.5;height:480;width:640}
+}
+##^##*/

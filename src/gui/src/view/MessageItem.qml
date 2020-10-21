@@ -8,6 +8,15 @@ Item
 
     property alias text: message.text;
     property alias avatar: avatar.source;
+    property alias mirror: mirrorMatrix.matrix;
+
+    Matrix4x4
+    {
+        id: mirrorMatrix;
+        matrix: Qt.matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+    }
+
+    transform: mirrorMatrix;
 
     width: 640;
     height: 135;
@@ -20,7 +29,6 @@ Item
         width: 86
         height: 86
         radius: 400;
-        visible: !sentByMe;
         Image
         {
             id: avatar;
@@ -44,10 +52,10 @@ Item
         // Arrow
         Shape
         {
-            x: 0;
-            y: 0;
-            width: 32;
-            height: 32;
+            x: -6
+            y: 14
+            width: 82
+            height: 68
 
             ShapePath
             {
@@ -55,8 +63,8 @@ Item
                   strokeColor: "#32406f"
                   fillColor: "#32406f";
                   startX: 0; startY: 0;
-                  PathLine { x: 80; y: 80;  }
-                  PathLine { x: 40; y: 100 ;}
+                  PathLine { x: 90; y: 40;  }
+                  PathLine { x: 30; y: 40 ;}
               }
           }
 
@@ -66,7 +74,6 @@ Item
             y: 23;
             width: 537;
             height: 67;
-            visible: !sentByMe;
             color: "#32406f";
 
 
@@ -83,3 +90,9 @@ Item
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:1.100000023841858}
+}
+##^##*/
