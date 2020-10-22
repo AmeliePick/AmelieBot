@@ -261,7 +261,7 @@ namespace library
 
             void setLanguage(const char* langValue);
 
-            void setUsername(const char* nameValue);
+            bool setUsername(const char* nameValue);
 
             const char* getLanguage();
 

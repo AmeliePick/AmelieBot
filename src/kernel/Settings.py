@@ -5,6 +5,7 @@ from Singleton              import Singleton
 from tools.system           import FileManager
 from tools.iniParser        import IniParser
 
+from re import sub
 
 
 class Settings(metaclass = Singleton):
@@ -68,10 +69,12 @@ class Settings(metaclass = Singleton):
 
 
 
-    def setUsername(self, nameValue: str) -> None:
-        self._iniParser.setValue("User", "name", nameValue)
+    def setUsername(self, nameValue: str) -> bool:
+        if len(sub('[\t, \n, \r \s]', '', nameValue)) >= 2:
+            self._iniParser.setValue("User", "name", nameValue)
+            return True
 
-        return
+        return False
 
 
 

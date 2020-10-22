@@ -553,10 +553,10 @@ void library::main::Settings::setLanguage(const char* langValue)
 
 
 
-void library::main::Settings::setUsername(const char* nameValue)
+bool library::main::Settings::setUsername(const char* nameValue)
 {
     Function::Arguments arg(nameValue);
-    callMethod("setUsername", arg);
+    return callMethod("setUsername", arg).ToBool();
 }
 
 
