@@ -161,16 +161,25 @@ Window
                 topMargin: 20;
                 leftMargin: 20;
                 rightMargin: 20;
+
                 id: chat;
-                width: 1295
-                height: 694
+                width: 1295;
+                height: 670;
                 spacing: 20;
+                ScrollBar.vertical: ScrollBar {}
 
                 model: messageModel;
                 delegate: MessageItem
                 {
+                    toReflect: model.toReflect;
+                    positionX: model.positionX;
                     text: model.text;
                     avatar: model.avatar;
+                }
+
+                onCountChanged:
+                {
+                    highlightFollowsCurrentItem
                 }
 
             }
@@ -193,19 +202,21 @@ Window
                 font.pixelSize: 32;
                 color: "#626262";
                 leftPadding: 30;
+                rightPadding: 30;
                 topPadding: 15;
                 bottomPadding: 15;
                 font.family: "Montserrat";
                 text: "Enter the message: ";
 
-
                 onAccepted:
                 {
                     var answer = Event.chatConversation(textInput.text);
 
-                    messageModel.append({text: textInput.text, avatar: "../../../../resources/AppIcon/userAvatar.png"})
-                    messageModel.append({mirror: Qt.matrix4x4(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), text: answer,
-                                         avatar: "../../../../resources/AppIcon/botAvatar.png"})
+                    messageModel.append({positionX: 0, toReflect: 1,text: textInput.text, avatar: "../../../../resources/AppIcon/userAvatar.png"})
+
+                    messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: "../../../../resources/AppIcon/botAvatar.png"});
+
+                    chat.positionViewAtEnd();
 
                     textInput.text = "";
 
@@ -239,6 +250,10 @@ Window
         }
     }
 }
+
+
+
+
 /*##^##
 Designer {
     D{i:0;autoSize:true;formeditorZoom:0.5;height:480;width:640}

@@ -8,15 +8,12 @@ Item
 
     property alias text: message.text;
     property alias avatar: avatar.source;
-    property alias mirror: mirrorMatrix.matrix;
+    property alias toReflect: mirror.xScale;
+    property alias positionX: messageItem.x;
 
-    Matrix4x4
-    {
-        id: mirrorMatrix;
-        matrix: Qt.matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-    }
+    Scale{ id: mirror; xScale: 1 }
+    transform: mirror;
 
-    transform: mirrorMatrix;
 
     width: 640;
     height: 135;
@@ -24,8 +21,18 @@ Item
     Rectangle
     {
         id: avatar_circle;
-        x: 0
-        y: 0
+        transform: mirror;
+        y: 0;
+        x:
+        {
+            if(toReflect == 1)
+            {
+
+                avatar_circle.x = 0;
+            }
+            else
+                avatar_circle.x = 80;
+        }
         width: 86
         height: 86
         radius: 400;
@@ -76,10 +83,19 @@ Item
             height: 67;
             color: "#32406f";
 
-
             Text
             {
                 id: message
+                transform: mirror;
+                x:{
+                    if(toReflect == 1)
+                    {
+
+                        message.x = 0;
+                    }
+                    else
+                        message.x = 537;
+                }
                 width: 537
                 height: 67
                 padding: 10;
@@ -93,6 +109,6 @@ Item
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.100000023841858}
+    D{i:0;formeditorZoom:0.8999999761581421}
 }
 ##^##*/
