@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 Window
 {
     id: settingsWindow;
+    title: qsTr("Settings")
     color: "#0c1128";
     visible: true;
 
@@ -46,8 +47,21 @@ Window
             font.family: "Montserrat";
             font.pixelSize: 20;
             color: "white";
-            text: Settings.getUsername();
+            text: Event.getUsername();
 
+        }
+
+        Text
+        {
+            id: usernameErrorText;
+            width: 500
+            height: 23
+            x: 0
+            y: 42
+            color: "Red";
+            font.family: "Montserrat";
+            font.pixelSize: 15;
+            verticalAlignment: Text.AlignVCenter;
         }
     }
 
@@ -127,9 +141,18 @@ Window
 
             onClicked:
             {
-                Settings.setUsername(userName.text);
-                Settings.setLanguage(applang.currentText);
-                settingsWindow.close();
+                if(Event.setUsername(userName.text))
+                {
+
+                    Event.setLanguage(applang.currentText);
+                    settingsWindow.close();
+                }
+                else
+                {
+                    usernameErrorText.text = "Username is too short, please try again."
+                }
+
+
             }
         }
 
@@ -167,3 +190,9 @@ Window
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorZoom:1.75;height:480;width:640}
+}
+##^##*/
