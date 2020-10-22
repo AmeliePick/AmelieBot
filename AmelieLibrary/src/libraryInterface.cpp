@@ -97,9 +97,9 @@ __declspec(dllexport) void setLanguage(Settings* object, const char* langValue)
 
 
 
-__declspec(dllexport) void setUsername(Settings* object, const char* nameValue)
+__declspec(dllexport) bool setUsername(Settings* object, const char* nameValue)
 {
-    object->setUsername(nameValue);
+    return object->setUsername(nameValue);
 }
 
 
@@ -235,24 +235,3 @@ __declspec(dllexport) void logWrite(Logger* object)
 }
 
 
-
-
-
-__declspec(dllexport) Dialog* DialogGetInstance(const char* appLanguage)
-{
-    return Dialog::getInstance(appLanguage);
-}
-
-
-
-__declspec(dllexport) const char* getMessageFor(Dialog* object, const char* expression)
-{
-    return object->getMessageFor(expression);
-}
-
-
-
-__declspec(dllexport) void changeLanguage(Dialog* object, const char* appLanguage)
-{
-    object->changeLanguage(appLanguage);
-}

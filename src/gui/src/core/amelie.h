@@ -9,31 +9,40 @@
 
 
 
-class Settings : public QObject
+class AmelieEvent : public QObject
 {
 private:
     Q_OBJECT
 
-    Settings();
-    Settings(const Settings &) = delete;
+    class AmelieApplication* amelie;
 
-    void* classInstance;
+    AmelieEvent();
+    AmelieEvent(const AmelieEvent &) = delete;
 
 public:
-    static Settings* getInstance();
+    static AmelieEvent* getInstance();
 
-    Q_INVOKABLE void setLanguage(QString langValue);
+    Q_INVOKABLE QString chatConversation(QString input);
 
-    Q_INVOKABLE void setUsername(QString nameValue);
+    Q_INVOKABLE void showSettingsWindow();
 
-    const char* getLanguage();
+    Q_INVOKABLE void setVoice(bool enableVoice);
 
-    Q_INVOKABLE std::vector<const char*> getSupportingLangs();
+    Q_INVOKABLE bool setUsername(QString nameValue);
 
     Q_INVOKABLE QString getUsername();
 
-    std::multimap<const char*, void*> getMethodsToResolveErrors();
+    Q_INVOKABLE void setLanguage(QString langValue);
+
+    Q_INVOKABLE QString getLanguage();
+
+    Q_INVOKABLE std::vector<const char*> getSupportingLangs();
+
+public:
+
 };
+
+
 
 
 
@@ -68,6 +77,7 @@ private:
     };
 
 
+
     class Network
     {
     private:
@@ -82,6 +92,7 @@ private:
 
         bool checkNetworkConnection();
     };
+
 
 
     class Logger
@@ -101,22 +112,31 @@ private:
     };
 
 
-    class Dialog
+
+    class Settings
     {
     private:
-        Dialog() = delete;
-        Dialog(const char* applanguage);
-        Dialog(const Dialog &) = delete;
+        Settings();
+        Settings(const Settings &) = delete;
 
         void* classInstance;
 
     public:
-        static Dialog* getInstance(const char* appLanguage);
+        static Settings* getInstance();
 
-        const char* getMessageFor(const char* expression);
+        void setLanguage(QString langValue);
 
-        void changeLanguage(const char* appLanguage);
+        bool setUsername(QString nameValue);
+
+        const char* getLanguage();
+
+        std::vector<const char*> getSupportingLangs();
+
+        QString getUsername();
+
+        std::multimap<const char*, void*> getMethodsToResolveErrors();
     };
+
 
 
     class Chat
@@ -159,6 +179,7 @@ private:
     };
 
 
+
     class GUI
     {
     private:
@@ -168,10 +189,11 @@ private:
     public:
         GUI(int argc, char** argv);
 
-        int showMainWindow(Chat* chat, Dialog* dialog);
+        int showMainWindow(Chat* chat);
 
-        int showSettingsWindow(Settings* settings);
+        int showSettingsWindow();
     };
+
 
 
     AmelieApplication();
@@ -186,18 +208,24 @@ private:
     Network* network;
 
     Settings* settings;
-    Dialog* dialog;
     Chat* chat;
 
     GUI* gui;
-
 
 public:
     static AmelieApplication* getInstance();
 
     void initChatBot();
 
-    void changeInputMode(bool enableVoice);
+    void setLanguage(QString langValue);
+
+    std::vector<const char*> getSupportingLangs();
+
+    QString getLanguage();
+
+    bool setUsername(QString nameValue);
+
+    QString getUsername();
 
     void showSettingsWindow();
 
@@ -206,28 +234,6 @@ public:
     void setVoice(bool enableVoice);
 
     int main(int argc, char** argv);
-};
-
-
-
-class AmelieEvent : public QObject
-{
-private:
-    Q_OBJECT
-
-    AmelieApplication* amelie;
-
-public:
-    AmelieEvent();
-
-    Q_INVOKABLE QString chatConversation(QString input);
-
-    Q_INVOKABLE void showSettingsWindow();
-
-    Q_INVOKABLE void setVoice(bool enableVoice);
-
-public:
-
 };
 
 #endif // AMELIE_H

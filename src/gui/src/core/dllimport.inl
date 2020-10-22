@@ -35,7 +35,7 @@ typedef void*(*SettingsInstance)();
 
 typedef void(*setLang)(void* object, const char* langValue);
 
-typedef void(*setUsername)(void* object, const char* nameValue);
+typedef bool(*setUsername)(void* object, const char* nameValue);
 
 typedef const char*(*getLang)(void* object);
 
@@ -80,16 +80,6 @@ typedef void* (*LoggerInstance)();
 typedef void (*addRecord)(void* object, const char* recordTitle, const char* value);
 
 typedef void (*logWrite)(void* object);
-
-
-
-
-
-typedef void* (*DialogInstance)(const char* appLanguage);
-
-typedef const char* (*getMessageFor)(void* object, const char* expression);
-
-typedef void (*changeLanguage)(void* object, const char* appLanguage);
 
 
 
@@ -147,14 +137,6 @@ static checkNetworkConnection NetworkCheckNetworkConnection = (checkNetworkConne
 static LoggerInstance LoggerCreateInstance = (LoggerInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "LoggerGetInstance");
 static addRecord LoggerAddRecord = (addRecord)GetProcAddress(LoadLibraryA("AmelieLibrary"), "addRecord");
 static logWrite LoggerLogWrite = (logWrite)GetProcAddress(LoadLibraryA("AmelieLibrary"), "logWrite");
-
-
-
-
-
-static DialogInstance DialogCreateInstance = (DialogInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "DialogGetInstance");
-static getMessageFor DialogGetMessageFor = (getMessageFor)GetProcAddress(LoadLibraryA("AmelieLibrary"), "getMessageFor");
-static changeLanguage DialogChangeLanguage = (changeLanguage)GetProcAddress(LoadLibraryA("AmelieLibrary"), "changeLanguage");
 
 
 

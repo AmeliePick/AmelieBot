@@ -6,7 +6,6 @@
 #define FileManager library::tools::system::FileManager
 #define Network library::tools::system::Network
 #define Logger library::tools::logger::Logger
-#define Dialog library::chat::dialog::Dialog
 
 
 
@@ -38,7 +37,7 @@ extern "C" __declspec(dllexport) Settings* SettingsGetInstance();
 
 extern "C" __declspec(dllexport) void setLanguage(Settings* object, const char* langValue);
 
-extern "C" __declspec(dllexport) void setUsername(Settings* object, const char* nameValue);
+extern "C" __declspec(dllexport) bool setUsername(Settings* object, const char* nameValue);
 
 extern "C" __declspec(dllexport) const char* getLanguage(Settings* object);
 
@@ -83,9 +82,3 @@ extern "C" __declspec(dllexport) void addRecord(Logger* object, const char* reco
 extern "C" __declspec(dllexport) void logWrite(Logger* object);
 
 
-
-extern "C" __declspec(dllexport) Dialog* DialogGetInstance(const char* appLanguage);
-
-extern "C" __declspec(dllexport) const char* getMessageFor(Dialog* object, const char* expression);
-
-extern "C" __declspec(dllexport) void changeLanguage(Dialog* object, const char* appLanguage);

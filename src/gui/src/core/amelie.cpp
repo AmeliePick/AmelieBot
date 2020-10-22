@@ -5,6 +5,84 @@
 
 
 
+
+
+#pragma region AmelieEvent
+AmelieEvent::AmelieEvent()
+{
+    this->amelie = AmelieApplication::getInstance();
+}
+
+
+
+AmelieEvent* AmelieEvent::getInstance()
+{
+    static AmelieEvent* instance = new AmelieEvent();
+    return instance;
+}
+
+
+
+void AmelieEvent::showSettingsWindow()
+{
+    amelie->showSettingsWindow();
+}
+
+
+
+QString AmelieEvent::chatConversation(QString input)
+{
+    return amelie->chatConversation(input);
+}
+
+
+
+void AmelieEvent::setVoice(bool enableVoice)
+{
+    amelie->setVoice(enableVoice);
+}
+
+
+
+bool AmelieEvent::setUsername(QString nameValue)
+{
+    return amelie->setUsername(nameValue);
+}
+
+
+
+QString AmelieEvent::getUsername()
+{
+    return amelie->getUsername();
+}
+
+
+
+void AmelieEvent::setLanguage(QString langValue)
+{
+    amelie->setLanguage(langValue);
+}
+
+
+
+QString AmelieEvent::getLanguage()
+{
+    return amelie->getLanguage();
+}
+
+
+
+std::vector<const char*> AmelieEvent::getSupportingLangs()
+{
+    return amelie->getSupportingLangs();
+}
+
+#pragma endregion
+
+
+
+
+
 #pragma region AmelieApplication
 AmelieApplication::AmelieApplication()
 {
@@ -27,14 +105,6 @@ AmelieApplication* AmelieApplication::getInstance()
 void AmelieApplication::initChatBot()
 {
     this->chat = Chat::getInstance(settings->getLanguage());
-    this->dialog = Dialog::getInstance(settings->getLanguage());
-}
-
-
-
-void AmelieApplication::changeInputMode(bool enableVoice)
-{
-
 }
 
 
@@ -53,6 +123,42 @@ void AmelieApplication::setVoice(bool enableVoice)
 
 
 
+void AmelieApplication::setLanguage(QString langValue)
+{
+    settings->setLanguage(langValue);
+    chat->changeLanguage(langValue.toStdString().c_str());
+}
+
+
+
+std::vector<const char*> AmelieApplication::getSupportingLangs()
+{
+    return settings->getSupportingLangs();
+}
+
+
+
+QString AmelieApplication::getLanguage()
+{
+    return settings->getLanguage();
+}
+
+
+
+bool AmelieApplication::setUsername(QString nameValue)
+{
+    return settings->setUsername(nameValue);
+}
+
+
+
+QString AmelieApplication::getUsername()
+{
+    return settings->getUsername();
+}
+
+
+
 int AmelieApplication::main(int argc, char** argv)
 {
     this->gui = new GUI(argc, argv);
@@ -60,23 +166,21 @@ int AmelieApplication::main(int argc, char** argv)
     // Filling the settings file
     while(settings->getLanguage() == "-" || settings->getUsername() == "")
     {
-        gui->showSettingsWindow(settings);
+        gui->showSettingsWindow();
     }
 
     initChatBot();
 
-    return gui->showMainWindow(chat, dialog);
+    return gui->showMainWindow(chat);
 }
 
 
 
 void AmelieApplication::showSettingsWindow()
 {
-    this->gui->showSettingsWindow(settings);
+    this->gui->showSettingsWindow();
 }
 #pragma endregion
-
-
 
 
 
@@ -240,13 +344,13 @@ AmelieApplication::FileManager::~FileManager()
 
 
 #pragma region Settings
-Settings::Settings()
+AmelieApplication::Settings::Settings()
 {
     this->classInstance = SettingsCreateInstance();
 }
 
 
-Settings* Settings::getInstance()
+AmelieApplication::Settings* AmelieApplication::Settings::getInstance()
 {
     static Settings* instance = new Settings();
     return instance;
@@ -254,42 +358,42 @@ Settings* Settings::getInstance()
 
 
 
-void Settings::setLanguage(QString langValue)
+void AmelieApplication::Settings::setLanguage(QString langValue)
 {
     SettingsSetLanguage(classInstance, langValue.toStdString().c_str());
 }
 
 
 
-void Settings::setUsername(QString nameValue)
+bool AmelieApplication::Settings::setUsername(QString nameValue)
 {
-    SettingsSetUsername(classInstance, nameValue.toStdString().c_str());
+    return SettingsSetUsername(classInstance, nameValue.toStdString().c_str());
 }
 
 
 
-const char* Settings::getLanguage()
+const char* AmelieApplication::Settings::getLanguage()
 {
     return SettingsGetLanguage(classInstance);
 }
 
 
 
-std::vector<const char*> Settings::getSupportingLangs()
+std::vector<const char*> AmelieApplication::Settings::getSupportingLangs()
 {
     return SettingsGetSupportingLangs(classInstance);
 }
 
 
 
-QString Settings::getUsername()
+QString AmelieApplication::Settings::getUsername()
 {
     return SettingsGetUsername(classInstance);
 }
 
 
 
-std::multimap<const char*, void*> Settings::getMethodsToResolveErrors()
+std::multimap<const char*, void*> AmelieApplication::Settings::getMethodsToResolveErrors()
 {
     return SettingsGetMethodsToResolveErrors(classInstance);
 }
@@ -358,40 +462,7 @@ void AmelieApplication::Logger::logWrite()
 
 
 
-#pragma region Dialog
-AmelieApplication::Dialog::Dialog(const char* applanguage)
-{
-    this->classInstance = nullptr;//DialogCreateInstance(applanguage);
-    qInfo() << "Reached";
-
-}
-
-
-
-AmelieApplication::Dialog* AmelieApplication::Dialog::getInstance(const char* appLanguage)
-{
-    static Dialog* instance = new Dialog(appLanguage);
-    return instance;
-}
-
-
-
-const char* AmelieApplication::Dialog::getMessageFor(const char* expression)
-{
-    return DialogGetMessageFor(classInstance, expression);
-}
-
-
-
-void AmelieApplication::Dialog::changeLanguage(const char* appLanguage)
-{
-    DialogChangeLanguage(classInstance, appLanguage);
-}
-
-
-
-
-
+#pragma region GUI
 AmelieApplication::GUI::GUI(int argc, char** argv)
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -404,12 +475,10 @@ AmelieApplication::GUI::GUI(int argc, char** argv)
 
 
 
-int AmelieApplication::GUI::showMainWindow(Chat* chat, Dialog* dialog)
+int AmelieApplication::GUI::showMainWindow(Chat* chat)
 {
-    AmelieEvent notify;
-    engine->rootContext()->setContextProperty("Event", &notify);
+    engine->rootContext()->setContextProperty("Event", AmelieEvent::getInstance());
     engine->rootContext()->setContextProperty("Chat", (QObject*)chat);
-    engine->rootContext()->setContextProperty("Dialog", (QObject*)dialog);
     engine->load(QUrl::fromLocalFile("../src/view/main.qml"));
 
     return app->exec();
@@ -417,14 +486,16 @@ int AmelieApplication::GUI::showMainWindow(Chat* chat, Dialog* dialog)
 
 
 
-int AmelieApplication::GUI::showSettingsWindow(Settings* settings)
+int AmelieApplication::GUI::showSettingsWindow()
 {
-    engine->rootContext()->setContextProperty("Settings", settings);
+    AmelieEvent* event = AmelieEvent::getInstance();
 
-    std::vector<const char*> langs = settings->getSupportingLangs();
+    engine->rootContext()->setContextProperty("Event", event);
+
+    std::vector<const char*> langs = event->getSupportingLangs();
     QVariantList supLangs;
 
-    QString currentLang = settings->getLanguage();
+    QString currentLang = event->getLanguage();
     // If value is actually language value
     if(currentLang != '-')
     {
@@ -451,33 +522,5 @@ int AmelieApplication::GUI::showSettingsWindow(Settings* settings)
 #pragma endregion
 
 
-
-#pragma region AmelieEvent
-AmelieEvent::AmelieEvent()
-{
-    this->amelie = AmelieApplication::getInstance();
-}
-
-
-
-void AmelieEvent::showSettingsWindow()
-{
-    amelie->showSettingsWindow();
-}
-
-
-
-QString AmelieEvent::chatConversation(QString input)
-{
-    return amelie->chatConversation(input);
-}
-
-
-
-void AmelieEvent::setVoice(bool enableVoice)
-{
-    amelie->setVoice(enableVoice);
-}
-#pragma endregion
 
 
