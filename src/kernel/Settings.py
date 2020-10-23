@@ -19,7 +19,6 @@ class Settings(metaclass = Singleton):
     _iniParser: IniParser
     _methods: dict
 
-    _supportingLangs: list
 
 
     def __init__(self):
@@ -37,6 +36,7 @@ class Settings(metaclass = Singleton):
 
         if len(FileManager.readFile("settings.ini")) == 0:
             self._iniParser.setSection("Settings")
+            self._iniParser.setSection("Bot")
             self._iniParser.setSection("User")
 
             self._iniParser.setValue("Settings",
@@ -45,6 +45,8 @@ class Settings(metaclass = Singleton):
                                     )
 
             self._iniParser.setValue("Settings", "lang", "-")
+            self._iniParser.setValue("Bot", "botAvatar", "-")
+            self._iniParser.setValue("User", "userAvatar", "-")
             self._iniParser.setValue("User", "name", '')
 
 
@@ -78,14 +80,42 @@ class Settings(metaclass = Singleton):
 
 
 
+    def setBotAvatar(self, avatarName: str) -> None:
+        self._iniParser.setValue("Bot", "botAvatar", nameValue)
+
+
+
+    def setUserAvatar(self, avatarName: str) -> None:
+        self._iniParser.setValue("User", "userAvatar", nameValue)
+
+
+
     def getLanguage(self) -> str:
         return self._iniParser.getValue("Settings", "lang")
 
 
 
     def getSupportingLangs(self) -> list:
-        self._supportingLangs = self._iniParser.getValue("AppData", "langs", "../setup/AppSetup.ini").split(',')
-        return self._supportingLangs
+        return self._iniParser.getValue("AppData", "langs", "../setup/AppSetup.ini").split(',')
+
+
+
+    def getBotAvatars(self) -> list:
+        return self._iniParser.getValue("AppData", "botAvatars", "../setup/AppSetup.ini")
+
+
+
+    def getUserAvatars(self) -> list:
+        return self._iniParser.getValue("AppData", "userAvatars", "../setup/AppSetup.ini")
+
+
+    def getBotAvatar(self) -> str:
+        return self._iniParser.getValue("Bot", "botAvatar")
+
+
+
+    def getBotAvatar(self) -> str:
+        return self._iniParser.getValue("User", "userAvatar")
 
 
 

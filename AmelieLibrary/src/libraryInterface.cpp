@@ -118,9 +118,51 @@ __declspec(dllexport) std::vector<const char*> getSupportingLangs(Settings* obje
 
 
 
-__declspec(dllexport) const char * getUsername(Settings* object)
+__declspec(dllexport) const char* getUsername(Settings* object)
 {
     return object->getUsername();
+}
+
+
+
+__declspec(dllexport) std::vector<const char*> getBotAvatars(Settings* object)
+{
+    return object->getBotAvatars();
+}
+
+
+
+__declspec(dllexport) std::vector<const char*> getUserAvatars(Settings* object)
+{
+    return object->getUserAvatars();
+}
+
+
+
+const char* getBotAvatar(Settings* object)
+{
+    return object->getBotAvatar();
+}
+
+
+
+const char* getUserAvatar(Settings* object)
+{
+    return object->getUserAvatar();
+}
+
+
+
+void setBotAvatar(Settings* object, const char* avatarName)
+{
+    object->setBotAvatar(avatarName);
+}
+
+
+
+void setUserAvatar(Settings * object, const char * avatarName)
+{
+    object->setBotAvatar(avatarName);
 }
 
 
@@ -233,6 +275,8 @@ __declspec(dllexport) void logWrite(Logger* object)
 {
     object->logWrite();
 }
+
+
 
 const char* voiceInput()
 {

@@ -263,9 +263,21 @@ namespace library
 
             bool setUsername(const char* nameValue);
 
+            void setBotAvatar(const char* avatarName);
+
+            void setUserAvatar(const char* avatarName);
+
             const char* getLanguage();
 
             std::vector<const char*> getSupportingLangs();
+
+            std::vector<const char*> getBotAvatars();
+
+            std::vector<const char*> getUserAvatars();
+
+            const char* getBotAvatar();
+
+            const char* getUserAvatar();
 
             const char* getUsername();
 

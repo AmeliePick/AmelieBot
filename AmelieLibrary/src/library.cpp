@@ -561,6 +561,22 @@ bool library::main::Settings::setUsername(const char* nameValue)
 
 
 
+void library::main::Settings::setBotAvatar(const char* avatarName)
+{
+    Function::Arguments arg(avatarName);
+    callMethod("setBotAvatars", arg);
+}
+
+
+
+void library::main::Settings::setUserAvatar(const char* avatarName)
+{
+    Function::Arguments arg(avatarName);
+    callMethod("setUserAvatars", arg);
+}
+
+
+
 const char* library::main::Settings::getLanguage()
 {
     Function::Arguments arg;
@@ -573,6 +589,38 @@ std::vector<const char*> library::main::Settings::getSupportingLangs()
 {
     Function::Arguments arg;
     return callMethod("getSupportingLangs", arg).ToVector<const char*>();
+}
+
+
+
+std::vector<const char*> library::main::Settings::getBotAvatars()
+{
+    Function::Arguments arg;
+    return callMethod("getBotAvatars", arg).ToVector<const char*>();
+}
+
+
+
+std::vector<const char*> library::main::Settings::getUserAvatars()
+{
+    Function::Arguments arg;
+    return callMethod("getUserAvatars", arg).ToVector<const char*>();
+}
+
+
+
+const char* library::main::Settings::getBotAvatar()
+{
+    Function::Arguments arg;
+    return callMethod("getBotAvatar", arg).ToString();
+}
+
+
+
+const char* library::main::Settings::getUserAvatar()
+{
+    Function::Arguments arg;
+    return callMethod("getUserAvatar", arg).ToString();
 }
 
 

@@ -40,6 +40,18 @@ public:
 
     Q_INVOKABLE QString voiceInput();
 
+    Q_INVOKABLE std::vector<const char*> getBotAvatars();
+
+    Q_INVOKABLE std::vector<const char*> getUserAvatars();
+
+    Q_INVOKABLE const char* getBotAvatar();
+
+    Q_INVOKABLE const char* getUserAvatar();
+
+    Q_INVOKABLE void setBotAvatar(const char* avatarName);
+
+    Q_INVOKABLE void setUserAvatar(const char* avatarName);
+
 public:
 
 };
@@ -130,11 +142,23 @@ private:
 
         bool setUsername(QString nameValue);
 
+        void setBotAvatar(const char* avatarName);
+
+        void setUserAvatar(const char* avatarName);
+
         const char* getLanguage();
 
         std::vector<const char*> getSupportingLangs();
 
+        std::vector<const char*> getBotAvatars();
+
+        std::vector<const char*> getUserAvatars();
+
         QString getUsername();
+
+        const char* getBotAvatar();
+
+        const char* getUserAvatar();
 
         std::multimap<const char*, void*> getMethodsToResolveErrors();
     };
@@ -236,6 +260,20 @@ public:
     void setVoice(bool enableVoice);
 
     QString voiceInput();
+
+    void update();
+
+    std::vector<const char*> getBotAvatars();
+
+    std::vector<const char*> getUserAvatars();
+
+    void setBotAvatar(const char* avatarName);
+
+    void setUserAvatar(const char* avatarName);
+
+    const char* getBotAvatar();
+
+    const char* getUserAvatar();
 
     int main(int argc, char** argv);
 };

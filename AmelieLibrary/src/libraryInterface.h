@@ -45,6 +45,18 @@ extern "C++" __declspec(dllexport) std::vector<const char*> getSupportingLangs(S
 
 extern "C" __declspec(dllexport) const char* getUsername(Settings* object);
 
+extern "C++" __declspec(dllexport) std::vector<const char*> getBotAvatars(Settings* object);
+
+extern "C++" __declspec(dllexport) std::vector<const char*> getUserAvatars(Settings* object);
+
+extern "C" __declspec(dllexport) const char* getBotAvatar(Settings* object);
+
+extern "C" __declspec(dllexport) const char* getUserAvatar(Settings* object);
+
+extern "C" __declspec(dllexport) void setBotAvatar(Settings* object, const char* avatarName);
+
+extern "C" __declspec(dllexport) void setUserAvatar(Settings* object, const char* avatarName);
+
 extern "C++" __declspec(dllexport) std::multimap<const char*, void*> getMethodsToResolveErrors(Settings* object);
 
 extern "C" __declspec(dllexport) void SettingsDelete(Settings* object);
