@@ -3,8 +3,16 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.1
 
 
+
 Window
 {
+    function pushMessagesToChat(userInput, answer)
+    {
+        messageModel.append({positionX: 0, toReflect: 1,text: userInput, avatar: "../../../../resources/AppIcon/userAvatar.png"})
+        messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: "../../../../resources/AppIcon/botAvatar.png"});
+    }
+
+
     color: "#0c1128";
     visible: true;
 
@@ -212,9 +220,7 @@ Window
                 {
                     var answer = Event.chatConversation(textInput.text);
 
-                    messageModel.append({positionX: 0, toReflect: 1,text: textInput.text, avatar: "../../../../resources/AppIcon/userAvatar.png"})
-
-                    messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: "../../../../resources/AppIcon/botAvatar.png"});
+                    pushMessagesToChat(textInput.text, answer);
 
                     chat.positionViewAtEnd();
 
@@ -242,11 +248,18 @@ Window
                 onClicked:
                 {
                     Event.setVoice(true);
+
+                    var userInput = Event.voiceInput();
+                    var answer = Event.chatConversation(userInput);
+
+                    pushMessagesToChat(userInput, answer);
+
+                    chat.positionViewAtEnd();
+
+                    Event.setVoice(false);
+
                 }
             }
-
-
-
         }
     }
 }

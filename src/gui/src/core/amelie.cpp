@@ -77,6 +77,13 @@ std::vector<const char*> AmelieEvent::getSupportingLangs()
     return amelie->getSupportingLangs();
 }
 
+
+
+QString AmelieEvent::voiceInput()
+{
+    return amelie->voiceInput();
+}
+
 #pragma endregion
 
 
@@ -155,6 +162,13 @@ bool AmelieApplication::setUsername(QString nameValue)
 QString AmelieApplication::getUsername()
 {
     return settings->getUsername();
+}
+
+
+
+QString AmelieApplication::voiceInput()
+{
+    return ::voiceInput();
 }
 
 

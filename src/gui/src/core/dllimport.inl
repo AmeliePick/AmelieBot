@@ -83,6 +83,10 @@ typedef void (*logWrite)(void* object);
 
 
 
+typedef const char* (*vcInput)();
+
+
+
 
 
 static AmelieInstance AmelieCreateInstance = (AmelieInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieCreateInstance");
@@ -137,6 +141,12 @@ static checkNetworkConnection NetworkCheckNetworkConnection = (checkNetworkConne
 static LoggerInstance LoggerCreateInstance = (LoggerInstance)GetProcAddress(LoadLibraryA("AmelieLibrary"), "LoggerGetInstance");
 static addRecord LoggerAddRecord = (addRecord)GetProcAddress(LoadLibraryA("AmelieLibrary"), "addRecord");
 static logWrite LoggerLogWrite = (logWrite)GetProcAddress(LoadLibraryA("AmelieLibrary"), "logWrite");
+
+
+
+
+
+static vcInput voiceInput = (vcInput)GetProcAddress(LoadLibraryA("AmelieLibrary"), "voiceInput");
 
 
 

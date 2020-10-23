@@ -234,4 +234,9 @@ __declspec(dllexport) void logWrite(Logger* object)
     object->logWrite();
 }
 
+const char* voiceInput()
+{
+    return library::tools::input::voiceInput();
+}
+
 

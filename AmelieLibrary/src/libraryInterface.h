@@ -82,3 +82,5 @@ extern "C" __declspec(dllexport) void addRecord(Logger* object, const char* reco
 extern "C" __declspec(dllexport) void logWrite(Logger* object);
 
 
+
+extern "C" __declspec(dllexport) const char* voiceInput();

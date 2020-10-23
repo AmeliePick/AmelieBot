@@ -38,6 +38,8 @@ public:
 
     Q_INVOKABLE std::vector<const char*> getSupportingLangs();
 
+    Q_INVOKABLE QString voiceInput();
+
 public:
 
 };
@@ -232,6 +234,8 @@ public:
     QString chatConversation(QString input);
 
     void setVoice(bool enableVoice);
+
+    QString voiceInput();
 
     int main(int argc, char** argv);
 };
