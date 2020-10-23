@@ -214,7 +214,7 @@ Window
                 topPadding: 15;
                 bottomPadding: 15;
                 font.family: "Montserrat";
-                text: "Enter the message: ";
+                text: "Enter the message:";
 
                 onAccepted:
                 {
@@ -225,7 +225,14 @@ Window
                     chat.positionViewAtEnd();
 
                     textInput.text = "";
+                }
 
+                onFocusChanged:
+                {
+                    if(textInput.text == "")
+                        textInput.text = "Enter the message:";
+                    else if(textInput.text == "Enter the message:")
+                        textInput.text = "";
                 }
             }
 
@@ -253,6 +260,8 @@ Window
                     var answer = Event.chatConversation(userInput);
 
                     pushMessagesToChat(userInput, answer);
+
+
 
                     chat.positionViewAtEnd();
 
