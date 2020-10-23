@@ -9,16 +9,127 @@ Window
     color: "#0c1128";
     visible: true;
 
-    minimumHeight: 390;
-    maximumHeight: 390;
+    minimumHeight: 800;
+    maximumHeight: 800;
     minimumWidth: 800;
     maximumWidth: 800;
 
 
+
+    Item
+    {
+        x: 150;
+        y: 32;
+
+        height: 86
+        width: 500;
+
+        Text {
+            width: 500;
+            height: 20;
+            horizontalAlignment: Text.AlignHCenter;
+            font.pixelSize: 20;
+            color: "white";
+            text: qsTr("User Avatar")
+        }
+
+        Rectangle
+        {
+            id: user_avatar_circle;
+            transform: mirror;
+            width: 86;
+            height: 86
+            radius: 400;
+            Image
+            {
+                id: userAvatar;
+                width: 86
+                height: 86;
+            }
+        }
+
+        ComboBox
+        {
+            id: userAvatars;
+            x: 150;
+            y: 43;
+            width: 316;
+            height: 33;
+
+            model: userAvatarList;
+
+
+            onActivated:
+            {
+                userAvatar.source = "../../../../resources/AppIcon/user/avatar/" + userAvatars.currentText + ".png";
+            }
+        }
+
+    }
+
+    Item
+    {
+        x: 150;
+        y: 182;
+
+        height: 86
+        width: 500;
+
+        Text {
+            width: 500;
+            height: 20;
+            horizontalAlignment: Text.AlignHCenter;
+            font.pixelSize: 20;
+            color: "white";
+            text: qsTr("Bot's Avatar")
+        }
+
+        Rectangle
+        {
+            id: bot_avatar_circle;
+            transform: mirror;
+            width: 86;
+            height: 86
+            radius: 400;
+            Image
+            {
+                id: botAvatar;
+                width: 86
+                height: 86;
+            }
+        }
+
+        ComboBox
+        {
+            id: botAvatars;
+            x: 150;
+            y: 43;
+            width: 316
+            height: 33;
+
+            model: botAvatarList;
+
+
+            onActivated:
+            {
+                botAvatar.source = "../../../../resources/AppIcon/bot/avatar/" + botAvatars.currentText + ".png";
+            }
+        }
+
+    }
+
+    Rectangle
+    {
+        y: 300;
+        width: 800;
+        height: 1;
+        color: "gray";
+    }
+
     Item
     {
         x: 150
-        y: 85;
+        y: 350;
         width: 500;
         height: 50;
 
@@ -66,10 +177,11 @@ Window
     }
 
 
+
     Item
     {
-        x: 150
-        y: 170
+        x: 150;
+        y: 450;
         width: 500;
         height: 50;
 
@@ -100,11 +212,19 @@ Window
     }
 
 
+    Rectangle
+    {
+        y: 550;
+        width: 800;
+        height: 1;
+        color: "gray";
+    }
+
     Item
     {
         id: buttons
-        x: 137
-        y: 269
+        x: 137;
+        y: 625;
         width: 350;
         height: 100;
         anchors.horizontalCenterOffset: 0
@@ -143,7 +263,8 @@ Window
             {
                 if(Event.setUsername(userName.text))
                 {
-
+                    Event.setBotAvatar(botAvatars.currentText);
+                    Event.setUserAvatar(userAvatars.currentText);
                     Event.setLanguage(applang.currentText);
                     settingsWindow.close();
                 }
@@ -193,6 +314,6 @@ Window
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;formeditorZoom:1.75;height:480;width:640}
+    D{i:0;autoSize:true;formeditorZoom:0.8999999761581421;height:800;width:800}
 }
 ##^##*/
