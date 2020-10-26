@@ -4,6 +4,16 @@ import QtQuick.Controls 2.12
 
 Window
 {
+    function setPreviewAvatar(avatarType, avatarName)
+    {
+        if(avatarType == "bot")
+            botAvatar.source = "../../../../resources/AppIcon/" + avatarType + "/avatar/" + avatarName + ".png";
+        else if(avatarType == "user")
+            userAvatar.source = "../../../../resources/AppIcon/" + avatarType + "/avatar/" + avatarName + ".png";
+    }
+
+
+
     id: settingsWindow;
     title: qsTr("Settings")
     color: "#0c1128";
@@ -45,6 +55,7 @@ Window
                 id: userAvatar;
                 width: 86
                 height: 86;
+                source: setPreviewAvatar("user", userAvatarList[0]);
             }
         }
 
@@ -61,7 +72,7 @@ Window
 
             onActivated:
             {
-                userAvatar.source = "../../../../resources/AppIcon/user/avatar/" + userAvatars.currentText + ".png";
+                setPreviewAvatar("user", userAvatars.currentText);
             }
         }
 
@@ -96,6 +107,7 @@ Window
                 id: botAvatar;
                 width: 86
                 height: 86;
+                source: setPreviewAvatar("bot", botAvatarList[0]);
             }
         }
 
@@ -112,7 +124,7 @@ Window
 
             onActivated:
             {
-                botAvatar.source = "../../../../resources/AppIcon/bot/avatar/" + botAvatars.currentText + ".png";
+                setPreviewAvatar("bot", botAvatars.currentText);
             }
         }
 

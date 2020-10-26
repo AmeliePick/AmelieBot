@@ -8,8 +8,8 @@ Window
 {
     function pushMessagesToChat(userInput, answer)
     {
-        messageModel.append({positionX: 0, toReflect: 1,text: userInput, avatar: "../../../../resources/AppIcon/userAvatar.png"})
-        messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: "../../../../resources/AppIcon/botAvatar.png"});
+        messageModel.append({positionX: 0, toReflect: 1,text: userInput, avatar: "../../../../resources/AppIcon/user/avatar/" + Event.getUserAvatar() +".png"})
+        messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: "../../../../resources/AppIcon/bot/avatar/" + Event.getBotAvatar() + ".png"});
     }
 
 

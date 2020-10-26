@@ -100,28 +100,28 @@ std::vector<const char*> AmelieEvent::getUserAvatars()
 
 
 
-const char* AmelieEvent::getBotAvatar()
+QString AmelieEvent::getBotAvatar()
 {
     return amelie->getBotAvatar();
 }
 
 
 
-const char* AmelieEvent::getUserAvatar()
+QString AmelieEvent::getUserAvatar()
 {
     return amelie->getUserAvatar();
 }
 
 
 
-void AmelieEvent::setBotAvatar(const char* avatarName)
+void AmelieEvent::setBotAvatar(QString avatarName)
 {
     amelie->setBotAvatar(avatarName);
 }
 
 
 
-void AmelieEvent::setUserAvatar(const char* avatarName)
+void AmelieEvent::setUserAvatar(QString avatarName)
 {
     amelie->setUserAvatar(avatarName);
 }
@@ -139,6 +139,9 @@ AmelieApplication::AmelieApplication()
     this->network = Network::getInstance();
 
     this->settings = Settings::getInstance();
+
+    this->chat = nullptr;
+    this->gui = nullptr;
 }
 
 
@@ -175,7 +178,9 @@ void AmelieApplication::setVoice(bool enableVoice)
 void AmelieApplication::setLanguage(QString langValue)
 {
     settings->setLanguage(langValue);
-    chat->changeLanguage(langValue.toStdString().c_str());
+
+    if(chat != nullptr)
+        chat->changeLanguage(langValue.toStdString().c_str());
 }
 
 
@@ -227,6 +232,8 @@ std::vector<const char*> AmelieApplication::getBotAvatars()
     return settings->getBotAvatars();
 }
 
+
+
 std::vector<const char*> AmelieApplication::getUserAvatars()
 {
     return settings->getUserAvatars();
@@ -234,28 +241,28 @@ std::vector<const char*> AmelieApplication::getUserAvatars()
 
 
 
-void AmelieApplication::setBotAvatar(const char* avatarName)
+void AmelieApplication::setBotAvatar(QString avatarName)
 {
     settings->setBotAvatar(avatarName);
 }
 
 
 
-void AmelieApplication::setUserAvatar(const char* avatarName)
+void AmelieApplication::setUserAvatar(QString avatarName)
 {
     settings->setUserAvatar(avatarName);
 }
 
 
 
-const char* AmelieApplication::getBotAvatar()
+QString AmelieApplication::getBotAvatar()
 {
     return settings->getBotAvatar();
 }
 
 
 
-const char* AmelieApplication::getUserAvatar()
+QString AmelieApplication::getUserAvatar()
 {
     return settings->getUserAvatar();
 }
@@ -272,7 +279,9 @@ int AmelieApplication::main(int argc, char** argv)
         gui->showSettingsWindow();
     }
 
+
     initChatBot();
+
 
     return gui->showMainWindow(chat);
 }
@@ -496,16 +505,16 @@ QString AmelieApplication::Settings::getUsername()
 
 
 
-void AmelieApplication::Settings::setBotAvatar(const char* avatarName)
+void AmelieApplication::Settings::setBotAvatar(QString avatarName)
 {
-    SettingsSetBotAvatar(avatarName);
+    SettingsSetBotAvatar(classInstance, avatarName.toStdString().c_str());
 }
 
 
 
-void AmelieApplication::Settings::setUserAvatar(const char* avatarName)
+void AmelieApplication::Settings::setUserAvatar(QString avatarName)
 {
-    SettingsSetUserAvatar(avatarName);
+    SettingsSetUserAvatar(classInstance, avatarName.toStdString().c_str());
 }
 
 
@@ -640,7 +649,6 @@ int AmelieApplication::GUI::showSettingsWindow()
     std::vector<const char*> langs = event->getSupportingLangs();
     QVariantList supLangs;
 
-
     QString currentLang = event->getLanguage();
     // If value is actually language value
     if(currentLang != '-')
@@ -664,41 +672,43 @@ int AmelieApplication::GUI::showSettingsWindow()
     std::vector<const char*> botAvatars = event->getBotAvatars();
     QVariantList botAvatarList;
 
-    if(event->getBotAvatar() != "-")
-    {
 
-        auto currentBotAvatar = std::find(botAvatars.begin(), botAvatars.end(), event->getBotAvatar());
-        if(currentBotAvatar != langs.end())
-        {
-            botAvatars.erase(currentBotAvatar);
-            botAvatarList.append(event->getBotAvatar());
-        }
+    QString currentBotAvatarName = event->getBotAvatar();
+    auto currentBotAvatarPosition = std::find(botAvatars.begin(), botAvatars.end(), currentBotAvatarName);
+    if(currentBotAvatarPosition != botAvatars.end())
+    {
+        botAvatars.erase(currentBotAvatarPosition);
+        botAvatarList.append(currentBotAvatarName);
     }
     for(int i = 0; i < botAvatars.size(); ++i)
     {
         botAvatarList.append(botAvatars[i]);
     }
+
     engine->rootContext()->setContextProperty("botAvatarList", botAvatarList);
+
 
 
     std::vector<const char*> userAvatars = event->getUserAvatars();
     QVariantList userAvatarList;
-    if(event->getBotAvatar() != "-")
+
+    QString currentUserAvatarName = event->getUserAvatar();
+    auto currentUserAvatarPosition = std::find(userAvatars.begin(), userAvatars.end(), currentUserAvatarName);
+    if(currentUserAvatarPosition != userAvatars.end())
     {
-        auto currentUserAvatar = std::find(userAvatars.begin(), userAvatars.end(), event->getUserAvatar());
-        if(currentUserAvatar != langs.end())
-        {
-            userAvatars.erase(currentUserAvatar);
-            userAvatarList.append(event->getUserAvatar());
-        }
+
+        userAvatars.erase(currentUserAvatarPosition);
+        userAvatarList.append(currentUserAvatarName);
     }
+
+
     for(int i = 0; i < userAvatars.size(); ++i)
     {
         userAvatarList.append(userAvatars[i]);
     }
     engine->rootContext()->setContextProperty("userAvatarList", userAvatarList);
 
-;
+
 
     engine->load(QUrl::fromLocalFile("../src/view/settingsWindow.qml"));
 

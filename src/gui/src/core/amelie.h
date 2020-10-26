@@ -44,13 +44,13 @@ public:
 
     Q_INVOKABLE std::vector<const char*> getUserAvatars();
 
-    Q_INVOKABLE const char* getBotAvatar();
+    Q_INVOKABLE QString getBotAvatar();
 
-    Q_INVOKABLE const char* getUserAvatar();
+    Q_INVOKABLE QString getUserAvatar();
 
-    Q_INVOKABLE void setBotAvatar(const char* avatarName);
+    Q_INVOKABLE void setBotAvatar(QString avatarName);
 
-    Q_INVOKABLE void setUserAvatar(const char* avatarName);
+    Q_INVOKABLE void setUserAvatar(QString avatarName);
 
 public:
 
@@ -142,9 +142,9 @@ private:
 
         bool setUsername(QString nameValue);
 
-        void setBotAvatar(const char* avatarName);
+        void setBotAvatar(QString avatarName);
 
-        void setUserAvatar(const char* avatarName);
+        void setUserAvatar(QString avatarName);
 
         const char* getLanguage();
 
@@ -227,9 +227,6 @@ private:
 
 
 
-    typedef void(*input)();
-    input inputMode;
-
     FileManager* fileManager;
     Network* network;
 
@@ -267,13 +264,13 @@ public:
 
     std::vector<const char*> getUserAvatars();
 
-    void setBotAvatar(const char* avatarName);
+    void setBotAvatar(QString avatarName);
 
-    void setUserAvatar(const char* avatarName);
+    void setUserAvatar(QString avatarName);
 
-    const char* getBotAvatar();
+    QString getBotAvatar();
 
-    const char* getUserAvatar();
+    QString getUserAvatar();
 
     int main(int argc, char** argv);
 };
