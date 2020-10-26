@@ -37,9 +37,9 @@ typedef void(*setLang)(void* object, const char* langValue);
 
 typedef bool(*setUsername)(void* object, const char* nameValue);
 
-typedef void(*setBotAvatar)(const char* avatarName);
+typedef void(*setBotAvatar)(void* object, const char* avatarName);
 
-typedef void(*setUserAvatar)(const char* avatarName);
+typedef void(*setUserAvatar)(void* object, const char* avatarName);
 
 typedef const char*(*getLang)(void* object);
 

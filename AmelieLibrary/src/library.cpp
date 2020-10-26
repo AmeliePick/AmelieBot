@@ -564,7 +564,7 @@ bool library::main::Settings::setUsername(const char* nameValue)
 void library::main::Settings::setBotAvatar(const char* avatarName)
 {
     Function::Arguments arg(avatarName);
-    callMethod("setBotAvatars", arg);
+    callMethod("setBotAvatar", arg);
 }
 
 
@@ -572,7 +572,7 @@ void library::main::Settings::setBotAvatar(const char* avatarName)
 void library::main::Settings::setUserAvatar(const char* avatarName)
 {
     Function::Arguments arg(avatarName);
-    callMethod("setUserAvatars", arg);
+    callMethod("setUserAvatar", arg);
 }
 
 

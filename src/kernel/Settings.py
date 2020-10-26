@@ -81,12 +81,12 @@ class Settings(metaclass = Singleton):
 
 
     def setBotAvatar(self, avatarName: str) -> None:
-        self._iniParser.setValue("Bot", "botAvatar", nameValue)
+        self._iniParser.setValue("Bot", "botAvatar", avatarName)
 
 
 
     def setUserAvatar(self, avatarName: str) -> None:
-        self._iniParser.setValue("User", "userAvatar", nameValue)
+        self._iniParser.setValue("User", "userAvatar", avatarName)
 
 
 
@@ -101,12 +101,12 @@ class Settings(metaclass = Singleton):
 
 
     def getBotAvatars(self) -> list:
-        return self._iniParser.getValue("AppData", "botAvatars", "../setup/AppSetup.ini")
+        return self._iniParser.getValue("AppData", "botAvatars", "../setup/AppSetup.ini").split(',')
 
 
 
     def getUserAvatars(self) -> list:
-        return self._iniParser.getValue("AppData", "userAvatars", "../setup/AppSetup.ini")
+        return self._iniParser.getValue("AppData", "userAvatars", "../setup/AppSetup.ini").split(',')
 
 
     def getBotAvatar(self) -> str:
@@ -114,7 +114,7 @@ class Settings(metaclass = Singleton):
 
 
 
-    def getBotAvatar(self) -> str:
+    def getUserAvatar(self) -> str:
         return self._iniParser.getValue("User", "userAvatar")
 
 

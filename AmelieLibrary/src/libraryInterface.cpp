@@ -160,9 +160,9 @@ void setBotAvatar(Settings* object, const char* avatarName)
 
 
 
-void setUserAvatar(Settings * object, const char * avatarName)
+void setUserAvatar(Settings* object, const char* avatarName)
 {
-    object->setBotAvatar(avatarName);
+    object->setUserAvatar(avatarName);
 }
 
 
