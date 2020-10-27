@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Singleton            import Singleton
+from Singleton             import Singleton
 
 from Settings              import Settings
 
@@ -9,13 +9,17 @@ from chat.AICore           import Chat
 
 from tools.system          import FileManager
 from tools.system          import Network
+from tools.input           import voiceInput
 
 
 from audio.processing      import playAudio, TextToSpeech
 from audio.recognition     import SpeechRecognition
 
-from webbrowser         import open as webbrowser_open
-from subprocess         import Popen
+from webbrowser            import open as webbrowser_open
+from subprocess            import Popen
+
+
+from re import sub
 
 
 
@@ -37,6 +41,7 @@ class Amelie(metaclass = Singleton):
     _voice: bool
 
     _exceptionStack: list
+    _exceptionStep: int
     _programsList:  list
 
 
@@ -54,6 +59,8 @@ class Amelie(metaclass = Singleton):
         self._voice = False
 
         self._updateProgramList()
+
+        self._exceptionStep = 1
 
         return
 
@@ -94,7 +101,7 @@ class Amelie(metaclass = Singleton):
 
 
 
-    def conversation(self, userInput) -> str:
+    def conversation(self, userInput = "") -> str:
         ''' Start the conversation with the bot by current input mode.
         '''
 
@@ -112,7 +119,49 @@ class Amelie(metaclass = Singleton):
             return chatAnswer
 
 
-        chatAnswer = _startChat(userInput)
+        chatAnswer = str()
+        
+        
+
+
+        try:
+            self.update();
+
+            if self._voice and userInput == "":
+                userInput = voiceInput();
+
+            chatAnswer = _startChat(userInput)
+
+        except FileNotFoundError:
+            if self._exceptionStep == 1 and userInput == 'Y' or userInput == 'y':
+                self._exceptionStep = 2
+                chatAnswer = self._dialog.getMessageFor("addProgName") + " " + self._dialog.getMessageFor("addProgPath")
+                
+            elif self._exceptionStep == 2:
+                parsedInput = userInput.split(" = ")
+
+                if self.getPathToProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0])):
+                    chatAnswer = self._dialog.getMessageFor("progNameExist")
+                else:
+                    self.addProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0]), sub('[\t]', '', parsedInput[1]))
+                    chatAnswer = self._dialog.getMessageFor("done")
+                    self._exceptionStep = 1
+                    self._exceptionStack.pop(0)
+
+        except (ConnectionError, ConnectError):
+            return self._dialog.getMessageFor("serviceError")
+
+        except OSError as e:
+            if e.errno == 6:
+                return self._dialog.getMessageFor("errMicroDefine")
+
+            elif e.errno == -9999:
+                chatAnswer = self._dialog.getMessageFor("microAccesDenied").replace('\n', " or ") + self._dialog.getMessageFor("errMicroDefine")
+
+            else:
+                chatAnswer = self._dialog.getMessageFor("error")
+
+       
 
         if self._voice:
             try:
@@ -120,6 +169,7 @@ class Amelie(metaclass = Singleton):
             except:
                 self._exceptionStack.append(ConnectionError())
                 self._voice = False
+                return str(self._dialog.getMessageFor("serviceError") + " " + chatAnswer)
 
         return chatAnswer
 
@@ -141,7 +191,7 @@ class Amelie(metaclass = Singleton):
         '''
 
         if len(self._exceptionStack) > 0:
-            excpetion = self._exceptionStack.pop(0)
+            excpetion = self._exceptionStack[0]
             raise excpetion
 
         return
