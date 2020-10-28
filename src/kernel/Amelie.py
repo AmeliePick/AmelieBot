@@ -7,8 +7,11 @@ from Settings              import Settings
 from chat.dialog           import Dialog
 from chat.AICore           import Chat
 
+from httpcore._exceptions import ConnectError
+
 from tools.system          import FileManager
 from tools.system          import Network
+from tools.logger          import Logger
 from tools.input           import voiceInput
 
 
@@ -32,6 +35,8 @@ class Amelie(metaclass = Singleton):
 
     '''
 
+    _logger: Logger
+
 
 
     _chat: Chat
@@ -48,7 +53,7 @@ class Amelie(metaclass = Singleton):
 
     def __init__(self, applanguage: str):
         super().__init__()
-        self._exceptionStack = list()
+        self._logger = Logger()
 
         self._voiceRecorder = None
         self._textToSpeech = None
@@ -60,6 +65,7 @@ class Amelie(metaclass = Singleton):
 
         self._updateProgramList()
 
+        self._exceptionStack = list()
         self._exceptionStep = 1
 
         return
@@ -120,17 +126,22 @@ class Amelie(metaclass = Singleton):
 
 
         chatAnswer = str()
-        
-        
+
 
 
         try:
             self.update();
 
-            if self._voice and userInput == "":
-                userInput = voiceInput();
+            if userInput == "":
+                self._setVoice(True)
+                try:
+                    userInput = voiceInput();
+                except ValueError:
+                    userInput = ""
 
             chatAnswer = _startChat(userInput)
+
+
 
         except FileNotFoundError:
             if self._exceptionStep == 1 and userInput == 'Y' or userInput == 'y':
@@ -149,17 +160,24 @@ class Amelie(metaclass = Singleton):
                     self._exceptionStack.pop(0)
 
         except (ConnectionError, ConnectError):
+            self._logger.writeLog()
+            self._exceptionStack.pop(0)
             return self._dialog.getMessageFor("serviceError")
 
         except OSError as e:
+            self._logger.writeLog()
             if e.errno == 6:
                 return self._dialog.getMessageFor("errMicroDefine")
-
             elif e.errno == -9999:
                 chatAnswer = self._dialog.getMessageFor("microAccesDenied").replace('\n', " or ") + self._dialog.getMessageFor("errMicroDefine")
-
             else:
                 chatAnswer = self._dialog.getMessageFor("error")
+            self._exceptionStack.pop(0)
+
+        except Exception:
+            self._logger.logWrite()
+            self._exceptionStack.pop(0)
+            return self._dialog.getMessageFor("error")
 
        
 
@@ -167,9 +185,9 @@ class Amelie(metaclass = Singleton):
             try:
                 self.tts(chatAnswer)
             except:
-                self._exceptionStack.append(ConnectionError())
+                self._logger.logWrite()
                 self._voice = False
-                return str(self._dialog.getMessageFor("serviceError") + " " + chatAnswer)
+                return str(self._dialog.getMessageFor("serviceError") + ". " + chatAnswer)
 
         return chatAnswer
 
@@ -228,7 +246,9 @@ class Amelie(metaclass = Singleton):
 
 
 
-    def setVoice(self, value: bool) -> None:
+    def _setVoice(self, value: bool) -> None:
+        if(self._voice == value): return
+
         if value == True and Network.checkNetworkConnection():
             try:
                 self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())
@@ -236,14 +256,10 @@ class Amelie(metaclass = Singleton):
             except OSError as e:
                 self._voiceRecorder = None
                 e.errno = 6
-                self._exceptionStack.append(e)
-
-                return
-
+                raise e
 
         elif value == True and not Network.checkNetworkConnection():
-            self._exceptionStack.append(ConnectionError())
-            return
+            raise ConnectionError()
 
         self._voice = value
         return
