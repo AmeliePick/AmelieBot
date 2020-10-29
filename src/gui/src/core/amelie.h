@@ -22,11 +22,9 @@ private:
 public:
     static AmelieEvent* getInstance();
 
-    Q_INVOKABLE QString chatConversation(QString input);
+    Q_INVOKABLE QString chatConversation(QString input = "");
 
     Q_INVOKABLE void showSettingsWindow();
-
-    Q_INVOKABLE void setVoice(bool enableVoice);
 
     Q_INVOKABLE bool setUsername(QString nameValue);
 
@@ -38,7 +36,7 @@ public:
 
     Q_INVOKABLE std::vector<const char*> getSupportingLangs();
 
-    Q_INVOKABLE QString voiceInput();
+    Q_INVOKABLE QString getUserInput();
 
     Q_INVOKABLE std::vector<const char*> getBotAvatars();
 
@@ -173,10 +171,6 @@ private:
         Chat(const Chat &) = delete;
 
 
-        void doAction(const char* inputType);
-
-        void updateProgramList();
-
         void* classInstance;
 
     public:
@@ -184,19 +178,15 @@ private:
 
         void changeLanguage(const char* language);
 
-        char* conversation(const char* userInput);
+        char* conversation(const char* userInput = "");
 
         void tts(const char* pharse);
-
-        void update();
 
         const char* getPathToProgram(const char* programName);
 
         void addProgram(const char* program, const char* path);
 
         bool getVoice();
-
-        void setVoice(bool value);
 
         const char* getUserInput();
 
@@ -252,13 +242,9 @@ public:
 
     void showSettingsWindow();
 
-    QString chatConversation(QString input);
+    QString chatConversation(QString input = "");
 
-    void setVoice(bool enableVoice);
-
-    QString voiceInput();
-
-    void update();
+    QString getUserInput();
 
     std::vector<const char*> getBotAvatars();
 

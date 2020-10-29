@@ -37,13 +37,6 @@ QString AmelieEvent::chatConversation(QString input)
 
 
 
-void AmelieEvent::setVoice(bool enableVoice)
-{
-    amelie->setVoice(enableVoice);
-}
-
-
-
 bool AmelieEvent::setUsername(QString nameValue)
 {
     return amelie->setUsername(nameValue);
@@ -79,9 +72,9 @@ std::vector<const char*> AmelieEvent::getSupportingLangs()
 
 
 
-QString AmelieEvent::voiceInput()
+QString AmelieEvent::getUserInput()
 {
-    return amelie->voiceInput();
+    return amelie->getUserInput();
 }
 
 
@@ -168,13 +161,6 @@ QString AmelieApplication::chatConversation(QString input)
 
 
 
-void AmelieApplication::setVoice(bool enableVoice)
-{
-    chat->setVoice(enableVoice);
-}
-
-
-
 void AmelieApplication::setLanguage(QString langValue)
 {
     settings->setLanguage(langValue);
@@ -213,16 +199,9 @@ QString AmelieApplication::getUsername()
 
 
 
-QString AmelieApplication::voiceInput()
+QString AmelieApplication::getUserInput()
 {
-    return ::voiceInput();
-}
-
-
-
-void AmelieApplication::update()
-{
-    chat->update();
+    return chat->getUserInput();
 }
 
 
@@ -335,13 +314,6 @@ void AmelieApplication::Chat::tts(const char* phrase)
 
 
 
-void AmelieApplication::Chat::update()
-{
-    AmelieUpdate(classInstance);
-}
-
-
-
 const char* AmelieApplication::Chat::getPathToProgram(const char* programName)
 {
     return AmelieGetPathToProgram(classInstance, programName);
@@ -359,13 +331,6 @@ void AmelieApplication::Chat::addProgram(const char* program, const char* path)
 bool AmelieApplication::Chat::getVoice()
 {
     return AmelieGetVoice(classInstance);
-}
-
-
-
-void AmelieApplication::Chat::setVoice(bool value)
-{
-    AmelieSetVoice(classInstance,value);
 }
 
 

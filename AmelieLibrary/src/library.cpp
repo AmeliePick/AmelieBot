@@ -425,20 +425,6 @@ library::main::Amelie::Amelie(const char* appLanguage) : Class("Amelie", "Amelie
 
 }
 
-void library::main::Amelie::doAction(const char* inputType)
-{
-    Function::Arguments arg(inputType);
-    callMethod("_doAction", arg);
-}
-
-
-
-void library::main::Amelie::updateProgramList()
-{
-    Function::Arguments arg;
-    callMethod("_updateProgramList", arg);
-}
-
 
 
 library::main::Amelie* library::main::Amelie::getInstance(const char* appLanguage)
@@ -473,14 +459,6 @@ void library::main::Amelie::tts(const char* pharse)
 
 
 
-void library::main::Amelie::update()
-{
-    Function::Arguments arg;
-    callMethod("update", arg);
-}
-
-
-
 const char* library::main::Amelie::getPathToProgram(const char* programName)
 {
     Function::Arguments arg(programName);
@@ -501,14 +479,6 @@ bool library::main::Amelie::getVoice()
 {
     Function::Arguments arg;
     return callMethod("getVoice", arg).ToBool();
-}
-
-
-
-void library::main::Amelie::setVoice(bool value)
-{
-    Function::Arguments arg(value);
-    callMethod("setVoice", arg);
 }
 
 

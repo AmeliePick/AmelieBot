@@ -32,13 +32,6 @@ __declspec(dllexport) void AmelieTTS(Amelie* object, const char* pharse)
 
 
 
-__declspec(dllexport) void AmelieUpdate(Amelie* object)
-{
-    object->update();
-}
-
-
-
 __declspec(dllexport) const char* AmelieGetPathToProgram(Amelie* object, const char* programName)
 {
     return object->getPathToProgram(programName);
@@ -56,13 +49,6 @@ __declspec(dllexport) void AmelieAddProgram(Amelie* object, const char* program,
 __declspec(dllexport) bool AmelieGetVoice(Amelie* object)
 {
     return object->getVoice();
-}
-
-
-
-__declspec(dllexport) void AmelieSetVoice(Amelie* object, bool value)
-{
-    object->setVoice(value);
 }
 
 
@@ -274,13 +260,6 @@ __declspec(dllexport) void addRecord(Logger* object, const char* recordTitle, co
 __declspec(dllexport) void logWrite(Logger* object)
 {
     object->logWrite();
-}
-
-
-
-const char* voiceInput()
-{
-    return library::tools::input::voiceInput();
 }
 
 

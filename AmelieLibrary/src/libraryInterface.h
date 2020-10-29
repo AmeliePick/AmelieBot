@@ -17,15 +17,11 @@ extern "C" __declspec(dllexport) char* AmelieConversation(Amelie* object, const 
 
 extern "C" __declspec(dllexport) void AmelieTTS(Amelie* object, const char* pharse);
 
-extern "C" __declspec(dllexport) void AmelieUpdate(Amelie* object);
-
 extern "C" __declspec(dllexport) const char* AmelieGetPathToProgram(Amelie* object, const char* programName);
 
 extern "C" __declspec(dllexport) void AmelieAddProgram(Amelie* object, const char* program, const char* path);
 
 extern "C" __declspec(dllexport) bool AmelieGetVoice(Amelie* object);
-
-extern "C" __declspec(dllexport) void AmelieSetVoice(Amelie* object, bool value);
 
 extern "C" __declspec(dllexport) const char* AmelieGetUserInput(Amelie* object);
 
@@ -95,4 +91,4 @@ extern "C" __declspec(dllexport) void logWrite(Logger* object);
 
 
 
-extern "C" __declspec(dllexport) const char* voiceInput();
+
