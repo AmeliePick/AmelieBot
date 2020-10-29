@@ -7,7 +7,7 @@ from Settings              import Settings
 from chat.dialog           import Dialog
 from chat.AICore           import Chat
 
-from httpcore._exceptions import ConnectError
+from httpcore._exceptions  import ConnectError
 
 from tools.system          import FileManager
 from tools.system          import Network
@@ -108,7 +108,7 @@ class Amelie(metaclass = Singleton):
 
 
     def conversation(self, userInput = "") -> str:
-        ''' Start the conversation with the bot by current input mode.
+        ''' Start the conversation with the bot.
         '''
 
         def _startChat(userInput: str) -> str:
@@ -130,12 +130,12 @@ class Amelie(metaclass = Singleton):
 
 
         try:
-            self.update();
+            self._update();
 
             if userInput == "":
                 self._setVoice(True)
                 try:
-                    userInput = voiceInput();
+                    userInput = voiceInput()
                 except ValueError:
                     userInput = ""
 
@@ -147,7 +147,7 @@ class Amelie(metaclass = Singleton):
             if self._exceptionStep == 1 and userInput == 'Y' or userInput == 'y':
                 self._exceptionStep = 2
                 chatAnswer = self._dialog.getMessageFor("addProgName") + " " + self._dialog.getMessageFor("addProgPath")
-                
+
             elif self._exceptionStep == 2:
                 parsedInput = userInput.split(" = ")
 
@@ -158,6 +158,8 @@ class Amelie(metaclass = Singleton):
                     chatAnswer = self._dialog.getMessageFor("done")
                     self._exceptionStep = 1
                     self._exceptionStack.pop(0)
+
+            else: chatAnswer = _startChat(userInput)
 
         except (ConnectionError, ConnectError):
             self._logger.writeLog()
@@ -179,14 +181,14 @@ class Amelie(metaclass = Singleton):
             self._exceptionStack.pop(0)
             return self._dialog.getMessageFor("error")
 
-       
+
 
         if self._voice:
             try:
+                self._setVoice(False)
                 self.tts(chatAnswer)
             except:
                 self._logger.logWrite()
-                self._voice = False
                 return str(self._dialog.getMessageFor("serviceError") + ". " + chatAnswer)
 
         return chatAnswer
@@ -196,7 +198,7 @@ class Amelie(metaclass = Singleton):
     def tts(self, pharse: str) -> Exception:
         ''' Convert Text To Speech and play it.
         '''
-        
+
         self._textToSpeech(pharse, self._chat.getLanguage())
         playAudio("TEMP/sound.wav")
 
@@ -204,7 +206,7 @@ class Amelie(metaclass = Singleton):
 
 
 
-    def update(self) -> Exception:
+    def _update(self) -> Exception:
         ''' Update the bot's logic.
         '''
 
