@@ -80,7 +80,7 @@ Item
             x: 11;
             y: 23;
             width: 537;
-            height: 67;
+            height: message.height;
             color: "#32406f";
 
             Text
@@ -96,12 +96,12 @@ Item
                     else
                         message.x = 537;
                 }
-                width: 537
-                height: 67
+                width: 537;
                 padding: 10;
                 font.pixelSize: 15;
                 font.family: "Montserrat";
                 color: "#c5c5c5"
+                wrapMode: Text.Wrap;
             }
         }
     }
