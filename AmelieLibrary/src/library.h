@@ -224,13 +224,9 @@ namespace library
 
             void changeLanguage(const char* language);
 
-            char* conversation(const char* userInput = "");
+            char* conversation(bool enableVoice, const char* userInput = "");
 
             void tts(const char* pharse);
-
-            const char* getPathToProgram(const char* programName);
-
-            void addProgram(const char* program, const char* path);
 
             bool getVoice();
 

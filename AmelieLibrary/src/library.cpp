@@ -443,9 +443,9 @@ void library::main::Amelie::changeLanguage(const char* language)
 
 
 
-char* library::main::Amelie::conversation(const char* userInput)
+char* library::main::Amelie::conversation(bool enableVoice, const char* userInput)
 {
-    Function::Arguments arg(userInput);
+    Function::Arguments arg(enableVoice, userInput);
     return callMethod("conversation", arg).ToString();
 }
 
@@ -455,22 +455,6 @@ void library::main::Amelie::tts(const char* pharse)
 {
     Function::Arguments arg(pharse);
     callMethod("tts", arg);
-}
-
-
-
-const char* library::main::Amelie::getPathToProgram(const char* programName)
-{
-    Function::Arguments arg(programName);
-    return callMethod("getPathToProgram", arg).ToString();
-}
-
-
-
-void library::main::Amelie::addProgram(const char* program, const char* path)
-{
-    Function::Arguments args(program, path);
-    callMethod("addProgram", args);
 }
 
 

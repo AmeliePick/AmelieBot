@@ -30,9 +30,9 @@ void AmelieEvent::showSettingsWindow()
 
 
 
-QString AmelieEvent::chatConversation(QString input)
+QString AmelieEvent::chatConversation(bool enableVoice, QString input)
 {
-    return amelie->chatConversation(input);
+    return amelie->chatConversation(enableVoice, input);
 }
 
 
@@ -154,9 +154,9 @@ void AmelieApplication::initChatBot()
 
 
 
-QString AmelieApplication::chatConversation(QString input)
+QString AmelieApplication::chatConversation(bool enableVoice, QString input)
 {
-    return chat->conversation(input.toStdString().c_str());
+    return chat->conversation(enableVoice, input.toStdString().c_str());
 }
 
 
@@ -300,9 +300,9 @@ void AmelieApplication::Chat::changeLanguage(const char* language)
 
 
 
-char* AmelieApplication::Chat::conversation(const char* userInput)
+char* AmelieApplication::Chat::conversation(bool enableVoice, const char* userInput)
 {
-    return AmelieConversation(classInstance, userInput);
+    return AmelieConversation(classInstance, enableVoice, userInput);
 }
 
 
@@ -310,20 +310,6 @@ char* AmelieApplication::Chat::conversation(const char* userInput)
 void AmelieApplication::Chat::tts(const char* phrase)
 {
     AmelieTTS(classInstance, phrase);
-}
-
-
-
-const char* AmelieApplication::Chat::getPathToProgram(const char* programName)
-{
-    return AmelieGetPathToProgram(classInstance, programName);
-}
-
-
-
-void AmelieApplication::Chat::addProgram(const char* program, const char* path)
-{
-    AmelieAddProgram(classInstance, program, path);
 }
 
 

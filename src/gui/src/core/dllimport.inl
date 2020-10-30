@@ -9,13 +9,9 @@ typedef void*(*AmelieInstance)(const char* appLanguage);
 
 typedef void*(*ChangeLanguage)(void* object, const char* language);
 
-typedef char*(*Conversation)(void* object, const char* userInput);
+typedef char*(*Conversation)(void* object, bool enableVoice, const char* userInput);
 
 typedef void(*Tts)(void* object, const char* prase);
-
-typedef const char*(*GetPathToProgram)(void* object, const char* programName);
-
-typedef void(*AddProgram)(void* object, const char* program, const char* path);
 
 typedef bool(*GetVoice)(void* object);
 
@@ -97,8 +93,6 @@ static AmelieInstance AmelieCreateInstance = (AmelieInstance)GetProcAddress(Load
 static ChangeLanguage AmelieChangeLanguage = (ChangeLanguage)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieChangeLanguage");
 static Conversation AmelieConversation = (Conversation)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieConversation");
 static Tts AmelieTTS = (Tts)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieTTS");
-static GetPathToProgram AmelieGetPathToProgram = (GetPathToProgram)GetProcAddress(LoadLibraryA("AmelieLibrary"), "GetPathToProgram");
-static AddProgram AmelieAddProgram = (AddProgram)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieAddProgram");
 static GetVoice AmelieGetVoice = (GetVoice)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieGetVoice");
 static GetUserInput AmelieGetUserInput = (GetUserInput)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieGetUserInput");
 static Delete AmelieDelete = (Delete)GetProcAddress(LoadLibraryA("AmelieLibrary"), "AmelieDelete");

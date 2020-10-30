@@ -18,9 +18,9 @@ __declspec(dllexport) void AmelieChangeLanguage(Amelie* object, const char* lang
 
 
 
-__declspec(dllexport) char* AmelieConversation(Amelie* object, const char* userInput)
+__declspec(dllexport) char* AmelieConversation(Amelie* object, bool enableVoice, const char* userInput)
 {
-    return object->conversation(userInput);
+    return object->conversation(enableVoice, userInput);
 }
 
 
@@ -28,20 +28,6 @@ __declspec(dllexport) char* AmelieConversation(Amelie* object, const char* userI
 __declspec(dllexport) void AmelieTTS(Amelie* object, const char* pharse)
 {
     object->tts(pharse);
-}
-
-
-
-__declspec(dllexport) const char* AmelieGetPathToProgram(Amelie* object, const char* programName)
-{
-    return object->getPathToProgram(programName);
-}
-
-
-
-__declspec(dllexport) void AmelieAddProgram(Amelie* object, const char* program, const char* path)
-{
-    object->addProgram(program, path);
 }
 
 

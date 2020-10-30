@@ -22,7 +22,7 @@ private:
 public:
     static AmelieEvent* getInstance();
 
-    Q_INVOKABLE QString chatConversation(QString input = "");
+    Q_INVOKABLE QString chatConversation(bool enableVoice, QString input = "");
 
     Q_INVOKABLE void showSettingsWindow();
 
@@ -178,13 +178,9 @@ private:
 
         void changeLanguage(const char* language);
 
-        char* conversation(const char* userInput = "");
+        char* conversation(bool enableVoice, const char* userInput = "");
 
         void tts(const char* pharse);
-
-        const char* getPathToProgram(const char* programName);
-
-        void addProgram(const char* program, const char* path);
 
         bool getVoice();
 
@@ -242,7 +238,7 @@ public:
 
     void showSettingsWindow();
 
-    QString chatConversation(QString input = "");
+    QString chatConversation(bool enableVoice, QString input = "");
 
     QString getUserInput();
 
