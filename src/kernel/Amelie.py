@@ -107,7 +107,7 @@ class Amelie(metaclass = Singleton):
 
 
 
-    def conversation(self, userInput = "") -> str:
+    def conversation(self, enableVoice: bool, userInput = "") -> str:
         ''' Start the conversation with the bot.
         '''
 
@@ -130,15 +130,15 @@ class Amelie(metaclass = Singleton):
 
 
         try:
-            self._update();
-
-            if userInput == "":
+            if enableVoice:
+                enableVoice = False
                 self._setVoice(True)
                 try:
                     userInput = voiceInput()
                 except ValueError:
                     userInput = ""
 
+            self._update();
             chatAnswer = _startChat(userInput)
 
 
@@ -159,7 +159,10 @@ class Amelie(metaclass = Singleton):
                     self._exceptionStep = 1
                     self._exceptionStack.pop(0)
 
-            else: chatAnswer = _startChat(userInput)
+            else:
+                self._exceptionStep = 1
+                self._exceptionStack.pop(0)
+                chatAnswer = _startChat(userInput)
 
         except (ConnectionError, ConnectError):
             self._logger.writeLog()
