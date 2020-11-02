@@ -36,63 +36,13 @@ class Chat(metaclass = Singleton):
     _inputType: str
     _sessionInput: dict
     _text_clf: Pipeline
-    
+
     _lang: str
 
 
 
     def __init__(self, appLanguage: str):
         super().__init__()
-        
-        def parseDataSet() -> dict:
-            Edit = {'text': [], 'tag':[]}
-            for line in self._dataSet:
-                if(line == '' or line == '\n' or line == ' '):
-                    continue
-
-                row = line.split(' @ ')
-            
-            
-                Edit['text'] += [row[0]]
-                Edit['tag'] += [row[1]]
-    
-        
-            return Edit
-
-
-
-        def training(Edit, Val_split = 0.1) -> None:
-            # load the model from disk
-            self._text_clf = joblib.load("../DataBase/models/model.pkl")
-
-
-            # fit and train the model
-            lenght = len(Edit['text'])
-            if lenght > 0:
-                indexes = arange(lenght)
-                random.shuffle(indexes)
-
-                X = [Edit['text'][i] for i in indexes]
-                Y = [Edit['tag'][i]  for i in indexes]
-
-                nb_valid_samples = int(Val_split * lenght)
-
-
-                trained = { 'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
-                            'test':  { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
-                          }
-
-                self._text_clf.fit(trained['train']['x'], trained['train']['y'])
-                self._text_clf.predict( trained['test']['x'] )
-
-
-                # save the model to disk
-                joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
-
-            
-            return
-
-
 
         self._lang = appLanguage
 
@@ -105,12 +55,61 @@ class Chat(metaclass = Singleton):
         self._input = str()
         self._sessionInput = dict()
 
-        data = parseDataSet()
+        data = self._parseDataSet()
         self._text_clf = Pipeline([ ('tfidf', TfidfVectorizer()),
                                     ('clf', SGDClassifier(loss='hinge')),
                                  ])
 
-        training(data)
+        self._training(data)
+
+        return
+
+
+
+    def _parseDataSet(self) -> dict:
+        Edit = {'text': [], 'tag':[]}
+        for line in self._dataSet:
+            if(line == '' or line == '\n' or line == ' '):
+                continue
+
+            row = line.split(' @ ')
+
+
+            Edit['text'] += [row[0]]
+            Edit['tag'] += [row[1]]
+
+
+        return Edit
+
+
+    def _training(self, dataSet: dict, Val_split = 0.1) -> None:
+        # load the model from disk
+        self._text_clf = joblib.load("../DataBase/models/model.pkl")
+
+
+        # fit and train the model
+        lenght = len(dataSet['text'])
+        if lenght > 0:
+            indexes = arange(lenght)
+            random.shuffle(indexes)
+
+            X = [dataSet['text'][i] for i in indexes]
+            Y = [dataSet['tag'][i]  for i in indexes]
+
+            nb_valid_samples = int(Val_split * lenght)
+
+
+            trained = { 'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
+                            'test':  { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
+                          }
+
+            self._text_clf.fit(trained['train']['x'], trained['train']['y'])
+            self._text_clf.predict( trained['test']['x'] )
+
+
+            # save the model to disk
+            joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
+
 
         return
 
@@ -128,7 +127,7 @@ class Chat(metaclass = Singleton):
 
     def getSessionInput(self) -> dict:
         return self.sessionInput_
-    
+
 
 
     def getLanguage(self) -> str:
@@ -148,6 +147,7 @@ class Chat(metaclass = Singleton):
     def changeLanguage(self, language: str) -> None:
         self._lang = language
         self._getDataFromDB()
+        self._training(self._parseDataSet())
 
         return
 
@@ -167,13 +167,11 @@ class Chat(metaclass = Singleton):
 
         def readFileToList(listOBJ: list, file: str) -> None:
             file = FileManager.readFile(file)
+            listOBJ.clear()
             for line in file:
                 listOBJ.append(line.replace('\n', ''))
 
-        # Parse data set only once.
-        if len(self._dataSet) == 0 and FileManager.fileExist("../DataBase/DataSet.db") == True:
-            readFileToList(self._dataSet, "../DataBase/DataSet.db")
-
+        readFileToList(self._dataSet, "../DataBase/DataSet"  + self._lang.upper() + ".db")
         readFileToList(self._stopWords, "../DataBase/stopWords" + self._lang.upper() + ".db")
         readFileToList(self._answerText, "../DataBase/answers" + self._lang.upper() + ".db")
 
@@ -188,7 +186,7 @@ class Chat(metaclass = Singleton):
         if len(sub('[\t, \n, \r, \s]', '', input_)) <= 1 or sub('[\t, \n, \r, \s]', '', input_).isdigit() or len(input_) <= 1:
             self._inputType = "Unknown"
             return
-        
+
         self._input = input_
 
         # predict the input type
@@ -210,7 +208,7 @@ class Chat(metaclass = Singleton):
                 Result: Google, summer wallpapers
         '''
 
-        ''' 
+        '''
         This method can incorrectly edit the input, because the meaning of the sentcene doesn't detecting.
         The lenght of meaning worlds detecting only manualy by meaningLength value.
 
@@ -221,7 +219,7 @@ class Chat(metaclass = Singleton):
         '''
 
         result = list(self._input)
-  
+
         for stopWord in self._stopWords:
             occurrence = (''.join(result).lower()).find(stopWord.lower())
             if occurrence != -1 and len(''.join(result).split()) >= meaningLength:
@@ -249,6 +247,6 @@ class Chat(metaclass = Singleton):
 
         # add phrases in data set
         if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet.db")
-                
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet" + self._lang.upper() + ".db")
+
         return self.output
