@@ -42,6 +42,58 @@ class Chat(metaclass = Singleton):
 
 
     def __init__(self, appLanguage: str):
+        def training(dataSet: dict, Val_split = 0.1) -> None:
+            if not FileManager.fileExist("../DataBase/models/model.pkl"):
+                FileManager.createFile("../DataBase/models/model.pkl")
+            else:
+                self._text_clf = joblib.load("../DataBase/models/model.pkl")
+
+
+            # fit and train the model
+            lenght = len(dataSet['text'])
+            if lenght > 0:
+                indexes = arange(lenght)
+                random.shuffle(indexes)
+
+                X = [dataSet['text'][i] for i in indexes]
+                Y = [dataSet['tag'][i]  for i in indexes]
+
+                nb_valid_samples = int(Val_split * lenght)
+
+
+                trained = { 'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
+                            'test':  { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
+                          }
+
+                self._text_clf.fit(trained['train']['x'], trained['train']['y'])
+                self._text_clf.predict(trained['test']['x'])
+
+
+                # save the model to disk
+                joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
+
+
+            return
+
+
+
+        def parseDataSet() -> dict:
+            dataSet = {'text': [], 'tag':[]}
+            for line in self._dataSet:
+                if(line == '' or line == '\n' or line == ' '):
+                    continue
+
+                row = line.split(' @ ')
+
+
+                dataSet['text'] += [row[0]]
+                dataSet['tag'] += [row[1]]
+
+
+            return dataSet
+
+
+
         super().__init__()
 
         self._lang = appLanguage
@@ -54,62 +106,11 @@ class Chat(metaclass = Singleton):
 
         self._input = str()
         self._sessionInput = dict()
-
-        data = self._parseDataSet()
         self._text_clf = Pipeline([ ('tfidf', TfidfVectorizer()),
                                     ('clf', SGDClassifier(loss='hinge')),
                                  ])
 
-        self._training(data)
-
-        return
-
-
-
-    def _parseDataSet(self) -> dict:
-        Edit = {'text': [], 'tag':[]}
-        for line in self._dataSet:
-            if(line == '' or line == '\n' or line == ' '):
-                continue
-
-            row = line.split(' @ ')
-
-
-            Edit['text'] += [row[0]]
-            Edit['tag'] += [row[1]]
-
-
-        return Edit
-
-
-    def _training(self, dataSet: dict, Val_split = 0.1) -> None:
-        # load the model from disk
-        self._text_clf = joblib.load("../DataBase/models/model.pkl")
-
-
-        # fit and train the model
-        lenght = len(dataSet['text'])
-        if lenght > 0:
-            indexes = arange(lenght)
-            random.shuffle(indexes)
-
-            X = [dataSet['text'][i] for i in indexes]
-            Y = [dataSet['tag'][i]  for i in indexes]
-
-            nb_valid_samples = int(Val_split * lenght)
-
-
-            trained = { 'train': { 'x': X[:-nb_valid_samples], 'y': Y[:-nb_valid_samples]  },
-                            'test':  { 'x': X[-nb_valid_samples:], 'y': Y[-nb_valid_samples:]  }
-                          }
-
-            self._text_clf.fit(trained['train']['x'], trained['train']['y'])
-            self._text_clf.predict( trained['test']['x'] )
-
-
-            # save the model to disk
-            joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
-
+        training(parseDataSet())
 
         return
 
@@ -147,7 +148,6 @@ class Chat(metaclass = Singleton):
     def changeLanguage(self, language: str) -> None:
         self._lang = language
         self._getDataFromDB()
-        self._training(self._parseDataSet())
 
         return
 
@@ -170,11 +170,15 @@ class Chat(metaclass = Singleton):
             listOBJ.clear()
             for line in file:
                 listOBJ.append(line.replace('\n', ''))
+            return
 
-        readFileToList(self._dataSet, "../DataBase/DataSet"  + self._lang.upper() + ".db")
+
+        # Parse data set only once.
+        if len(self._dataSet) == 0 and FileManager.fileExist("../DataBase/DataSet.db") == True:
+            readFileToList(self._dataSet, "../DataBase/DataSet.db")
+
         readFileToList(self._stopWords, "../DataBase/stopWords" + self._lang.upper() + ".db")
         readFileToList(self._answerText, "../DataBase/answers" + self._lang.upper() + ".db")
-
 
         return
 
@@ -218,19 +222,21 @@ class Chat(metaclass = Singleton):
         output: website
         '''
 
-        result = list(self._input)
+        result = self._input.split()
 
         for stopWord in self._stopWords:
             occurrence = (''.join(result).lower()).find(stopWord.lower())
-            if occurrence != -1 and len(''.join(result).split()) >= meaningLength:
-
+            if occurrence != -1 and len(result) >= meaningLength:
                 # remove stop words from the input
                 for index in range(occurrence, occurrence + len(stopWord)):
-                    result[index] = ''
+                    # TODO: Convert str to list
+                    inputString[index] = ''
 
-                result = list(''.join(result))
+                result = list(' '.join(inputString))
 
-        return sub('[?, !]', '', ''.join(result)).lstrip().rstrip()
+
+
+        return sub('[?, !]', '', ' '.join(result)).lstrip().rstrip()
 
 
 
@@ -247,6 +253,6 @@ class Chat(metaclass = Singleton):
 
         # add phrases in data set
         if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet" + self._lang.upper() + ".db")
+            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet.db")
 
         return self.output
