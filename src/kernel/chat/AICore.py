@@ -222,21 +222,16 @@ class Chat(metaclass = Singleton):
         output: website
         '''
 
-        result = self._input.split()
+        result = list(self._input)
 
         for stopWord in self._stopWords:
             occurrence = (''.join(result).lower()).find(stopWord.lower())
-            if occurrence != -1 and len(result) >= meaningLength:
+            if occurrence != -1 and len(''.join(result).split()) >= meaningLength:
                 # remove stop words from the input
                 for index in range(occurrence, occurrence + len(stopWord)):
-                    # TODO: Convert str to list
-                    inputString[index] = ''
+                    result[index] = ''
 
-                result = list(' '.join(inputString))
-
-
-
-        return sub('[?, !]', '', ' '.join(result)).lstrip().rstrip()
+        return ''.join(result).lstrip().rstrip()
 
 
 
