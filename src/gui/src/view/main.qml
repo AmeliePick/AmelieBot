@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
-import QtQuick.Controls 2.1
+import QtQuick.Controls 2.2
 
 
 
@@ -197,76 +197,88 @@ Window
             Rectangle
             {
                 y: 700;
-                height: 80;
-                width: 1295;
-                color: "#1f2646";
-            }
-            TextInput
-            {
-                id: textInput;
-                y: 700;
-                height: 80;
-                width: 1295;
-                font.pixelSize: 32;
-                color: "#626262";
-                leftPadding: 30;
-                rightPadding: 30;
-                topPadding: 15;
-                bottomPadding: 15;
-                font.family: "Montserrat";
-                text: "Enter the message:";
+                height: 80; width: 1295; color: "#1f2646"
 
-                onAccepted:
+                ScrollView
                 {
-                    var answer = Event.chatConversation(textInput.text);
+                    x: 0
+                    y: 0
+                    height: 80;
+                    width: 1215;
+                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff;
+                    clip: true;
 
-                    pushMessagesToChat(textInput.text, answer);
+                    TextInput
+                    {
+                        x: 0
+                        y: 0
+                        id: textInput;
+                        width: 1215;
+                        height: 80;
+                        font.pixelSize: 32;
+                        color: "#626262";
+                        verticalAlignment: TextInput.AlignVCenter;
 
-                    chat.positionViewAtEnd();
+                        leftPadding: 20;
+                        rightPadding: 20;
+                        font.family: "Montserrat";
+                        text: "Enter the message:";
+                        selectByMouse: true;
+                        wrapMode: TextInput.Wrap;
 
-                    textInput.text = "";
+                        onAccepted:
+                        {
+                            if(textInput.text != "")
+                            {
+                                var answer = Event.chatConversation(false, textInput.text);
+                                pushMessagesToChat(textInput.text, answer);
+
+                                chat.positionViewAtEnd();
+
+                                textInput.text = "";
+                            }
+                        }
+
+                    }
+
+
+                    onFocusChanged:
+                    {
+                        if(textInput.text == "")
+                            textInput.text = "Enter the message:";
+                        else if(textInput.text == "Enter the message:")
+                            textInput.text = "";
+                    }
                 }
 
-                onFocusChanged:
+
+
+
+
+
+
+                Button
                 {
-                    if(textInput.text == "")
-                        textInput.text = "Enter the message:";
-                    else if(textInput.text == "Enter the message:")
-                        textInput.text = "";
-                }
-            }
-
-
-            Button
-            {
-                x: 1215;
-                y: 700;
-                width: 80;
-                height: 80;
-                palette { button: "#1f2646"; }
-
-                Image
-                {
+                    x: 1215;
                     width: 80;
                     height: 80;
-                    source: "res/images/microphone.ico";
-                }
+                    palette { button: "#1f2646"; }
 
-                onClicked:
-                {
-                    Event.setVoice(true);
+                    Image
+                    {
+                        width: 80;
+                        height: 80;
+                        source: "res/images/microphone.ico";
+                    }
 
-                    var userInput = Event.voiceInput();
-                    var answer = Event.chatConversation(userInput);
+                    onClicked:
+                    {
+                        var answer = Event.chatConversation(true);
 
-                    pushMessagesToChat(userInput, answer);
+                        pushMessagesToChat(Event.getUserInput(), answer);
+                        chat.positionViewAtEnd();
 
-
-
-                    chat.positionViewAtEnd();
-
-                    Event.setVoice(false);
-
+                    }
                 }
             }
         }
