@@ -2,8 +2,6 @@
 
 from Singleton             import Singleton
 
-from Settings              import Settings
-
 from chat.dialog           import Dialog
 from chat.AICore           import Chat
 
@@ -37,8 +35,6 @@ class Amelie(metaclass = Singleton):
 
     _logger: Logger
 
-
-
     _chat: Chat
     _dialog: Dialog
     _voiceRecorder: SpeechRecognition
@@ -55,13 +51,19 @@ class Amelie(metaclass = Singleton):
         super().__init__()
         self._logger = Logger()
 
-        self._voiceRecorder = None
-        self._textToSpeech = None
-        self.voice = False
-
         self._chat = Chat(applanguage)
         self._dialog = Dialog(applanguage)
+
+        # Try to init classes for the voice mode
         self._voice = False
+        self._textToSpeech = TextToSpeech()
+        try:
+            # When voice recorder is initializing, here can be only two exceptions 
+            # due to lack of access to the microphone. Until the user resolves 
+            # the problems with the microphone, the recorder will be not initialized.
+            self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())      
+        except OSError:
+            self._voiceRecorder = None
 
         self._updateProgramList()
 
@@ -75,7 +77,7 @@ class Amelie(metaclass = Singleton):
     def _doAction(self, inputType: str) -> None:
         ''' Do action based on user's request.
 
-        This method must calling in a try block, because the bot can generate exceptions.
+        This method must calling in a try block, because the it can generate exceptions.
 
         '''
 
@@ -99,9 +101,9 @@ class Amelie(metaclass = Singleton):
 
 
     def changeLanguage(self, language: str) -> None:
-        self._voiceRecorder = SpeechRecognition(language)
         self._chat.changeLanguage(language)
         self._dialog.changeLanguage(language)
+        self._voiceRecorder.changeLanguage(language)
 
         return
 
@@ -125,13 +127,10 @@ class Amelie(metaclass = Singleton):
             return chatAnswer
 
 
+
         chatAnswer = str()
-
-
-
         try:
             if enableVoice:
-                enableVoice = False
                 self._setVoice(True)
                 try:
                     userInput = voiceInput()
@@ -171,13 +170,13 @@ class Amelie(metaclass = Singleton):
 
         except OSError as e:
             self._logger.writeLog()
+            self._exceptionStack.pop(0)
             if e.errno == 6:
                 return self._dialog.getMessageFor("errMicroDefine")
             elif e.errno == -9999:
-                chatAnswer = self._dialog.getMessageFor("microAccesDenied").replace('\n', " or ") + self._dialog.getMessageFor("errMicroDefine")
+                return self._dialog.getMessageFor("microAccesDenied").replace('\n', " or ") + self._dialog.getMessageFor("errMicroDefine")
             else:
-                chatAnswer = self._dialog.getMessageFor("error")
-            self._exceptionStack.pop(0)
+                return self._dialog.getMessageFor("error")            
 
         except Exception:
             self._logger.logWrite()
@@ -192,7 +191,7 @@ class Amelie(metaclass = Singleton):
                 self.tts(chatAnswer)
             except:
                 self._logger.logWrite()
-                return str(self._dialog.getMessageFor("serviceError") + ". " + chatAnswer)
+                return str(self._dialog.getMessageFor("serviceError") + chatAnswer)
 
         return chatAnswer
 
@@ -254,10 +253,10 @@ class Amelie(metaclass = Singleton):
     def _setVoice(self, value: bool) -> None:
         if(self._voice == value): return
 
-        if value == True and Network.checkNetworkConnection():
+        if value == True and Network.checkNetworkConnection() and self._voiceRecorder == None:
+            # Try to make a late initialization of the voice recorder if it was not initialized in the constructor.
             try:
                 self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())
-                self._textToSpeech = TextToSpeech()
             except OSError as e:
                 self._voiceRecorder = None
                 e.errno = 6
