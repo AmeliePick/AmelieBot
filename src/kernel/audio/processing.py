@@ -33,7 +33,8 @@ class TextToSpeech(metaclass = Singleton):
 
 
     def __call__(self, textSource: str, srcLang: str) -> Exception:
-        textSource = self._translator.translate(text = textSource, dest = "en", src = srcLang).text
+        if srcLang != "en":
+            textSource = self._translator.translate(text = textSource, dest = "en", src = srcLang).text
 
         text_to_speech = TextToSpeechV1(iam_apikey="D6i3r45_nB2pNi_ewnSuZpu4ze_KexO9fBHtL1vs5E56",
                                             url="https://stream.watsonplatform.net/text-to-speech/api")

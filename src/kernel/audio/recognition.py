@@ -18,17 +18,23 @@ class SpeechRecognition(metaclass = Singleton):
 
 
 
-    lang: str
-    recognizer: sr.Recognizer
-    micro: sr.Microphone
+    _lang: str
+    _recognizer: sr.Recognizer
+    _micro: sr.Microphone
 
 
 
     def __init__(self, appLanguage: str):
-        self.lang = appLanguage
-        self.recognizer = sr.Recognizer()
-        self.micro = sr.Microphone()
+        self._lang = appLanguage
+        self._recognizer = sr.Recognizer()
+        self._micro = sr.Microphone()
 
+        return
+
+
+
+    def changeLanguage(self, appLanguage: str) -> None:
+        self._lang = appLanguage
         return
 
 
@@ -37,8 +43,8 @@ class SpeechRecognition(metaclass = Singleton):
          ''' Noise calibration.
          '''
 
-         with self.micro as source:
-            self.recognizer.adjust_for_ambient_noise(source)
+         with self._micro as source:
+            self._recognizer.adjust_for_ambient_noise(source)
 
          return
     
@@ -47,9 +53,9 @@ class SpeechRecognition(metaclass = Singleton):
     def recognize(self) -> str:
         try:
             # Listening to the microphone
-            with self.micro as _source:
-                audio = self.recognizer.listen(source = _source, timeout = 3, phrase_time_limit = 5)
-                return self.recognizer.recognize_google(audio, language = self.lang)
+            with self._micro as _source:
+                audio = self._recognizer.listen(source = _source, timeout = 3, phrase_time_limit = 5)
+                return self._recognizer.recognize_google(audio, language = self._lang)
 
         except (sr.WaitTimeoutError, sr.UnknownValueError):
             raise ValueError()
