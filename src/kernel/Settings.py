@@ -9,7 +9,7 @@ from re import sub
 
 
 class Settings(metaclass = Singleton):
-    ''' Control the config file
+    ''' Control the config file, database files and other file of the app.
 
     The class is a Singleton.
     '''
@@ -23,8 +23,15 @@ class Settings(metaclass = Singleton):
 
     def __init__(self):
         super().__init__()
-        self._iniParser = IniParser("settings.ini")
 
+        self._fileManager = FileManager()
+        if not FileManager.dirExist("TEMP"):
+            FileManager.createDir("TEMP")
+        if not FileManager.fileExist("../DataBase/addedProgramms.db"):
+            FileManager.clearFile("../DataBase/addedProgramms.db")
+
+
+        self._iniParser = IniParser("settings.ini")
         self._methods = dict()
         self._supportingLangs = dict()
 
@@ -126,3 +133,8 @@ class Settings(metaclass = Singleton):
 
     def getMethodsToResolveErrors(self) -> dict:
         return self._methods
+
+
+
+    def __del__(self):
+        FileManager.deleteDir("TEMP")

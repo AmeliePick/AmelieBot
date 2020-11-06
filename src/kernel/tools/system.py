@@ -23,15 +23,15 @@ class FileManager(metaclass = Singleton):
 
     def __init__(self):
         super().__init__()
-
-        if not os_path.isdir("TEMP"):
-            os_makedirs("TEMP")
-
-        if not self.fileExist("../DataBase/addedProgramms.db"):
-            with open ("../DataBase/addedProgramms.db", 'w') as file:
-                file.close()
-
         return
+
+
+
+    @staticmethod
+    def dirExist(dirPath: str) -> bool:
+        if os_path.isdir(dirPath):
+            return True
+        else: return False
 
 
 
@@ -64,9 +64,25 @@ class FileManager(metaclass = Singleton):
 
 
     @staticmethod
+    def createDir(dirPath: str) -> None:
+        os_makedirs(dirPath)
+        return
+
+
+
+    @staticmethod
     def createFile(file: str) -> None:
         if not os_path.exists(file):
             with open(file, 'w'): pass
+
+        return
+
+
+
+    @staticmethod
+    def deleteDir(dirPath: str) -> None:
+        if os_path.isdir(dirPath):
+            shutil_rmtree(dirPath, ignore_errors = True)
 
         return
 
@@ -92,9 +108,6 @@ class FileManager(metaclass = Singleton):
 
 
     def __del__(self):
-        if os_path.isdir("TEMP"):
-            shutil_rmtree("TEMP", ignore_errors = True)
-
         return
 
 

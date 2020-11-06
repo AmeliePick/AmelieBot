@@ -188,6 +188,7 @@ class Chat(metaclass = Singleton):
         # if the input is garbage
         input_ = sub('[^\w, \s]', '', input_)
         if len(sub('[\t, \n, \r, \s]', '', input_)) <= 1 or sub('[\t, \n, \r, \s]', '', input_).isdigit() or len(input_) <= 1:
+            self._input = ""
             self._inputType = "Unknown"
             return
 
