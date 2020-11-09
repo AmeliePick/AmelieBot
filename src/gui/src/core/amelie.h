@@ -50,6 +50,8 @@ public:
 
     Q_INVOKABLE void setUserAvatar(QString avatarName);
 
+    Q_INVOKABLE QString setPreviewAvatar(QString avatarType, QString avatarName);
+
 public:
 
 };

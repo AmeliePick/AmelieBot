@@ -1,10 +1,10 @@
 #include "amelie.h"
 #include <vector>
-#include <iostream>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QResource>
+#include <QFile>
 #include <QDebug>
-
-
-
 
 
 #pragma region AmelieEvent
@@ -117,6 +117,14 @@ void AmelieEvent::setBotAvatar(QString avatarName)
 void AmelieEvent::setUserAvatar(QString avatarName)
 {
     amelie->setUserAvatar(avatarName);
+}
+
+
+
+QString AmelieEvent::setPreviewAvatar(QString avatarType, QString avatarName)
+{
+    QFileInfo p("../resources/AppIcon/" + avatarType + "/avatar/" + avatarName + ".png");
+    return QUrl::fromLocalFile(p.absoluteFilePath()).toString();
 }
 
 #pragma endregion
@@ -301,8 +309,8 @@ void AmelieApplication::Chat::changeLanguage(const char* language)
 
 
 char* AmelieApplication::Chat::conversation(bool enableVoice, const char* userInput)
-{
-    return AmelieConversation(classInstance, enableVoice, userInput);
+{   
+    return AmelieConversation(classInstance, enableVoice, userInput);qInfo() << "Called";
 }
 
 
@@ -584,7 +592,7 @@ int AmelieApplication::GUI::showMainWindow(Chat* chat)
 {
     engine->rootContext()->setContextProperty("Event", AmelieEvent::getInstance());
     engine->rootContext()->setContextProperty("Chat", (QObject*)chat);
-    engine->load(QUrl::fromLocalFile("../src/view/main.qml"));
+    engine->load("qrc:///qml/main.qml");
 
     return app->exec();
 }
@@ -631,11 +639,11 @@ int AmelieApplication::GUI::showSettingsWindow()
         botAvatars.erase(currentBotAvatarPosition);
         botAvatarList.append(currentBotAvatarName);
     }
+
     for(int i = 0; i < botAvatars.size(); ++i)
     {
         botAvatarList.append(botAvatars[i]);
     }
-
     engine->rootContext()->setContextProperty("botAvatarList", botAvatarList);
 
 
@@ -661,7 +669,8 @@ int AmelieApplication::GUI::showSettingsWindow()
 
 
 
-    engine->load(QUrl::fromLocalFile("../src/view/settingsWindow.qml"));
+
+    engine->load("qrc:///qml/settingsWindow.qml");
 
     return app->exec();
 }

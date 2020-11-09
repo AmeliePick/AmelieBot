@@ -4,6 +4,8 @@ import QtQuick.Shapes 1.12
 
 Item
 {
+    FontLoader { id: fontMontserrat; source: "qrc:///resource/fonts/Montserrat.ttf" }
+
     id: messageItem;
 
     property alias text: message.text;
@@ -39,9 +41,9 @@ Item
         Image
         {
             id: avatar;
-            x: 0
+            x: 0;
             y: 0;
-            width: 86
+            width: 86;
             height: 86;
         }
     }
@@ -99,7 +101,7 @@ Item
                 width: 537;
                 padding: 10;
                 font.pixelSize: 15;
-                font.family: "Montserrat";
+                font.family: fontMontserrat.name;
                 color: "#c5c5c5"
                 wrapMode: Text.Wrap;
             }

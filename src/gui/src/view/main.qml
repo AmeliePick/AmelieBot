@@ -8,10 +8,12 @@ Window
 {
     function pushMessagesToChat(userInput, answer)
     {
-        messageModel.append({positionX: 0, toReflect: 1,text: userInput, avatar: "../../../../resources/AppIcon/user/avatar/" + Event.getUserAvatar() +".png"})
-        messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: "../../../../resources/AppIcon/bot/avatar/" + Event.getBotAvatar() + ".png"});
+        messageModel.append({positionX: 0, toReflect: 1,text: userInput, avatar: Event.setPreviewAvatar("user", Event.getUserAvatar())})
+        messageModel.append({positionX: 1255, toReflect: -1, text: answer, avatar: Event.setPreviewAvatar("bot", Event.getBotAvatar())});
     }
 
+    FontLoader { id: fontMagneto; source: "qrc:///resource/fonts/Magneto.ttf" }
+    FontLoader { id: fontMontserrat; source: "qrc:///resource/fonts/Montserrat.ttf" }
 
     color: "#0c1128";
     visible: true;
@@ -38,6 +40,7 @@ Window
                 y: 100; width: 300;  height: 5; color: "#545454";
             }
 
+
             Text {
                 width: 300;
                 height: 100;
@@ -45,7 +48,7 @@ Window
                 verticalAlignment: Text.AlignVCenter;
                 color: "#9382dc";
                 font.pixelSize: 32;
-                font.family: "Magneto"
+                font.family: fontMagneto.name;
                 text: qsTr("Amelie Bot");
 
             }
@@ -82,7 +85,7 @@ Window
 
                         color: "gray";
                         font.pixelSize: 32;
-                        font.family: "Montserrat";
+                        font.family: fontMontserrat.name;
                         text: "History";
                     }
 
@@ -113,7 +116,7 @@ Window
 
                         color: "gray";
                         font.pixelSize: 32;
-                        font.family: "Montserrat";
+                        font.family: fontMontserrat.name;
                         text: "Settings";
                     }
 
@@ -122,8 +125,6 @@ Window
                         Event.showSettingsWindow();
                     }
                 }
-
-
             }
 
 
@@ -141,7 +142,7 @@ Window
                 verticalAlignment: Text.AlignVCenter;
                 color: "#9382dc";
                 font.pixelSize: 20;
-                font.family: "Magneto";
+                font.family: fontMagneto.name;
                 text: qsTr("AmeliePick ©");
 
             }
@@ -221,7 +222,7 @@ Window
 
                         leftPadding: 20;
                         rightPadding: 20;
-                        font.family: "Montserrat";
+                        font.family: fontMontserrat.name;
                         text: "Enter the message:";
                         selectByMouse: true;
                         wrapMode: TextInput.Wrap;
@@ -268,13 +269,12 @@ Window
                     {
                         width: 80;
                         height: 80;
-                        source: "res/images/microphone.ico";
+                        source: "qrc:///resource/images/microphone.ico";
                     }
 
                     onClicked:
                     {
                         var answer = Event.chatConversation(true);
-
                         pushMessagesToChat(Event.getUserInput(), answer);
                         chat.positionViewAtEnd();
 

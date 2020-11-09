@@ -7,12 +7,13 @@ Window
     function setPreviewAvatar(avatarType, avatarName)
     {
         if(avatarType == "bot")
-            botAvatar.source = "../../../../resources/AppIcon/" + avatarType + "/avatar/" + avatarName + ".png";
+            botAvatar.source = Event.setPreviewAvatar(avatarType, avatarName);
         else if(avatarType == "user")
-            userAvatar.source = "../../../../resources/AppIcon/" + avatarType + "/avatar/" + avatarName + ".png";
+            userAvatar.source = Event.setPreviewAvatar(avatarType, avatarName);
     }
 
-
+    FontLoader { id: fontMagneto; source: "qrc:///resource/fonts/Magneto.ttf" }
+    FontLoader { id: fontMontserrat; source: "qrc:///resource/fonts/Montserrat.ttf" }
 
     id: settingsWindow;
     title: qsTr("Settings")
@@ -154,7 +155,7 @@ Window
             y: 0
             color: "white";
             text: qsTr("Username:")
-            font.family: "Montserrat";
+            font.family: fontMontserrat.name;
             font.pixelSize: 20;
             verticalAlignment: Text.AlignVCenter;
         }
@@ -167,7 +168,7 @@ Window
             width: 383
             height: 50;
             verticalAlignment: Text.AlignVCenter;
-            font.family: "Montserrat";
+            font.family: fontMontserrat.name;
             font.pixelSize: 20;
             color: "white";
             text: Event.getUsername();
@@ -182,7 +183,7 @@ Window
             x: 0
             y: 42
             color: "Red";
-            font.family: "Montserrat";
+            font.family: fontMontserrat.name;
             font.pixelSize: 15;
             verticalAlignment: Text.AlignVCenter;
         }
@@ -206,7 +207,7 @@ Window
             height: 50
             color: "white";
             text: qsTr("Bot's Language:")
-            font.family: "Montserrat";
+            font.family: fontMontserrat.name;
             font.pixelSize: 20;
             verticalAlignment: Text.AlignVCenter;
         }
@@ -262,7 +263,7 @@ Window
 
                 color: "gray";
                 font.pixelSize: 20;
-                font.family: "Montserrat";
+                font.family: fontMontserrat.name;
                 text: "Apply";
             }
 
@@ -307,7 +308,7 @@ Window
 
                 color: "gray";
                 font.pixelSize: 20;
-                font.family: "Montserrat";
+                font.family: fontMontserrat.name;
                 text: "Cancel";
             }
 
