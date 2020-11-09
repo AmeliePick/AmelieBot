@@ -132,6 +132,8 @@ class Amelie(metaclass = Singleton):
         try:
             if enableVoice:
                 self._setVoice(True)
+
+            if self.getVoice():
                 try:
                     userInput = voiceInput()
                 except ValueError:
@@ -153,10 +155,10 @@ class Amelie(metaclass = Singleton):
                 if self.getPathToProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0])):
                     chatAnswer = self._dialog.getMessageFor("progNameExist")
                 else:
-                    self.addProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0]), sub('[\t]', '', parsedInput[1]))
-                    chatAnswer = self._dialog.getMessageFor("done")
+                    self.addProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0]), sub('[\t]', '', parsedInput[1]).replace("\n", ''))
                     self._exceptionStep = 1
                     self._exceptionStack.pop(0)
+                    chatAnswer = _startChat("open " + parsedInput[0])
 
             else:
                 self._exceptionStep = 1
@@ -253,17 +255,19 @@ class Amelie(metaclass = Singleton):
     def _setVoice(self, value: bool) -> None:
         if(self._voice == value): return
 
-        if value == True and Network.checkNetworkConnection() and self._voiceRecorder == None:
+        if self._voiceRecorder == None:
             # Try to make a late initialization of the voice recorder if it was not initialized in the constructor.
             try:
                 self._voiceRecorder = SpeechRecognition(self._chat.getLanguage())
             except OSError as e:
                 self._voiceRecorder = None
                 e.errno = 6
-                raise e
-
-        elif value == True and not Network.checkNetworkConnection():
-            raise ConnectionError()
+                self._exceptionStack.append(e)
+                return
+            
+        if value == True and not Network.checkNetworkConnection():
+            self._exceptionStack.append(ConnectionError())
+            return
 
         self._voice = value
         return
