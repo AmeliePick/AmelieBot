@@ -28,7 +28,7 @@ class Settings(metaclass = Singleton):
         if not FileManager.dirExist("TEMP"):
             FileManager.createDir("TEMP")
         if not FileManager.fileExist("../DataBase/addedProgramms.db"):
-            FileManager.clearFile("../DataBase/addedProgramms.db")
+            FileManager.createFile("../DataBase/addedProgramms.db")
 
 
         self._iniParser = IniParser("settings.ini")
