@@ -152,13 +152,16 @@ class Amelie(metaclass = Singleton):
             elif self._exceptionStep == 2:
                 parsedInput = userInput.split(" = ")
 
-                if self.getPathToProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0])):
-                    chatAnswer = self._dialog.getMessageFor("progNameExist")
-                else:
-                    self.addProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0]), sub('[\t]', '', parsedInput[1]).replace("\n", ''))
-                    self._exceptionStep = 1
-                    self._exceptionStack.pop(0)
-                    chatAnswer = _startChat("open " + parsedInput[0])
+                try:
+                    if self.getPathToProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0])):
+                        chatAnswer = self._dialog.getMessageFor("progNameExist")
+                    else:
+                        self.addProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0]), sub('[\t]', '', parsedInput[1]).replace("\n", ''))
+                        self._exceptionStep = 1
+                        self._exceptionStack.pop(0)
+                        chatAnswer = _startChat("open " + parsedInput[0])
+                except IndexError:
+                    chatAnswer = self._dialog.getMessageFor("addProgName") + " " + self._dialog.getMessageFor("addProgPath")
 
             else:
                 self._exceptionStep = 1
@@ -224,7 +227,13 @@ class Amelie(metaclass = Singleton):
 
     def _updateProgramList(self) -> None:
         programsFile = FileManager.readFile("../DataBase/addedProgramms.db")
-        self._programsList = { row.split(" = ")[0].lower(): row.split(" = ")[1].replace('\n', '') for row in programsFile }
+        self._programsList = dict()
+        for row in programsFile:
+            if row != '' and row != '\n' and row != ' ':
+                self._programsList.update({row.split(" = ")[0].lower(): row.split(" = ")[1].replace('\n', '')})
+
+
+        
 
         return
 
