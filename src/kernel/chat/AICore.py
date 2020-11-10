@@ -51,7 +51,7 @@ class Chat(metaclass = Singleton):
 
             # fit and train the model
             lenght = len(dataSet['text'])
-            if lenght > 0:
+            if lenght > 10:
                 indexes = arange(lenght)
                 random.shuffle(indexes)
 
@@ -67,7 +67,6 @@ class Chat(metaclass = Singleton):
 
                 self._text_clf.fit(trained['train']['x'], trained['train']['y'])
                 self._text_clf.predict(trained['test']['x'])
-
 
                 # save the model to disk
                 joblib.dump(self._text_clf, "../DataBase/models/model.pkl", compress = 3, protocol = 4)
@@ -102,15 +101,14 @@ class Chat(metaclass = Singleton):
         self._stopWords = list()
         self._answerText = list()
         self._getDataFromDB()
-
+        self._text_clf = joblib.load("../DataBase/models/model.pkl")
 
         self._input = str()
         self._sessionInput = dict()
-        self._text_clf = Pipeline([ ('tfidf', TfidfVectorizer()),
-                                    ('clf', SGDClassifier(loss='hinge')),
-                                 ])
 
-        training(parseDataSet())
+
+        #self._text_clf = Pipeline([ ('tfidf', TfidfVectorizer()), ('clf', SGDClassifier(loss='hinge')),])
+        #training(parseDataSet())
 
         return
 
@@ -248,7 +246,7 @@ class Chat(metaclass = Singleton):
         self.output = choice(answerPharse)
 
         # add phrases in data set
-        if self._inputType != "Unknown":
-            FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet.db")
+        #if self._inputType != "Unknown":
+        #    FileManager.writeToFile(self._input + " @ " + self._inputType + '\n', "../DataBase/DataSet.db")
 
         return self.output
