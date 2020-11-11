@@ -41,9 +41,9 @@ class Amelie(metaclass = Singleton):
     _textToSpeech: TextToSpeech
     _voice: bool
 
+    _programsList:  dict
     _exceptionStack: list
-    _exceptionStep: int
-    _programsList:  list
+    _parsedInput: list
 
 
 
@@ -65,10 +65,11 @@ class Amelie(metaclass = Singleton):
         except OSError:
             self._voiceRecorder = None
 
+        self._programsList = dict()
         self._updateProgramList()
 
         self._exceptionStack = list()
-        self._exceptionStep = 1
+        self._parsedInput = list()
 
         return
 
@@ -113,18 +114,24 @@ class Amelie(metaclass = Singleton):
         ''' Start the conversation with the bot.
         '''
 
+
+
         def _startChat(userInput: str) -> str:
             chatAnswer = self._chat.launch(userInput)
 
             try:
                 self._doAction(self._chat.getInputType())
             except (FileNotFoundError, OSError):
-                self._exceptionStack.append(FileNotFoundError())
+                exc = FileNotFoundError()
+                exc.errno = 1
+                self._exceptionStack.append(exc)
                 return str(self._dialog.getMessageFor("progNotFound") +
                        " " +
                        self._dialog.getMessageFor("addProg")).replace('\n', '')
 
             return chatAnswer
+
+
 
 
 
@@ -144,28 +151,57 @@ class Amelie(metaclass = Singleton):
 
 
 
-        except FileNotFoundError:
-            if self._exceptionStep == 1 and userInput == 'Y' or userInput == 'y':
-                self._exceptionStep = 2
+        except FileNotFoundError as exception:
+            if exception.errno == 1 and userInput == 'Y' or userInput == 'y':
+                self._exceptionStack[0].errno = 2
                 chatAnswer = self._dialog.getMessageFor("addProgName") + " " + self._dialog.getMessageFor("addProgPath")
 
-            elif self._exceptionStep == 2:
-                parsedInput = userInput.split(" = ")
+            elif exception.errno == 2:
+                parsedInput = userInput.split(" = ")                
 
                 try:
                     if self.getPathToProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0])):
                         chatAnswer = self._dialog.getMessageFor("progNameExist")
-                    else:
-                        self.addProgram(sub('[\t, \n, \r, \s]', '', parsedInput[0]), sub('[\t]', '', parsedInput[1]).replace("\n", ''))
-                        self._exceptionStep = 1
+                        if(len(parsedInput) == 2):
+                            self._parsedInput = parsedInput
+                    else: self._exceptionStack[0].errno = 0
+
+
+                    # Replace program's path
+                    if userInput == "R" or userInput == "r":
+                        self._programsList[self._parsedInput[0].lower()] = self._parsedInput[1].replace('\n', '')
+
+                        FileManager.clearFile("../DataBase/addedProgramms.db")
+                        for key, value in self._programsList.items():
+                            FileManager.writeToFile(key + " = " + value + '\n', "../DataBase/addedProgramms.db", 'a')
+                        self._exceptionStack[0].errno = 1
+                        chatAnswer = _startChat("open " + self._parsedInput[0])
+                        self._parsedInput.clear()
+
+                    # Change the name of adding program
+                    elif len(parsedInput) == 1 and self._exceptionStack[0].errno == 0: 
+                        self._parsedInput[0] = parsedInput[0].lower()
+
+                    if self._exceptionStack[0].errno == 0:
                         self._exceptionStack.pop(0)
-                        chatAnswer = _startChat("open " + parsedInput[0])
+                        
+                        # this is a crutch to init self._parsedInput when adding a new programm
+                        # and the crutch to save self._parsedInput[0] when user change the name of the adding program
+                        if len(self._parsedInput) != 2:
+                            self._parsedInput = parsedInput
+
+                        self.addProgram(sub('[\t, \n, \r, \s]', '', self._parsedInput[0]), sub('[\t]', '', self._parsedInput[1]).replace("\n", ''))
+                        chatAnswer = _startChat("open " + self._parsedInput[0])
+                        self._parsedInput.clear()
+
                 except IndexError:
-                    chatAnswer = self._dialog.getMessageFor("addProgName") + " " + self._dialog.getMessageFor("addProgPath")
+                    chatAnswer = _startChat(userInput)
+                    self._parsedInput.clear()
+                    self._exceptionStack.pop(0)
 
             else:
-                self._exceptionStep = 1
                 self._exceptionStack.pop(0)
+                self._parsedInput.clear()
                 chatAnswer = _startChat(userInput)
 
         except (ConnectionError, ConnectError):
@@ -218,8 +254,7 @@ class Amelie(metaclass = Singleton):
         '''
 
         if len(self._exceptionStack) > 0:
-            excpetion = self._exceptionStack[0]
-            raise excpetion
+            raise self._exceptionStack[0]
 
         return
 
@@ -227,7 +262,7 @@ class Amelie(metaclass = Singleton):
 
     def _updateProgramList(self) -> None:
         programsFile = FileManager.readFile("../DataBase/addedProgramms.db")
-        self._programsList = dict()
+        self._programsList.clear()
         for row in programsFile:
             if row != '' and row != '\n' and row != ' ':
                 self._programsList.update({row.split(" = ")[0].lower(): row.split(" = ")[1].replace('\n', '')})
