@@ -175,16 +175,23 @@ class AmelieProgramm:
 
 
         username = str(self._settingsFile.getUsername())
-        while(True):
-            self._console.write('\n' + username + ": ")
-            if self._amelie.getVoice() == False:   
-                userInput = self._console.readLine("--> ")
+        userInput = ""
+        if enableVoice == False:
+            while(True):
+                self._console.write('\n' + username + ": ")
+                userInput = self._console.readLine()
+                self._console.writeLine("\t\t\tAmelie: " + self._amelie.conversation(enableVoice, userInput))
                 
+        else:
+            while(True):
+                self._console.write('\n' + username + ": ")
+                chatAnswer = self._amelie.conversation(enableVoice, userInput)
+                self._console.write(self._amelie.getUserInput() + '\n')
+                self._console.writeLine("\t\t\tAmelie: " + chatAnswer + '\n')
 
-            chatAnswer = self._amelie.conversation(enableVoice, userInput)
-            if self._amelie.getVoice(): self._console.write(self._amelie.getUserInput() + '\n')
-            self._console.writeLine("\n\t\t\tAmelie: " + chatAnswer)
-
+                self._console.write(self._dialog.getMessageFor("wait"))
+                msvcrt.getch()
+            
         return
 
 
