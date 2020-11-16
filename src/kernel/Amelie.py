@@ -221,7 +221,7 @@ class Amelie(metaclass = Singleton):
 
         except Exception:
             self._logger.logWrite()
-            self._exceptionStack.pop(0)
+            if len(self._exceptionStack) > 0: self._exceptionStack.pop(0)
             return self._dialog.getMessageFor("error")
 
 
@@ -266,9 +266,6 @@ class Amelie(metaclass = Singleton):
         for row in programsFile:
             if row != '' and row != '\n' and row != ' ':
                 self._programsList.update({row.split(" = ")[0].lower(): row.split(" = ")[1].replace('\n', '')})
-
-
-        
 
         return
 

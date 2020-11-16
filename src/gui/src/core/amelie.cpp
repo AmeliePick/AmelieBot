@@ -1,10 +1,7 @@
 #include "amelie.h"
 #include <vector>
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QResource>
-#include <QFile>
-#include <QDebug>
 
 
 #pragma region AmelieEvent
@@ -136,9 +133,6 @@ QString AmelieEvent::setPreviewAvatar(QString avatarType, QString avatarName)
 #pragma region AmelieApplication
 AmelieApplication::AmelieApplication()
 {
-    this->fileManager = FileManager::getInstance();
-    this->network = Network::getInstance();
-
     this->settings = Settings::getInstance();
 
     this->chat = nullptr;
@@ -310,7 +304,7 @@ void AmelieApplication::Chat::changeLanguage(const char* language)
 
 char* AmelieApplication::Chat::conversation(bool enableVoice, const char* userInput)
 {   
-    return AmelieConversation(classInstance, enableVoice, userInput);qInfo() << "Called";
+    return AmelieConversation(classInstance, enableVoice, userInput);
 }
 
 
@@ -582,8 +576,6 @@ AmelieApplication::GUI::GUI(int argc, char** argv)
 
     this->app = new QGuiApplication(argc, argv);
     this->engine = new QQmlApplicationEngine();
-
-    app->setWindowIcon(QIcon("../../../resources/AppIcon/icon.ico"));
 }
 
 
