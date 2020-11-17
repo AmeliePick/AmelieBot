@@ -35,13 +35,11 @@ class Dialog(metaclass = Singleton):
         ''' Getting the text of expression by given expression
         '''
 
-        text = list()
         for line in self.serviceExpressions:
             row = line.split(' # ')
 
             if row[0] == expression:
-                text.append(row[1])
-                return ''.join(text)
+                return row[1]
 
         return self.getMessageFor("error")
 
