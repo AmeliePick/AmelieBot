@@ -1,63 +1,63 @@
-![](https://pp.userapi.com/c849424/v849424587/c32dd/JMbz1W60jPA.jpg)
-**AmelieBot is a chat assistant for PC. Written in Python.
-The program is based on a small neural network written in the sklearn module. This network classifies user input. Further, the type of the question is compared with the Database and the answer is given with some action (opening the application, etc.).**
+![](./readmeSRC/Logo.png)
+
+___
+![](./readmeSRC/about.png)
+
+Amelie Bot is a chat-assistant for PC. You can chatting with Amelie by voice or just by writing a message.
+
+The list of possibilities:
+1. A little imitation of communication.
+2. Find information in the Internet.
+3. Search YouTube videos.
+4. Open applications.
+
+
+___
+![](./readmeSRC/modes.png)
+
+The bot has two modes:
++ Voice control and voice response. For this you need a microphone and the Ethernet connection. The bot answers by only the one voice(English) and localized subtitles.
++ Just a typing.
+
+## Supporting languages
++ English.
++ Russian(partially).
+
+## Versions
+The bot also has two versions:
+1. CLI - python console application.
+2. GUI - using QT framework for C++.
+
+
+___
+![](./readmeSRC/sysReq.png)
+
++ CPU: i5-2410M or better.
++ RAM: 500 MB or more.
++ OS: Windows 10.
+
+
+___
+![](./readmeSRC/building.png)
+
+The core of this bot is written in Python. The GUI version is actually C++ code.
+It uses Qt framework and a dynamic library builded by [python interface](https://github.com/AmeliePick/Python-Interface) and which contains calls to Python.
+
+To run the bot, needs create a data base and setup file.
+
+❔ Check the [wiki page](https://github.com/AmeliePick/AmelieBot/wiki/Build-Guide) for more information. ❔
+
+
+___
+![](./readmeSRC/credits.png)
+
++ _Programmers_: [AmeliePick](https://github.com/AmeliePick).
++ _Testers_: [ltachiUchiha](https://github.com/ltachiUchiha).
++ _Translators_:
+    + AmeliePick -> English, Russian.
+
++ _Special thanks to [ex-vi](https://github.com/ex-vi)._
 ***
 
 
-# What can the bot
-
-
-At the time of publication AmelieBot Alpha 2.5.2 (03/30/2019), the bot can:
-
-1. Imitate communication a little
-2. Find information on the Internet
-3. Search YouTube Videos [*¹*](https://github.com/AmeliePick/AmelieChatBot#work-with-applications)
-4. Work with OC (Open different applications)
-***
-
-The bot has two modes of operation:
-- Voice control and voice response
-- Just chat
-
-Due to the fact that the bot still has a small database, it is not always able to correctly distinguish what was said / written to it.
-(See below for more on this.)
-***
-
-# Work with applications.
-Because a bot can open applications, it needs to know where the file being launched (.exe) is. In the published version 2.0, Bot needs to add the name of the program and specify the path to it. The bot himself will offer this if he does not find the program.
-
-¹- The bot has implemented *pure search* - cutting the phrase and searching within the meaning of the request. For example: Find guides on Python. The query will leave the entire phrase, except for the word "Find." On this built search in search engines and on YouTube. Again, in connection with a small Database, a clean search can incorrectly recognize the meaning of a phrase and add extra words to the search.
-***
-
-# Optimization issue
-Initially, the bot was planned to be kept in the background. In trial tests, he occupied 57-58 MB in RAM with the included synthesis.
-***
-
-# Upcoming updates and project support.
-
-1. In future updates, it is planned to increase optimization and reduce memory consumption in two bot modes.
-
-2. Expand Database (willing to help with this, all links below)
-
-3. ~~Implement self-learning based on user requests~~
-
-4. The code is far from perfect, so fixes of bugs will be released from time to time.
-
-5. Auto update bot
-***
-
-# Links:
-+ Help expand the Database ([Guide](https://github.com/AmeliePick/AmelieChatBot/tree/master/API))
-
-+ Suggestions to write here -> ameliepickdev@gmail.com
-
-+ Author on cookies -> WebMoney: *USD - Z798649130210 | RUB - R832721470836*
-
-
-**The author thanks all those who offered ideas, inspired.**
-
-Special thanks: [Sombruh](https://github.com/Sombruh) - for help at the beginning of the project.
-
-***
-
-Good Luck! ^ - ^
+**Copyright © 2018-2020 AmeliePick.**
