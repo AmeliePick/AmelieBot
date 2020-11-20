@@ -18,13 +18,14 @@ class Dialog(metaclass = Singleton):
 
 
 
-    serviceExpressions: str
+    serviceExpressions: list
 
 
 
     def __init__(self, appLanguage: str):
         super().__init__()
 
+        self.serviceExpressions = list()
         self.changeLanguage(appLanguage)
 
         return

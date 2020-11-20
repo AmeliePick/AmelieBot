@@ -55,7 +55,7 @@ class FileManager(metaclass = Singleton):
 
 
     @staticmethod
-    def readFile(file: str, _encoding="utf-8") -> str:
+    def readFile(file: str, _encoding="utf-8") -> list:
         with open (file, encoding = _encoding) as file:
             return file.readlines()
 
