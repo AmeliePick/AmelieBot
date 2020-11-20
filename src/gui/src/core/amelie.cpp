@@ -156,7 +156,7 @@ void AmelieApplication::initChatBot()
 
 
 
-QString AmelieApplication::chatConversation(bool enableVoice, QString input)
+char* AmelieApplication::chatConversation(bool enableVoice, QString input)
 {
     return chat->conversation(enableVoice, input.toStdString().c_str());
 }
@@ -292,7 +292,6 @@ AmelieApplication::Chat* AmelieApplication::Chat::getInstance(const char* appLan
     static Chat* instance = new Chat(appLanguage);
     return instance;
 }
-
 
 
 void AmelieApplication::Chat::changeLanguage(const char* language)
@@ -582,17 +581,41 @@ AmelieApplication::GUI::GUI(int argc, char** argv)
 
 int AmelieApplication::GUI::showMainWindow(Chat* chat)
 {
+
     engine->rootContext()->setContextProperty("Event", AmelieEvent::getInstance());
     engine->rootContext()->setContextProperty("Chat", (QObject*)chat);
-    engine->load("qrc:///qml/main.qml");
+
+
+    /* This is a crutch to fix a crash of the application.
+     * aftter the call of engine->load it's raising an unhanlded excpetion in ucrtbase module.
+     *
+     * The stack trace:
+     * > 	ucrtbase.dll!00007ffd1d0bdb8e() -> raise the 0xC0000409 exception.
+     * > 	ucrtbase.dll!00007ffd1d0bd2cf()
+     * >	AmelieBot.exe!__scrt_unhandled_exception_filter(_EXCEPTION_POINTERS * const pointers) in crt -> utility_app.cpp line 91
+     */
+    while(true)
+    {
+        try
+        {
+            engine->load("qrc:///qml/main.qml");
+            break;
+        }
+        catch(...)
+        {
+            continue;
+        }
+    }
 
     return app->exec();
+
 }
 
 
 
 int AmelieApplication::GUI::showSettingsWindow()
 {
+    // TODO: Refactoring.
     AmelieEvent* event = AmelieEvent::getInstance();
 
     engine->rootContext()->setContextProperty("Event", event);

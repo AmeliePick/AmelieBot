@@ -240,7 +240,7 @@ public:
 
     void showSettingsWindow();
 
-    QString chatConversation(bool enableVoice, QString input = "");
+    char* chatConversation(bool enableVoice, QString input = "");
 
     QString getUserInput();
 
