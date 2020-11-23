@@ -25,6 +25,7 @@ Window
     minimumWidth: 800;
     maximumWidth: 800;
 
+    flags: Qt.Dialog
 
 
     Item
@@ -324,9 +325,3 @@ Window
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorZoom:0.8999999761581421;height:800;width:800}
-}
-##^##*/

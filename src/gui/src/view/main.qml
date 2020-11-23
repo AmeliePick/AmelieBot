@@ -4,7 +4,7 @@ import QtQuick.Controls 2.2
 
 
 
-Window
+ApplicationWindow
 {
     function pushMessagesToChat(userInput, answer)
     {
@@ -15,6 +15,7 @@ Window
     FontLoader { id: fontMagneto; source: "qrc:///resource/fonts/Magneto.ttf" }
     FontLoader { id: fontMontserrat; source: "qrc:///resource/fonts/Montserrat.ttf" }
 
+    id: mainWindow;
     color: "#0c1128";
     visible: true;
 
@@ -63,41 +64,10 @@ Window
                 height: 594;
                 color: "#0c1128";
 
-
                 Button
                 {
                     x: 75;
                     y: 50;
-                    width: 150;
-                    height: 44;
-
-                    background: Rectangle
-                    {
-                        color: "#0c1128";
-                    }
-
-                    contentItem: Text
-                    {
-                        width: 150;
-                        height: 44;
-
-                        verticalAlignment: Text.AlignVCenter;
-
-                        color: "gray";
-                        font.pixelSize: 32;
-                        font.family: fontMontserrat.name;
-                        text: "History";
-                    }
-
-
-                }
-
-
-
-                Button
-                {
-                    x: 75;
-                    y: 110;
                     width: 150;
                     height: 44;
                     palette { button: "#0c1128"; }
@@ -122,9 +92,37 @@ Window
 
                     onClicked:
                     {
-                        Event.showSettingsWindow();
+                        var component = Qt.createComponent(Event.initSettingsWindow());
+                        var settingsWin = component.createObject(mainWindow);
+                        settingsWin.show();
                     }
                 }
+
+                /*Button
+                {
+                    x: 75;
+                    y: 110;
+                    width: 150;
+                    height: 44;
+
+                    background: Rectangle
+                    {
+                        color: "#0c1128";
+                    }
+
+                    contentItem: Text
+                    {
+                        width: 150;
+                        height: 44;
+
+                        verticalAlignment: Text.AlignVCenter;
+
+                        color: "gray";
+                        font.pixelSize: 32;
+                        font.family: fontMontserrat.name;
+                        text: "History";
+                    }
+                }*/
             }
 
 
@@ -283,13 +281,9 @@ Window
             }
         }
     }
+
+    onClosing:
+    {
+        Event.closeAmelieEvent();
+    }
 }
-
-
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorZoom:0.5;height:480;width:640}
-}
-##^##*/
