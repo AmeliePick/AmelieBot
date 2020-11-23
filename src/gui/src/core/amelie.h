@@ -24,7 +24,7 @@ public:
 
     Q_INVOKABLE QString chatConversation(bool enableVoice, QString input = "");
 
-    Q_INVOKABLE void showSettingsWindow();
+    Q_INVOKABLE QUrl initSettingsWindow();
 
     Q_INVOKABLE bool setUsername(QString nameValue);
 
@@ -52,8 +52,10 @@ public:
 
     Q_INVOKABLE QString setPreviewAvatar(QString avatarType, QString avatarName);
 
-public:
 
+    Q_INVOKABLE void closeAmelieEvent();
+
+    Q_INVOKABLE ~AmelieEvent();
 };
 
 
@@ -63,70 +65,6 @@ public:
 class AmelieApplication
 {
 private:
-    class FileManager
-    {
-    private:
-        FileManager();
-        FileManager(const FileManager &) = delete;
-
-        void* classInstance;
-
-
-    public:
-        static FileManager* getInstance();
-
-        bool fileExist(const char* file);
-
-        void writeToFile(const char* value, const char* file, const char* mode = "a", const char* _encoding = "utf-8");
-
-        const char* readFile(const char* file, const char* _encoding = "utf-8");
-
-        void createFile(const char* file);
-
-        void deleteFile(const char* file);
-
-        void clearFile(const char* file);
-
-        ~FileManager();
-    };
-
-
-
-    class Network
-    {
-    private:
-        Network();
-        Network(const Network &) = delete;
-
-        void* classInstance;
-
-
-    public:
-        static Network* getInstance();
-
-        bool checkNetworkConnection();
-    };
-
-
-
-    class Logger
-    {
-    private:
-        Logger();
-        Logger(const Logger &) = delete;
-
-        void* classInstance;
-
-    public:
-        static Logger* getInstance();
-
-        void addRecord(const char* recordTitle, const char* value);
-
-        void logWrite();
-    };
-
-
-
     class Settings
     {
     private:
@@ -161,6 +99,8 @@ private:
         const char* getUserAvatar();
 
         std::multimap<const char*, void*> getMethodsToResolveErrors();
+
+        ~Settings();
     };
 
 
@@ -203,9 +143,13 @@ private:
     public:
         GUI(int argc, char** argv);
 
-        int showMainWindow(Chat* chat);
+        int showMainWindow();
 
-        int showSettingsWindow();
+        QUrl initSettingsWindow();
+
+        void showSettingsWindow();
+
+        ~GUI();
     };
 
 
@@ -213,10 +157,6 @@ private:
     AmelieApplication();
     AmelieApplication(const AmelieApplication &) = delete;
 
-
-
-    FileManager* fileManager;
-    Network* network;
 
     Settings* settings;
     Chat* chat;
@@ -238,7 +178,7 @@ public:
 
     QString getUsername();
 
-    void showSettingsWindow();
+    QUrl initSettingsWindow();
 
     char* chatConversation(bool enableVoice, QString input = "");
 
@@ -257,6 +197,8 @@ public:
     QString getUserAvatar();
 
     int main(int argc, char** argv);
+
+    ~AmelieApplication();
 };
 
 #endif // AMELIE_H

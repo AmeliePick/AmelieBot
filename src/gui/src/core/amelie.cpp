@@ -20,9 +20,9 @@ AmelieEvent* AmelieEvent::getInstance()
 
 
 
-void AmelieEvent::showSettingsWindow()
+QUrl AmelieEvent::initSettingsWindow()
 {
-    amelie->showSettingsWindow();
+    return amelie->initSettingsWindow();
 }
 
 
@@ -122,6 +122,19 @@ QString AmelieEvent::setPreviewAvatar(QString avatarType, QString avatarName)
 {
     QFileInfo p("../resources/AppIcon/" + avatarType + "/avatar/" + avatarName + ".png");
     return QUrl::fromLocalFile(p.absoluteFilePath()).toString();
+}
+
+
+
+void AmelieEvent::closeAmelieEvent()
+{
+    delete amelie;
+}
+
+
+AmelieEvent::~AmelieEvent()
+{
+    delete amelie;
 }
 
 #pragma endregion
@@ -264,14 +277,22 @@ int AmelieApplication::main(int argc, char** argv)
     initChatBot();
 
 
-    return gui->showMainWindow(chat);
+    return gui->showMainWindow();
 }
 
 
 
-void AmelieApplication::showSettingsWindow()
+QUrl AmelieApplication::initSettingsWindow()
 {
-    this->gui->showSettingsWindow();
+    return this->gui->initSettingsWindow();
+}
+
+
+AmelieApplication::~AmelieApplication()
+{
+    // this->gui will be deleted automatically when QML window triggers close event.
+    delete chat;
+    delete settings;
 }
 #pragma endregion
 
@@ -332,74 +353,6 @@ const char* AmelieApplication::Chat::getUserInput()
 AmelieApplication::Chat::~Chat()
 {
     AmelieDelete(classInstance);
-}
-#pragma endregion
-
-
-
-
-
-#pragma region FileManager
-AmelieApplication::FileManager::FileManager()
-{
-    this->classInstance = FileManagerCreateInstance();
-}
-
-
-
-AmelieApplication::FileManager* AmelieApplication::FileManager::getInstance()
-{
-    static FileManager* instance = new FileManager();
-    return instance;
-}
-
-
-
-bool AmelieApplication::FileManager::fileExist(const char* file)
-{
-    return FMfileExist(classInstance, file);
-}
-
-
-
-void AmelieApplication::FileManager::writeToFile(const char* value, const char* file, const char* mode, const char* _encoding)
-{
-    FMWriteToFile(classInstance, value, file, mode, _encoding);
-}
-
-
-
-const char* AmelieApplication::FileManager::readFile(const char* file, const char* _encoding)
-{
-    return FMreadFile(classInstance, file, _encoding);
-}
-
-
-
-void AmelieApplication::FileManager::createFile(const char* file)
-{
-    FMcreateFile(classInstance, file);
-}
-
-
-
-void AmelieApplication::FileManager::deleteFile(const char* file)
-{
-    FMdeleteFile(classInstance, file);
-}
-
-
-
-void AmelieApplication::FileManager::clearFile(const char* file)
-{
-    FMclearFile(classInstance, file);
-}
-
-
-
-AmelieApplication::FileManager::~FileManager()
-{
-    FileManagerDelete(classInstance);
 }
 #pragma endregion
 
@@ -503,64 +456,12 @@ std::multimap<const char*, void*> AmelieApplication::Settings::getMethodsToResol
 {
     return SettingsGetMethodsToResolveErrors(classInstance);
 }
-#pragma endregion
 
 
 
-
-
-#pragma region Network
-AmelieApplication::Network::Network()
+AmelieApplication::Settings::~Settings()
 {
-    this->classInstance = NetworkCreateInstance();
-}
-
-
-
-AmelieApplication::Network* AmelieApplication::Network::getInstance()
-{
-    Network* instance = new Network();
-    return instance;
-}
-
-
-
-bool AmelieApplication::Network::checkNetworkConnection()
-{
-    return NetworkCheckNetworkConnection(classInstance);
-}
-#pragma endregion
-
-
-
-
-
-#pragma region Logger
-AmelieApplication::Logger::Logger()
-{
-    this->classInstance = LoggerCreateInstance();
-}
-
-
-
-AmelieApplication::Logger* AmelieApplication::Logger::getInstance()
-{
-    static Logger* instance = new Logger();
-    return instance;
-}
-
-
-
-void AmelieApplication::Logger::addRecord(const char* recordTitle, const char* value)
-{
-    LoggerAddRecord(classInstance, recordTitle, value);
-}
-
-
-
-void AmelieApplication::Logger::logWrite()
-{
-    LoggerLogWrite(classInstance);
+    SettingsDelete(classInstance);
 }
 #pragma endregion
 
@@ -579,11 +480,10 @@ AmelieApplication::GUI::GUI(int argc, char** argv)
 
 
 
-int AmelieApplication::GUI::showMainWindow(Chat* chat)
+int AmelieApplication::GUI::showMainWindow()
 {
-
     engine->rootContext()->setContextProperty("Event", AmelieEvent::getInstance());
-    engine->rootContext()->setContextProperty("Chat", (QObject*)chat);
+
 
 
     /* This is a crutch to fix a crash of the application.
@@ -608,16 +508,13 @@ int AmelieApplication::GUI::showMainWindow(Chat* chat)
     }
 
     return app->exec();
-
 }
 
 
-
-int AmelieApplication::GUI::showSettingsWindow()
+QUrl AmelieApplication::GUI::initSettingsWindow()
 {
     // TODO: Refactoring.
     AmelieEvent* event = AmelieEvent::getInstance();
-
     engine->rootContext()->setContextProperty("Event", event);
 
     std::vector<const char*> langs = event->getSupportingLangs();
@@ -682,12 +579,22 @@ int AmelieApplication::GUI::showSettingsWindow()
     }
     engine->rootContext()->setContextProperty("userAvatarList", userAvatarList);
 
+    return QUrl("qrc:///qml/settingsWindow.qml");
+}
 
 
+void AmelieApplication::GUI::showSettingsWindow()
+{
 
-    engine->load("qrc:///qml/settingsWindow.qml");
+    engine->load(initSettingsWindow());
+    app->exec();
+}
 
-    return app->exec();
+
+AmelieApplication::GUI::~GUI()
+{
+    delete engine;
+    delete app;
 }
 #pragma endregion
 
