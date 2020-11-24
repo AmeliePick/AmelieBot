@@ -5,6 +5,8 @@ ___
 
 Amelie Bot is a chat-assistant for PC. You can chatting with Amelie by voice or just by writing a message.
 
+![](./readmeSRC/mainWindow.jpg) ![](./readmeSRC/settingsWindow.png)
+
 The list of possibilities:
 1. A little imitation of communication.
 2. Find information in the Internet.
