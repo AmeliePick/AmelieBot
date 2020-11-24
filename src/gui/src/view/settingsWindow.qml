@@ -48,6 +48,7 @@ Window
         Rectangle
         {
             id: user_avatar_circle;
+            color: Qt.rgba(0,0,0,0);
             transform: mirror;
             width: 86;
             height: 86
@@ -100,6 +101,7 @@ Window
         Rectangle
         {
             id: bot_avatar_circle;
+            color: Qt.rgba(0,0,0,0);
             transform: mirror;
             width: 86;
             height: 86

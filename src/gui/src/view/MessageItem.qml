@@ -23,6 +23,7 @@ Item
     Rectangle
     {
         id: avatar_circle;
+        color: Qt.rgba(0,0,0,0);
         transform: mirror;
         y: 0;
         x:
