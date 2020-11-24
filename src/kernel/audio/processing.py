@@ -27,6 +27,7 @@ class TextToSpeech(metaclass = Singleton):
 
     def __init__(self):
         self._translator = gTranslator()
+        AudioSegment.converter = "audio/ffmpeg/bin/ffmpeg.exe"
 
         return
 
