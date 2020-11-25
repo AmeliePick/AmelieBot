@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>main.qml</file>
+        <file>MessageItem.qml</file>
+        <file>settingsWindow.qml</file>
+    </qresource>
+
+    <qresource prefix="/resource">
+        <file alias="images/microphone.ico">res/images/microphone.ico</file>
+        <file alias="fonts/Magneto.ttf">res/fonts/Magneto.ttf</file>
+        <file alias="fonts/Montserrat.ttf">res/fonts/Montserrat.ttf</file>
+    </qresource>
+</RCC>
