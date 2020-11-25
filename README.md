@@ -1,5 +1,5 @@
 ![](./readmeSRC/Logo.png)
-
+![GitHub all releases](https://img.shields.io/github/downloads/AmeliePick/AmelieBot/total?style=for-the-badge)
 ___
 ![](./readmeSRC/about.png)
 
